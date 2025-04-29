@@ -1,0 +1,14 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.detectIndentation": false,
+  "editor.trimAutoWhitespace": true,
+  "editor.tabSize": 4,
+  "editor.wordWrap": "on",
+  "files.insertFinalNewline": true,
+  "prettier.trailingComma": "none",
+  "prettier.singleQuote": true,
+  "typescript.updateImportsOnFileMove.enabled": "always"
+}
