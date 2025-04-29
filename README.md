@@ -21,3 +21,4 @@ A mobile app developed in **React Native + Expo** that connects **elderly caregi
 ```bash
 git clone https://github.com/amaury14/companion-app
 cd companion-app
+```
