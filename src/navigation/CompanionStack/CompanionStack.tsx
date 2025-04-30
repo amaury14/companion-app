@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // import CompanionHomeScreen from '../screens/Companion/CompanionHomeScreen';
 // import ActiveServiceScreen from '../screens/Companion/ActiveServiceScreen';
@@ -12,7 +12,7 @@ export type CompanionStackParamList = {
     ServiceTracking: { serviceId: string };
 };
 
-const Stack = createNativeStackNavigator<CompanionStackParamList>();
+// const Stack = createNativeStackNavigator<CompanionStackParamList>();
 
 export default function CompanionStack() {
     return (

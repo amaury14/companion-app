@@ -3,9 +3,11 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-native-ui-datepicker';
 import SelectDropdown from 'react-native-select-dropdown';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
+import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Category } from '../../types/category';
@@ -19,7 +21,9 @@ type FormData = {
     location: string;
 };
 
-export default function CreateServiceScreen({ navigation }: any) {
+type Props = NativeStackScreenProps<UserStackParamList, 'CreateService'>;
+
+export default function CreateServiceScreen({ navigation }: Props) {
     const { control, handleSubmit } = useForm<FormData>();
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
