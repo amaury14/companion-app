@@ -18,8 +18,12 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/native": "^7.1.6",
     "@react-navigation/native-stack": "^7.3.10",
+    "dayjs": "^1.11.13",
     "expo": "~52.0.46",
+    "expo-auth-session": "~6.0.3",
+    "expo-dev-client": "~5.0.20",
     "expo-status-bar": "~2.0.1",
+    "expo-web-browser": "~14.0.2",
     "firebase": "^11.6.1",
     "react": "18.3.1",
     "react-hook-form": "^7.56.1",
@@ -29,10 +33,9 @@
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
-    "react-native-vector-icons": "^10.2.0",
-    "expo-auth-session": "~6.0.3",
-    "expo-web-browser": "~14.0.2",
-    "expo-dev-client": "~5.0.20"
+    "react-native-select-dropdown": "^4.0.1",
+    "react-native-ui-datepicker": "^3.1.2",
+    "react-native-vector-icons": "^10.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
