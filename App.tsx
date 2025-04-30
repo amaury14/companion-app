@@ -1,20 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+
+import AuthStack from './src/navigation/AuthStack/AuthStack';
+import CompanionStack from './src/navigation/CompanionStack/CompanionStack';
+import UserStack from './src/navigation/UserStack/UserStack';
+import { auth, db } from './src/services/firebase';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+    const [initializing, setInitializing] = useState(true);
+    const [userType, setUserType] = useState<null | 'user' | 'companion'>(null);
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                const type = userDoc.data()?.type;
+                setUserType(type);
+            } else {
+                setUserType(null);
+            }
+
+            if (initializing) setInitializing(false);
+        });
+
+        return unsubscribe;
+    }, []);
+
+    if (initializing) return null;
+
+    return (
+        <NavigationContainer>
+            {userType === 'user' && <UserStack />}
+            {userType === 'companion' && <CompanionStack />}
+            {userType === null && <AuthStack />}
+        </NavigationContainer>
+    );
+}
