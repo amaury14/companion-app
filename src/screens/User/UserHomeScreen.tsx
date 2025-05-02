@@ -1,16 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
+import { collection, doc, getDoc, getDocs, query, Timestamp, updateDoc, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Layout from '../../components/Layout';
+import Loader from '../../components/Loader';
+import ServiceItemRow from '../../components/ServiceItemRow';
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
-import { dbKeys } from '../../utils/keys/db-keys';
+import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
+import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
+import { sortServices } from '../../utils/util';
 
 type Props = NativeStackScreenProps<UserStackParamList, 'UserHome'>;
 
@@ -18,13 +22,14 @@ export default function UserHomeScreen({ navigation }: Props) {
     const [name, setName] = useState<string>('');
     const [refreshing, setRefreshing] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
+    const [pending, setPending] = useState<Service[]>([]);
 
     const fetchServices = async () => {
         const uid = auth.currentUser?.uid;
         if (!uid) return;
 
-        const q = query(collection(db, dbKeys.services), where('requesterId', '==', uid));
-        const querySnapshot = await getDocs(q);
+        const queryObj = query(collection(db, dbKeys.services), where(fieldKeys.requesterId, '==', uid));
+        const querySnapshot = await getDocs(queryObj);
         const fetched: Service[] = [];
         querySnapshot.forEach((doc) => {
             const data = doc.data();
@@ -33,10 +38,13 @@ export default function UserHomeScreen({ navigation }: Props) {
                 category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
                 status: statusData.find(item => item.value === data.status)?.name ?? data.status,
                 date: data.date?.toDate().toLocaleDateString() || 'Sin fecha',
-                price: data.price ?? 0
+                price: data.price ?? 0,
+                timeStamp: (data.date as Timestamp).toMillis()
             });
         });
-        setServices(fetched);
+        const sorted = sortServices(fetched);
+        setServices(sorted);
+        setPending(sorted.filter(item => item.status === statusTexts.pending));
     };
 
     const fetchUserName = async () => {
@@ -46,6 +54,23 @@ export default function UserHomeScreen({ navigation }: Props) {
         if (userDoc.exists()) {
             setName(userDoc.data()?.name || '');
         }
+    };
+
+    const updateServiceStatus = async (serviceId: string, newStatus: string) => {
+        if (!serviceId) return;
+        try {
+            setRefreshing(true);
+            const serviceRef = doc(db, dbKeys.services, serviceId);
+
+            await updateDoc(serviceRef, {
+                status: newStatus,
+            });
+
+            await fetchServices();
+        } catch (error) {
+            console.error('Error al actualizar el servicio:', error);
+        }
+        setRefreshing(false);
     };
 
     const handleRefresh = useCallback(async () => {
@@ -84,7 +109,14 @@ export default function UserHomeScreen({ navigation }: Props) {
                 </View>
 
                 <View style={styles.body}>
-                    <TouchableOpacity style={styles.newServiceButton} onPress={handleCreateService}>
+                    <TouchableOpacity
+                        disabled={pending.length > 0}
+                        style={{
+                            ...styles.newServiceButton,
+                            backgroundColor: pending.length > 0 ? colors.gray : colors.argentinianblue,
+                        }}
+                        onPress={handleCreateService}
+                    >
                         <Text style={styles.newServiceButtonText}>Solicitar nuevo servicio</Text>
                     </TouchableOpacity>
 
@@ -94,13 +126,30 @@ export default function UserHomeScreen({ navigation }: Props) {
                         keyExtractor={(item) => item.id}
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
                         renderItem={({ item }) => (
-                            <View style={styles.serviceItem}>
-                                <Text style={styles.serviceText}>🗓️ {item.date} • {item.category}</Text>
-                                <Text style={styles.status}>Estado: {item.status} • Costo: UYU {item.price}</Text>
-                            </View>
+                            <ServiceItemRow
+                                id={item.id}
+                                date={item.date}
+                                category={item.category}
+                                status={item.status}
+                                price={item.price}
+                                onCancel={(id) => {
+                                    Alert.alert('Cancelar servicio', '¿Estás seguro?', [
+                                        { text: 'Cancelar', style: 'cancel' },
+                                        {
+                                            text: 'Sí',
+                                            style: 'destructive',
+                                            onPress: () => updateServiceStatus(id, statusKeys.cancelled)
+                                        },
+                                    ]);
+                                }}
+                            />
                         )}
-                        ListEmptyComponent={<Text>No tenés servicios registrados.</Text>}
+                        ListEmptyComponent={<Text style={styles.noRecords}>No tenés servicios registrados.</Text>}
                     />
+                    {
+                        refreshing &&
+                        <Loader color={colors.azureblue} size={'large'}></Loader>
+                    }
                 </View>
             </View>
         </Layout>
@@ -150,6 +199,11 @@ const styles = StyleSheet.create({
     newServiceButtonText: {
         color: colors.white,
         fontSize: 20,
+        fontWeight: 'bold'
+    },
+    noRecords: {
+        color: colors.black,
+        fontSize: 18,
         fontWeight: 'bold'
     }
 });

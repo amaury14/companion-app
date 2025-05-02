@@ -4,6 +4,7 @@ on:
     pull_request:
         branches: 
           - main
+          - 'release/**'
         types: ["opened", "reopened", "synchronize"]
 
 jobs:
@@ -28,3 +29,4 @@ jobs:
             - name: Run lint and test
               run: |
                 npm run lint
+                npm run test

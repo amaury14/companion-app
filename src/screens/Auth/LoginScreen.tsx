@@ -5,6 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import Layout from '../../components/Layout';
+import Loader from '../../components/Loader';
 import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth } from '../../services/firebase';
 import { colors } from '../../theme/colors';
@@ -58,9 +59,12 @@ export default function LoginScreen({ navigation }: Props) {
                 <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
                     <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
                 </TouchableOpacity>
-                {loading && <Text style={styles.actionsText}>Cargando...</Text>}
-                {error && <Text style={styles.actionsText}>Credenciales Inválidas!!!</Text>}
                 <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
+                {
+                    loading &&
+                    <Loader color={colors.azureblue} size={'small'}></Loader>
+                }
+                {error && <Text style={styles.actionsText}>Credenciales Inválidas!!!</Text>}
             </View>
         </Layout>
     );

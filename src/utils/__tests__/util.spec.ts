@@ -1,0 +1,105 @@
+import { Service } from '../../types/service';
+import { statusTexts } from '../keys/status-keys';
+import { getCosts, getStatusIcon, sortServices } from '../util';
+
+describe('getCosts', () => {
+    it('should return correct costs', () => {
+        expect(getCosts(4, 120, 0.15)).toEqual(552);
+    });
+
+    it('should return 0', () => {
+        expect(getCosts(0, 100, 0.10)).toEqual(0);
+    });
+
+    it('should return 200', () => {
+        expect(getCosts(2, 100, 0)).toEqual(200);
+    });
+
+    it('should return 0 again', () => {
+        expect(getCosts(0, 100, 0)).toEqual(0);
+    });
+});
+
+describe('getStatusIcon', () => {
+    it('should return accepted icon', () => {
+        expect(getStatusIcon(statusTexts.accepted)).toEqual('🟢');
+    });
+
+    it('should return cancelled icon', () => {
+        expect(getStatusIcon(statusTexts.cancelled)).toEqual('❌');
+    });
+
+    it('should return Completado icon', () => {
+        expect(getStatusIcon(statusTexts.completed)).toEqual('✅');
+    });
+
+    it('should return conflicts icon', () => {
+        expect(getStatusIcon(statusTexts.conflicts)).toEqual('⚠️');
+    });
+
+    it('should return En Progreso icon', () => {
+        expect(getStatusIcon(statusTexts.in_progress)).toEqual('🚶‍♂️');
+    });
+
+    it('should return Pendiente icon', () => {
+        expect(getStatusIcon(statusTexts.pending)).toEqual('⏳');
+    });
+
+    it('should return calendar icon', () => {
+        expect(getStatusIcon('mock')).toEqual('🗓️');
+    });
+});
+
+describe('sortServices', () => {
+    const mock = (overrides: Partial<Service>): Service => ({
+        id: '',
+        category: '',
+        date: '',
+        price: 0,
+        status: '',
+        timeStamp: 0,
+        ...overrides,
+    });
+
+    it('puts pending services first', () => {
+        const input: Service[] = [
+            mock({ status: 'Completado', timeStamp: 1000 }),
+            mock({ status: 'Pendiente', timeStamp: 500 }),
+            mock({ status: 'En Progreso', timeStamp: 2000 }),
+        ];
+
+        const result = sortServices(input);
+
+        expect(result[0].status).toBe('Pendiente');
+    });
+
+    it('sorts within same status by timeStamp descending', () => {
+        const input: Service[] = [
+            mock({ status: 'Pendiente', timeStamp: 1000 }),
+            mock({ status: 'Pendiente', timeStamp: 3000 }),
+            mock({ status: 'Pendiente', timeStamp: 2000 }),
+        ];
+
+        const result = sortServices(input);
+
+        expect(result.map(s => s.timeStamp)).toEqual([3000, 2000, 1000]);
+    });
+
+    it('places non-pending items in time order after pending', () => {
+        const input: Service[] = [
+            mock({ status: 'En Progreso', timeStamp: 3000 }),
+            mock({ status: 'Completado', timeStamp: 1000 }),
+            mock({ status: 'Pendiente', timeStamp: 2000 }),
+        ];
+
+        const result = sortServices(input);
+
+        expect(result[0].status).toBe('Pendiente');
+        expect(result[1].status).toBe('En Progreso');
+        expect(result[2].status).toBe('Completado');
+    });
+
+    it('should return empty', () => {
+        expect(sortServices([])).toEqual([]);
+    });
+});

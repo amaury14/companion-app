@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
 import Layout from '../../components/Layout';
+import Loader from '../../components/Loader';
 import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
@@ -13,8 +14,8 @@ import { colors } from '../../theme/colors';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
 type RegisterFormData = {
-    name: string;
     email: string;
+    name: string;
     password: string;
 };
 
@@ -113,11 +114,14 @@ export default function RegisterScreen({ navigation }: Props) {
                 <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
                     <Text style={styles.buttonText}>REGÍSTRAME</Text>
                 </TouchableOpacity>
-                {loading && <Text style={styles.actionsText}>Cargando...</Text>}
-                {error && <Text style={styles.actionsText}>Error al registrarse. Intente nuevamente.</Text>}
                 <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>
                     ¿Ya tenés cuenta? Iniciá sesión
                 </Text>
+                {
+                    loading &&
+                    <Loader color={colors.azureblue} size={'small'}></Loader>
+                }
+                {error && <Text style={styles.actionsText}>Error al registrarse. Intente nuevamente.</Text>}
             </View>
         </Layout>
     );
