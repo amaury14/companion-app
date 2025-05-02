@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Layout from '../../components/Layout';
+import Loader from '../../components/Loader';
+import ServiceItemRow from '../../components/ServiceItemRow';
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
@@ -47,6 +49,18 @@ export default function UserHomeScreen({ navigation }: Props) {
             setName(userDoc.data()?.name || '');
         }
     };
+
+    const removeService = async (id: string) => {
+        if (!id) return;
+        try {
+            setRefreshing(true);
+            await deleteDoc(doc(db, dbKeys.services, id));
+            await fetchServices();
+        } catch (error) {
+            console.error('Error deleting service:', error);
+        }
+        setRefreshing(false);
+    }
 
     const handleRefresh = useCallback(async () => {
         setRefreshing(true);
@@ -94,13 +108,30 @@ export default function UserHomeScreen({ navigation }: Props) {
                         keyExtractor={(item) => item.id}
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
                         renderItem={({ item }) => (
-                            <View style={styles.serviceItem}>
-                                <Text style={styles.serviceText}>🗓️ {item.date} • {item.category}</Text>
-                                <Text style={styles.status}>Estado: {item.status} • Costo: UYU {item.price}</Text>
-                            </View>
+                            <ServiceItemRow
+                                id={item.id}
+                                date={item.date}
+                                category={item.category}
+                                status={item.status}
+                                price={item.price}
+                                onCancel={(id) => {
+                                    Alert.alert('Cancelar servicio', '¿Estás seguro?', [
+                                        { text: 'Cancelar', style: 'cancel' },
+                                        {
+                                            text: 'Sí',
+                                            style: 'destructive',
+                                            onPress: () => removeService(id)
+                                        },
+                                    ]);
+                                }}
+                            />
                         )}
-                        ListEmptyComponent={<Text>No tenés servicios registrados.</Text>}
+                        ListEmptyComponent={<Text style={styles.noRecords}>No tenés servicios registrados.</Text>}
                     />
+                    {
+                        refreshing &&
+                        <Loader color={colors.azureblue} size={'large'}></Loader>
+                    }
                 </View>
             </View>
         </Layout>
@@ -150,6 +181,11 @@ const styles = StyleSheet.create({
     newServiceButtonText: {
         color: colors.white,
         fontSize: 20,
+        fontWeight: 'bold'
+    },
+    noRecords: {
+        color: colors.black,
+        fontSize: 18,
         fontWeight: 'bold'
     }
 });

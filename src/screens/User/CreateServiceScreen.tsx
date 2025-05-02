@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 import Layout from '../../components/Layout';
+import Loader from '../../components/Loader';
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
@@ -142,7 +143,10 @@ export default function CreateServiceScreen({ navigation }: Props) {
                     <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
                         <Text style={styles.buttonText}>Confirmar y solicitar</Text>
                     </TouchableOpacity>
-                    {loading && <Text style={styles.actionsText}>Solicitando...</Text>}
+                    {
+                        loading &&
+                        <Loader color={colors.azureblue} size={'large'}></Loader>
+                    }
                 </View>
             </View>
         </Layout>
@@ -222,11 +226,5 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontSize: 22,
         fontWeight: 'bold'
-    },
-    actionsText: {
-        color: colors.darkergray,
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginTop: 20
     }
 });
