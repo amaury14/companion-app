@@ -7,7 +7,6 @@ on:
 
 jobs:
   eas-android-build:
-    name: EAS Android Build
     runs-on: ubuntu-latest
 
     strategy:
@@ -15,8 +14,7 @@ jobs:
             node-version: [20.x]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
