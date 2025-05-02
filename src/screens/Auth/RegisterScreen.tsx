@@ -14,8 +14,8 @@ import { colors } from '../../theme/colors';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
 type RegisterFormData = {
-    name: string;
     email: string;
+    name: string;
     password: string;
 };
 

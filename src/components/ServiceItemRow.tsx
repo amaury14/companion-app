@@ -7,11 +7,11 @@ import { statusTexts } from '../utils/keys/status-keys';
 import { getStatusIcon } from '../utils/util';
 
 export type ServiceItemRowProps = {
-    id: string;
-    date: string;
     category: string;
-    status: string;
+    date: string;
+    id: string;
     price: number;
+    status: string;
     onCancel: (id: string) => void;
 };
 
