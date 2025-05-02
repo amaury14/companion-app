@@ -66,7 +66,7 @@ export default function RegisterScreen({ navigation }: Props) {
                     />
                 </View>
 
-                <Text style={styles.registerText}>Email</Text>
+                <Text style={styles.registerText}>Correo electrónico</Text>
                 <View style={{ width: '80%' }}>
                     <Controller
                         control={control}
