@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
-import { collection, deleteDoc, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, Timestamp, updateDoc, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Layout from '../../components/Layout';
@@ -12,7 +12,9 @@ import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
-import { dbKeys } from '../../utils/keys/db-keys';
+import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
+import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
+import { sortServices } from '../../utils/util';
 
 type Props = NativeStackScreenProps<UserStackParamList, 'UserHome'>;
 
@@ -20,13 +22,14 @@ export default function UserHomeScreen({ navigation }: Props) {
     const [name, setName] = useState<string>('');
     const [refreshing, setRefreshing] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
+    const [pending, setPending] = useState<Service[]>([]);
 
     const fetchServices = async () => {
         const uid = auth.currentUser?.uid;
         if (!uid) return;
 
-        const q = query(collection(db, dbKeys.services), where('requesterId', '==', uid));
-        const querySnapshot = await getDocs(q);
+        const queryObj = query(collection(db, dbKeys.services), where(fieldKeys.requesterId, '==', uid));
+        const querySnapshot = await getDocs(queryObj);
         const fetched: Service[] = [];
         querySnapshot.forEach((doc) => {
             const data = doc.data();
@@ -35,10 +38,13 @@ export default function UserHomeScreen({ navigation }: Props) {
                 category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
                 status: statusData.find(item => item.value === data.status)?.name ?? data.status,
                 date: data.date?.toDate().toLocaleDateString() || 'Sin fecha',
-                price: data.price ?? 0
+                price: data.price ?? 0,
+                timeStamp: (data.date as Timestamp).toMillis()
             });
         });
-        setServices(fetched);
+        const sorted = sortServices(fetched);
+        setServices(sorted);
+        setPending(sorted.filter(item => item.status === statusTexts.pending));
     };
 
     const fetchUserName = async () => {
@@ -50,17 +56,22 @@ export default function UserHomeScreen({ navigation }: Props) {
         }
     };
 
-    const removeService = async (id: string) => {
-        if (!id) return;
+    const updateServiceStatus = async (serviceId: string, newStatus: string) => {
+        if (!serviceId) return;
         try {
             setRefreshing(true);
-            await deleteDoc(doc(db, dbKeys.services, id));
+            const serviceRef = doc(db, dbKeys.services, serviceId);
+
+            await updateDoc(serviceRef, {
+                status: newStatus,
+            });
+
             await fetchServices();
         } catch (error) {
-            console.error('Error deleting service:', error);
+            console.error('Error al actualizar el servicio:', error);
         }
         setRefreshing(false);
-    }
+    };
 
     const handleRefresh = useCallback(async () => {
         setRefreshing(true);
@@ -98,7 +109,14 @@ export default function UserHomeScreen({ navigation }: Props) {
                 </View>
 
                 <View style={styles.body}>
-                    <TouchableOpacity style={styles.newServiceButton} onPress={handleCreateService}>
+                    <TouchableOpacity
+                        disabled={pending.length > 0}
+                        style={{
+                            ...styles.newServiceButton,
+                            backgroundColor: pending.length > 0 ? colors.gray : colors.argentinianblue,
+                        }}
+                        onPress={handleCreateService}
+                    >
                         <Text style={styles.newServiceButtonText}>Solicitar nuevo servicio</Text>
                     </TouchableOpacity>
 
@@ -120,7 +138,7 @@ export default function UserHomeScreen({ navigation }: Props) {
                                         {
                                             text: 'Sí',
                                             style: 'destructive',
-                                            onPress: () => removeService(id)
+                                            onPress: () => updateServiceStatus(id, statusKeys.cancelled)
                                         },
                                     ]);
                                 }}

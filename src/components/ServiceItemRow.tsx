@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '../theme/colors';
+import { statusTexts } from '../utils/keys/status-keys';
+import { getStatusIcon } from '../utils/util';
 
 export type ServiceItemRowProps = {
     id: string;
@@ -17,12 +19,15 @@ export default function ServiceItemRow({ id, date, category, status, price, onCa
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }}>
-                <Text style={styles.text}>🗓️ {date} • {category}</Text>
+                <Text style={styles.text}>{getStatusIcon(status)} {date} • {category}</Text>
                 <Text style={styles.subtext}>Estado: {status} • Costo: UYU {price}</Text>
             </View>
-            <TouchableOpacity onPress={() => onCancel(id)} style={styles.cancelButton}>
-                <Ionicons name="close-circle" size={35} color={colors.danger} />
-            </TouchableOpacity>
+            {
+                status === statusTexts.pending &&
+                <TouchableOpacity onPress={() => onCancel(id)} style={styles.cancelButton}>
+                    <Ionicons name="close-circle" size={35} color={colors.danger} />
+                </TouchableOpacity>
+            }
         </View>
     );
 }

@@ -4,4 +4,5 @@ export type Service = {
     id: string;
     price: number;
     status: string;
+    timeStamp: number;
 };

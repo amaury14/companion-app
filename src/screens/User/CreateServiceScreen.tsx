@@ -16,6 +16,8 @@ import { Category } from '../../types/category';
 import { categoryData } from '../../utils/data/category-data';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
+import { baseComission, baseCost } from '../../utils/keys/costs-keys';
+import { getCosts } from '../../utils/util';
 
 type FormData = {
     category: Category;
@@ -26,31 +28,35 @@ type FormData = {
 type Props = NativeStackScreenProps<UserStackParamList, 'CreateService'>;
 
 export default function CreateServiceScreen({ navigation }: Props) {
-    const { control, handleSubmit } = useForm<FormData>();
+    const { control, handleSubmit, watch } = useForm<FormData>();
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+    const duration = watch('duration');
 
     const onSubmit = async (data: FormData) => {
         const uid = auth.currentUser?.uid;
         if (!uid) return;
 
-        const price = parseInt(data.duration) * 200; // ej: 200 UYU por hora
+        const price = getCosts(parseInt(data.duration), baseCost, baseComission);
 
         try {
             setLoading(true);
             await addDoc(collection(db, dbKeys.services), {
-                requesterId: uid,
-                companionId: '',
                 category: data.category.value,
-                duration: parseInt(data.duration),
-                location: data.location,
-                date: Timestamp.fromDate(selectedDate),
-                price,
-                paid: false,
-                status: statusKeys.pending,
                 checkInTime: null,
                 checkOutTime: null,
+                companionId: '',
+                companionPayment: Math.round(price - (price * baseComission)),
+                date: Timestamp.fromDate(selectedDate),
+                duration: parseInt(data.duration),
                 evidenceUrls: [],
+                location: data.location,
+                paid: false,
+                price,
+                platformComission: Math.round((price * baseComission)),
+                requesterId: uid,
+                status: statusKeys.pending
             });
 
             Alert.alert('¡Servicio solicitado!', 'Esperá la confirmación de un acompañante');
@@ -61,6 +67,10 @@ export default function CreateServiceScreen({ navigation }: Props) {
         }
         setLoading(false);
     };
+
+    const getEstCosts = (): string => {
+        return duration ? `$${getCosts(parseInt(duration), baseCost, baseComission)} est.` : ''
+    }
 
     return (
         <Layout>
@@ -102,7 +112,10 @@ export default function CreateServiceScreen({ navigation }: Props) {
                     )}
                 />
 
-                <Text style={styles.inputText}>Duración (horas)</Text>
+                <View style={styles.durationContent}>
+                    <Text style={styles.inputText}>Duración (horas)</Text>
+                    <Text style={styles.estText}>{getEstCosts()}</Text>
+                </View>
                 <Controller
                     control={control}
                     name="duration"
@@ -200,7 +213,7 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     dropdownItemTxtStyle: {
-        color: '#151E26',
+        color: colors.darkergray,
         flex: 1,
         fontSize: 18,
         fontWeight: '500'
@@ -209,11 +222,17 @@ const styles = StyleSheet.create({
         fontSize: 28,
         marginRight: 8
     },
+    durationContent: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%'
+    },
     inputText: {
         color: colors.black,
         fontSize: 22,
-        fontWeight: 'bold',
-        marginTop: 20
+        fontWeight: 'bold'
     },
     button: {
         alignItems: 'center',
@@ -225,6 +244,11 @@ const styles = StyleSheet.create({
     buttonText: {
         color: colors.white,
         fontSize: 22,
+        fontWeight: 'bold'
+    },
+    estText: {
+        color: colors.azureblue,
+        fontSize: 18,
         fontWeight: 'bold'
     }
 });
