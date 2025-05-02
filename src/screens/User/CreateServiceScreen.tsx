@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-native-ui-datepicker';
 import SelectDropdown from 'react-native-select-dropdown';
@@ -7,6 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
+import Layout from '../../components/Layout';
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
@@ -61,91 +62,95 @@ export default function CreateServiceScreen({ navigation }: Props) {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Solicitar nuevo servicio</Text>
+        <Layout>
+            <View style={styles.container}>
+                <Text style={styles.title}>Solicitar nuevo servicio</Text>
 
-            <Text>Categoría (compañía, trámites...)</Text>
-            <Controller
-                control={control}
-                name="category"
-                rules={{ required: true }}
-                render={({ field: { onChange } }) => (
-                    <View style={{ width: '100%' }}>
-                        <SelectDropdown
-                            data={categoryData}
-                            onSelect={(selectedItem) => {
-                                onChange(selectedItem);
-                            }}
-                            renderButton={(selectedItem) => {
-                                return (
-                                    <View style={styles.dropdownButtonStyle}>
-                                        <Text style={styles.dropdownButtonTxtStyle}>
-                                            {(selectedItem && selectedItem.name) || 'Seleccione la categoría'}
-                                        </Text>
-                                    </View>
-                                );
-                            }}
-                            renderItem={(item) => {
-                                return (
-                                    <View style={styles.dropdownItemStyle}>
-                                        <Text style={styles.dropdownItemTxtStyle}>{item.name}</Text>
-                                    </View>
-                                );
-                            }}
-                            showsVerticalScrollIndicator={false}
-                            dropdownStyle={styles.dropdownMenuStyle}
-                        />
-                    </View>
-                )}
-            />
-
-            <Text>Duración (horas)</Text>
-            <Controller
-                control={control}
-                name="duration"
-                rules={{ required: true }}
-                render={({ field: { onChange, value } }) => (
-                    <TextInput style={styles.input} value={value} onChangeText={onChange} keyboardType="numeric" />
-                )}
-            />
-
-            <Text>Ubicación (barrio, dirección)</Text>
-            <Controller
-                control={control}
-                name="location"
-                rules={{ required: true }}
-                render={({ field: { onChange, value } }) => (
-                    <TextInput style={styles.input} value={value} onChangeText={onChange} />
-                )}
-            />
-
-            <Text>Fecha y hora</Text>
-            <View style={{ marginVertical: 10 }}>
-                <DatePicker
-                    date={selectedDate}
-                    initialView="day"
-                    minDate={new Date()}
-                    mode="single"
-                    locale="es"
-                    onChange={({ date }) => setSelectedDate(dayjs(date).toDate())}
-                    styles={{
-                        today: { borderColor: colors.azureblue, borderWidth: 1 },
-                        selected: { backgroundColor: colors.argentinianblue },
-                        selected_label: { color: 'white' }
-                    }}
+                <Text style={styles.inputText}>Categoría (compañía, trámites...)</Text>
+                <Controller
+                    control={control}
+                    name="category"
+                    rules={{ required: true }}
+                    render={({ field: { onChange } }) => (
+                        <View style={{ width: '100%' }}>
+                            <SelectDropdown
+                                data={categoryData}
+                                onSelect={(selectedItem) => {
+                                    onChange(selectedItem);
+                                }}
+                                renderButton={(selectedItem) => {
+                                    return (
+                                        <View style={styles.dropdownButtonStyle}>
+                                            <Text style={styles.dropdownButtonTxtStyle}>
+                                                {(selectedItem && selectedItem.name) || 'Seleccione la categoría'}
+                                            </Text>
+                                        </View>
+                                    );
+                                }}
+                                renderItem={(item) => {
+                                    return (
+                                        <View style={styles.dropdownItemStyle}>
+                                            <Text style={styles.dropdownItemTxtStyle}>{item.name}</Text>
+                                        </View>
+                                    );
+                                }}
+                                showsVerticalScrollIndicator={false}
+                                dropdownStyle={styles.dropdownMenuStyle}
+                            />
+                        </View>
+                    )}
                 />
-            </View>
 
-            <View style={{ marginTop: 20 }}>
-                <Button title="Confirmar y solicitar" onPress={handleSubmit(onSubmit)} />
-                {loading && <Text>Solicitando...</Text>}
+                <Text style={styles.inputText}>Duración (horas)</Text>
+                <Controller
+                    control={control}
+                    name="duration"
+                    rules={{ required: true }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextInput style={styles.input} value={value} onChangeText={onChange} keyboardType="numeric" />
+                    )}
+                />
+
+                <Text style={styles.inputText}>Ubicación (barrio, dirección)</Text>
+                <Controller
+                    control={control}
+                    name="location"
+                    rules={{ required: true }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextInput style={styles.input} value={value} onChangeText={onChange} />
+                    )}
+                />
+
+                <Text style={styles.inputText}>Fecha y hora</Text>
+                <View style={{ marginVertical: 10 }}>
+                    <DatePicker
+                        date={selectedDate}
+                        initialView="day"
+                        minDate={new Date()}
+                        mode="single"
+                        locale="es"
+                        onChange={({ date }) => setSelectedDate(dayjs(date).toDate())}
+                        styles={{
+                            today: { borderColor: colors.azureblue, borderWidth: 1 },
+                            selected: { backgroundColor: colors.argentinianblue },
+                            selected_label: { color: 'white' }
+                        }}
+                    />
+                </View>
+
+                <View>
+                    <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
+                        <Text style={styles.buttonText}>Confirmar y solicitar</Text>
+                    </TouchableOpacity>
+                    {loading && <Text style={styles.actionsText}>Solicitando...</Text>}
+                </View>
             </View>
-        </View>
+        </Layout>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, backgroundColor: colors.surface },
+    container: { flex: 1, padding: 20 },
     title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
     input: {
         borderBottomWidth: 1,
@@ -158,10 +163,6 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         borderWidth: 1,
         marginBottom: 16
-    },
-    picker: {
-        height: 50,
-        width: '100%'
     },
     dropdownButtonStyle: {
         alignItems: 'center',
@@ -203,5 +204,29 @@ const styles = StyleSheet.create({
     dropdownItemIconStyle: {
         fontSize: 28,
         marginRight: 8
+    },
+    inputText: {
+        color: colors.black,
+        fontSize: 22,
+        fontWeight: 'bold',
+        marginTop: 20
+    },
+    button: {
+        alignItems: 'center',
+        backgroundColor: colors.header,
+        borderRadius: 8,
+        paddingHorizontal: 24,
+        paddingVertical: 12
+    },
+    buttonText: {
+        color: colors.white,
+        fontSize: 22,
+        fontWeight: 'bold'
+    },
+    actionsText: {
+        color: colors.darkergray,
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginTop: 20
     }
 });
