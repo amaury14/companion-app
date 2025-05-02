@@ -8,11 +8,15 @@
             "distribution": "internal"
         },
         "production": {
+            "developmentClient": false,
             "android": {
                 "buildType": "apk"
             },
             "ios": {
                 "simulator": true
+            },
+            "env": {
+                "ENVIRONMENT": "production"
             }
         }
     },
