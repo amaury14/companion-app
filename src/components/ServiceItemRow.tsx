@@ -21,7 +21,7 @@ export default function ServiceItemRow({ id, date, category, status, price, onCa
                 <Text style={styles.subtext}>Estado: {status} • Costo: UYU {price}</Text>
             </View>
             <TouchableOpacity onPress={() => onCancel(id)} style={styles.cancelButton}>
-                <Ionicons name="close-circle" size={24} color={colors.danger} />
+                <Ionicons name="close-circle" size={35} color={colors.danger} />
             </TouchableOpacity>
         </View>
     );
