@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } fr
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import Layout from '../../components/Layout';
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
@@ -73,34 +74,36 @@ export default function UserHomeScreen({ navigation }: Props) {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.headerText}>Hola, {name || 'Usuario'}</Text>
-                <TouchableOpacity style={styles.exitButton} onPress={logout}>
-                    <Text style={styles.exitButtonText}>Salir</Text>
-                </TouchableOpacity>
-            </View>
+        <Layout>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>Hola, {name || 'Usuario'}</Text>
+                    <TouchableOpacity style={styles.exitButton} onPress={logout}>
+                        <Text style={styles.exitButtonText}>Salir</Text>
+                    </TouchableOpacity>
+                </View>
 
-            <View style={styles.body}>
-                <TouchableOpacity style={styles.newServiceButton} onPress={handleCreateService}>
-                    <Text style={styles.newServiceButtonText}>Solicitar nuevo servicio</Text>
-                </TouchableOpacity>
+                <View style={styles.body}>
+                    <TouchableOpacity style={styles.newServiceButton} onPress={handleCreateService}>
+                        <Text style={styles.newServiceButtonText}>Solicitar nuevo servicio</Text>
+                    </TouchableOpacity>
 
-                <Text style={styles.sectionTitle}>Tus servicios actuales/anteriores</Text>
-                <FlatList
-                    data={services}
-                    keyExtractor={(item) => item.id}
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-                    renderItem={({ item }) => (
-                        <View style={styles.serviceItem}>
-                            <Text style={styles.serviceText}>🗓️ {item.date} • {item.category}</Text>
-                            <Text style={styles.status}>Estado: {item.status} • Costo: UYU {item.price}</Text>
-                        </View>
-                    )}
-                    ListEmptyComponent={<Text>No tenés servicios registrados.</Text>}
-                />
+                    <Text style={styles.sectionTitle}>Tus servicios actuales/anteriores</Text>
+                    <FlatList
+                        data={services}
+                        keyExtractor={(item) => item.id}
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+                        renderItem={({ item }) => (
+                            <View style={styles.serviceItem}>
+                                <Text style={styles.serviceText}>🗓️ {item.date} • {item.category}</Text>
+                                <Text style={styles.status}>Estado: {item.status} • Costo: UYU {item.price}</Text>
+                            </View>
+                        )}
+                        ListEmptyComponent={<Text>No tenés servicios registrados.</Text>}
+                    />
+                </View>
             </View>
-        </View>
+        </Layout>
     );
 }
 
@@ -116,14 +119,14 @@ const styles = StyleSheet.create({
     },
     headerText: { color: colors.white, fontSize: 22, fontWeight: 'bold' },
     body: { flex: 1, padding: 20 },
-    sectionTitle: { fontSize: 18, marginVertical: 20 },
+    sectionTitle: { fontSize: 20, marginVertical: 20 },
     serviceItem: {
         padding: 12,
         borderBottomColor: colors.gray,
         borderBottomWidth: 1
     },
-    serviceText: { fontSize: 16 },
-    status: { fontSize: 14, color: colors.darkergray },
+    serviceText: { fontSize: 19 },
+    status: { fontSize: 18, color: colors.black },
     exitButton: {
         alignItems: 'center',
         backgroundColor: colors.azureblue,
@@ -146,7 +149,7 @@ const styles = StyleSheet.create({
     },
     newServiceButtonText: {
         color: colors.white,
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold'
     }
 });
