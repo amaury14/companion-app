@@ -166,16 +166,16 @@ const styles = StyleSheet.create({
         backgroundColor: colors.header,
         padding: 10
     },
-    headerText: { color: colors.white, fontSize: 22, fontWeight: 'bold' },
+    headerText: { color: colors.white, fontSize: 20, fontWeight: 'bold' },
     body: { flex: 1, padding: 20 },
-    sectionTitle: { fontSize: 20, marginVertical: 20 },
+    sectionTitle: { fontSize: 18, marginVertical: 20 },
     serviceItem: {
         padding: 12,
         borderBottomColor: colors.gray,
         borderBottomWidth: 1
     },
-    serviceText: { fontSize: 19 },
-    status: { fontSize: 18, color: colors.black },
+    serviceText: { fontSize: 18 },
+    status: { fontSize: 16, color: colors.black },
     exitButton: {
         alignItems: 'center',
         backgroundColor: colors.azureblue,
@@ -198,12 +198,12 @@ const styles = StyleSheet.create({
     },
     newServiceButtonText: {
         color: colors.white,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold'
     },
     noRecords: {
         color: colors.black,
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold'
     }
 });

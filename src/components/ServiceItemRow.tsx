@@ -42,12 +42,12 @@ const styles = StyleSheet.create({
         paddingVertical: 12
     },
     text: {
-        fontSize: 19,
+        fontSize: 18,
         fontWeight: '500'
     },
     subtext: {
         color: colors.black,
-        fontSize: 18,
+        fontSize: 16,
         marginTop: 2
     },
     cancelButton: {

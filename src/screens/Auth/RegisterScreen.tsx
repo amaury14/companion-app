@@ -55,105 +55,112 @@ export default function RegisterScreen({ navigation }: Props) {
 
     return (
         <Layout>
-            <View style={styles.content}>
-                <Text style={styles.registerText}>Nombre completo</Text>
-                <View style={{ width: '80%' }}>
-                    <Controller
-                        control={control}
-                        name="name"
-                        render={({ field: { onChange, value } }) => (
-                            <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
-                        )}
-                    />
-                </View>
+            <View style={styles.container}>
+                <View style={styles.content}>
+                    <Text style={styles.registerText}>Nombre completo</Text>
+                    <View style={{ width: '80%' }}>
+                        <Controller
+                            control={control}
+                            name="name"
+                            render={({ field: { onChange, value } }) => (
+                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
+                            )}
+                        />
+                    </View>
 
-                <Text style={styles.registerText}>Correo electrónico</Text>
-                <View style={{ width: '80%' }}>
-                    <Controller
-                        control={control}
-                        name="email"
-                        render={({ field: { onChange, value } }) => (
-                            <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} keyboardType="email-address" />
-                        )}
-                    />
-                </View>
+                    <Text style={styles.registerText}>Correo electrónico</Text>
+                    <View style={{ width: '80%' }}>
+                        <Controller
+                            control={control}
+                            name="email"
+                            render={({ field: { onChange, value } }) => (
+                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} keyboardType="email-address" />
+                            )}
+                        />
+                    </View>
 
-                <Text style={styles.registerText}>Contraseña</Text>
-                <View style={{ width: '80%' }}>
-                    <Controller
-                        control={control}
-                        name="password"
-                        render={({ field: { onChange, value } }) => (
-                            <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
-                        )}
-                    />
-                </View>
+                    <Text style={styles.registerText}>Contraseña</Text>
+                    <View style={{ width: '80%' }}>
+                        <Controller
+                            control={control}
+                            name="password"
+                            render={({ field: { onChange, value } }) => (
+                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
+                            )}
+                        />
+                    </View>
 
-                <Text style={styles.registerText}>Tipo de usuario</Text>
-                <View style={styles.accountType}>
-                    <TouchableOpacity onPress={() => setUserType('user')}>
-                        <Text style={{
-                            backgroundColor: userType === 'user' ? colors.argentinianblue : colors.white,
-                            fontSize: 20,
-                            fontWeight: userType === 'user' ? 'bold' : 'normal',
-                            padding: 10,
-                            borderRadius: 5
-                        }}>🧑 Usuario</Text>
+                    <Text style={styles.registerText}>Tipo de usuario</Text>
+                    <View style={styles.accountType}>
+                        <TouchableOpacity onPress={() => setUserType('user')}>
+                            <Text style={{
+                                backgroundColor: userType === 'user' ? colors.argentinianblue : colors.white,
+                                fontSize: 18,
+                                fontWeight: userType === 'user' ? 'bold' : 'normal',
+                                padding: 10,
+                                borderRadius: 5
+                            }}>🧑 Usuario</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setUserType('companion')}>
+                            <Text style={{
+                                backgroundColor: userType === 'companion' ? colors.argentinianblue : colors.white,
+                                fontSize: 18,
+                                fontWeight: userType === 'companion' ? 'bold' : 'normal',
+                                padding: 10,
+                                borderRadius: 5
+                            }}>🤝 Acompañante</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
+                        <Text style={styles.buttonText}>REGÍSTRAME</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setUserType('companion')}>
-                        <Text style={{
-                            backgroundColor: userType === 'companion' ? colors.argentinianblue : colors.white,
-                            fontSize: 20,
-                            fontWeight: userType === 'companion' ? 'bold' : 'normal',
-                            padding: 10,
-                            borderRadius: 5
-                        }}>🤝 Acompañante</Text>
-                    </TouchableOpacity>
+                    <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>
+                        ¿Ya tenés cuenta? Iniciá sesión
+                    </Text>
+                    {
+                        loading &&
+                        <Loader color={colors.azureblue} size={'small'}></Loader>
+                    }
+                    {error && <Text style={styles.actionsText}>Error al registrarse. Intente nuevamente.</Text>}
                 </View>
-
-                <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
-                    <Text style={styles.buttonText}>REGÍSTRAME</Text>
-                </TouchableOpacity>
-                <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>
-                    ¿Ya tenés cuenta? Iniciá sesión
-                </Text>
-                {
-                    loading &&
-                    <Loader color={colors.azureblue} size={'small'}></Loader>
-                }
-                {error && <Text style={styles.actionsText}>Error al registrarse. Intente nuevamente.</Text>}
             </View>
         </Layout>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center'
+    },
     content: {
         alignItems: 'center',
         display: 'flex',
-        justifyContent: 'center',
-        height: '100%',
-        padding: 20,
+        justifyContent: 'flex-start',
+        height: 600,
+        padding: 5,
         width: '100%'
     },
     button: {
         alignItems: 'center',
         backgroundColor: colors.header,
         borderRadius: 8,
-        marginTop: 20,
+        marginTop: 10,
         paddingHorizontal: 24,
         paddingVertical: 12
     },
     buttonText: {
         color: colors.white,
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: 'bold'
     },
     registerText: {
         color: colors.black,
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: 'bold',
-        marginTop: 20
+        marginTop: 10
     },
     accountType: {
         flexDirection: 'row',
@@ -163,8 +170,8 @@ const styles = StyleSheet.create({
     },
     actionsText: {
         color: colors.darkergray,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
-        marginTop: 20
+        marginTop: 10
     }
 });
