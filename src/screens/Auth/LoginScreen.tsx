@@ -35,51 +35,58 @@ export default function LoginScreen({ navigation }: Props) {
 
     return (
         <Layout>
-            <View style={styles.content}>
-                <Text style={styles.registerText}>Correo electrónico</Text>
-                <View style={{ width: '80%' }}>
-                    <Controller
-                        control={control}
-                        name="email"
-                        render={({ field: { onChange, value } }) => (
-                            <TextInput value={value} onChangeText={onChange} style={styles.input} />
-                        )}
-                    />
+            <View style={styles.container}>
+                <View style={styles.content}>
+                    <Text style={styles.registerText}>Correo electrónico</Text>
+                    <View style={{ width: '80%' }}>
+                        <Controller
+                            control={control}
+                            name="email"
+                            render={({ field: { onChange, value } }) => (
+                                <TextInput value={value} onChangeText={onChange} style={styles.input} />
+                            )}
+                        />
+                    </View>
+                    <Text style={styles.registerText}>Contraseña</Text>
+                    <View style={{ width: '80%' }}>
+                        <Controller
+                            control={control}
+                            name="password"
+                            render={({ field: { onChange, value } }) => (
+                                <TextInput secureTextEntry value={value} onChangeText={onChange} style={styles.input} />
+                            )}
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
+                        <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
+                    </TouchableOpacity>
+                    <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
+                    {
+                        loading &&
+                        <Loader color={colors.azureblue} size={'small'}></Loader>
+                    }
+                    {error && <Text style={styles.actionsText}>Credenciales Inválidas!!!</Text>}
                 </View>
-                <Text style={styles.registerText}>Contraseña</Text>
-                <View style={{ width: '80%' }}>
-                    <Controller
-                        control={control}
-                        name="password"
-                        render={({ field: { onChange, value } }) => (
-                            <TextInput secureTextEntry value={value} onChangeText={onChange} style={styles.input} />
-                        )}
-                    />
-                </View>
-                <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
-                    <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
-                </TouchableOpacity>
-                <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
-                {
-                    loading &&
-                    <Loader color={colors.azureblue} size={'small'}></Loader>
-                }
-                {error && <Text style={styles.actionsText}>Credenciales Inválidas!!!</Text>}
             </View>
         </Layout>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center'
+    },
     content: {
         alignItems: 'center',
         display: 'flex',
-        justifyContent: 'center',
-        height: '100%',
-        padding: 20,
+        justifyContent: 'flex-start',
+        height: 500,
+        padding: 5,
         width: '100%'
     },
-    input: { borderBottomWidth: 1, fontSize: 20 },
+    input: { borderBottomWidth: 1, fontSize: 18 },
     button: {
         alignItems: 'center',
         backgroundColor: '#246bce',
@@ -90,18 +97,18 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: colors.white,
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: 'bold'
     },
     registerText: {
         color: colors.black,
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: 'bold',
         marginTop: 20
     },
     actionsText: {
         color: colors.darkergray,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         marginTop: 20
     }

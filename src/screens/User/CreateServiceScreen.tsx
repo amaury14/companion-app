@@ -136,7 +136,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
                 />
 
                 <Text style={styles.inputText}>Fecha y hora</Text>
-                <View style={{ marginVertical: 10 }}>
+                <View>
                     <DatePicker
                         date={selectedDate}
                         initialView="day"
@@ -168,18 +168,18 @@ export default function CreateServiceScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
     container: { flex: 1, padding: 20 },
-    title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
+    title: { fontSize: 20, fontWeight: 'bold', marginBottom: 5 },
     input: {
         borderBottomWidth: 1,
-        fontSize: 16,
-        marginBottom: 16,
+        fontSize: 14,
+        marginBottom: 5,
         paddingVertical: 4
     },
     pickerContainer: {
         borderColor: colors.gray,
         borderRadius: 4,
         borderWidth: 1,
-        marginBottom: 16
+        marginBottom: 5
     },
     dropdownButtonStyle: {
         alignItems: 'center',
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     },
     dropdownButtonTxtStyle: {
         flex: 1,
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '500'
     },
     dropdownButtonArrowStyle: {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     dropdownItemTxtStyle: {
         color: colors.darkergray,
         flex: 1,
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: '500'
     },
     dropdownItemIconStyle: {
@@ -231,24 +231,24 @@ const styles = StyleSheet.create({
     },
     inputText: {
         color: colors.black,
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: 'bold'
     },
     button: {
         alignItems: 'center',
         backgroundColor: colors.header,
         borderRadius: 8,
-        paddingHorizontal: 24,
+        paddingHorizontal: 12,
         paddingVertical: 12
     },
     buttonText: {
         color: colors.white,
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: 'bold'
     },
     estText: {
         color: colors.azureblue,
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold'
     }
 });

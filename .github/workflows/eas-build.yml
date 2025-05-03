@@ -1,10 +1,10 @@
-name: EAS Build (Android) on release branches
+name: EAS Build Android
 
 on:
     push:
       branches:
+        - 'preview/**'
         - 'release/**'
-        - 'main'
 
 jobs:
     build:
@@ -22,13 +22,21 @@ jobs:
             with:
               node-version: ${{ matrix.node-version }}
 
+          - name: Set Environment Variable
+            run: |
+              if [[ "${GITHUB_REF#refs/heads/}" =~ ^release.* ]]; then
+                  echo "TARGET=production" >> $GITHUB_ENV
+              else
+                  echo "TARGET=preview" >> $GITHUB_ENV
+              fi
+
           - name: Install dependencies
             run: npm install
 
           - name: Install EAS CLI
             run: npm install -g eas-cli
 
-          - name: EAS Build (Android - production)
-            run: eas build --platform android --profile production --non-interactive
+          - name: EAS Build Android
+            run: eas build --platform android --profile $TARGET --non-interactive
             env:
               EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
