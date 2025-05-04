@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { getAuth, GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword } from 'firebase/auth';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
@@ -22,11 +23,41 @@ export default function LoginScreen({ navigation }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
 
+    GoogleSignin.configure({
+        webClientId: process.env.FIREBASE_WEB_CLIENT_ID ?? '',
+    });
+
     const onLogin: SubmitHandler<LoginFormData> = async ({ email, password }) => {
         try {
             setError(false);
             setLoading(true);
             await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+            setError(true);
+        }
+        setLoading(false);
+    };
+
+    const signIn = async () => {
+        try {
+            setError(false);
+            setLoading(true);
+            // Check if your device supports Google Play
+            await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+            // Get the users ID token
+            const signInResult = await GoogleSignin.signIn();
+
+            // Try the new style of google-sign in result, from v13+ of that module
+            const idToken = signInResult.data?.idToken;
+            if (!idToken) {
+                throw new Error('No ID token found');
+            }
+
+            // Create a Google credential with the token
+            const googleCredential = GoogleAuthProvider.credential(idToken);
+
+            // Sign-in the user with the credential
+            return signInWithCredential(getAuth(), googleCredential);
         } catch (error) {
             setError(true);
         }
@@ -60,6 +91,9 @@ export default function LoginScreen({ navigation }: Props) {
                     <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
                         <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={signIn}>
+                        <Text style={styles.buttonText}>ENTRAR CON GOOGLE</Text>
+                    </TouchableOpacity>
                     <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
                     {
                         loading &&
@@ -89,7 +123,7 @@ const styles = StyleSheet.create({
     input: { borderBottomWidth: 1, fontSize: 18 },
     button: {
         alignItems: 'center',
-        backgroundColor: '#246bce',
+        backgroundColor: colors.header,
         borderRadius: 8,
         marginTop: 20,
         paddingHorizontal: 24,
