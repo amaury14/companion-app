@@ -120,7 +120,7 @@ export default function RegisterScreen({ navigation }: Props) {
                     </Text>
                     {
                         loading &&
-                        <Loader color={colors.azureblue} size={'small'}></Loader>
+                        <Loader color={colors.azureblue} size={'large'}></Loader>
                     }
                     {error && <Text style={styles.actionsText}>Error al registrarse. Intente nuevamente.</Text>}
                 </View>

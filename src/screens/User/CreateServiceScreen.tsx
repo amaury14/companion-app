@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-native-ui-datepicker';
@@ -6,6 +6,7 @@ import SelectDropdown from 'react-native-select-dropdown';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import * as Location from 'expo-location';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
@@ -31,14 +32,52 @@ export default function CreateServiceScreen({ navigation }: Props) {
     const { control, handleSubmit, watch } = useForm<FormData>();
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
     const duration = watch('duration');
+
+    const getLocation = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Permiso de ubicación denegado');
+            return;
+        }
+
+        const loc = await Location.getCurrentPositionAsync({});
+        setLocation({
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+        });
+    };
+
+    const validateAddress = async (address: string) => {
+        try {
+            const geocoded = await Location.geocodeAsync(address);
+            if (geocoded.length === 0) {
+                alert('Dirección inválida. Intenta con una más específica.');
+                return null;
+            }
+
+            const { latitude, longitude } = geocoded[0];
+            return { latitude, longitude };
+        } catch (error) {
+            console.error('Error geocoding address:', error);
+            alert('Ocurrió un error al validar la dirección.');
+            return null;
+        }
+    };
 
     const onSubmit = async (data: FormData) => {
         const uid = auth.currentUser?.uid;
         if (!uid) return;
 
         const price = getCosts(parseInt(data.duration), baseCost, baseComission);
+
+        const coords = data.location
+            ? await validateAddress(data.location)
+            : location;
+
+        if (!coords) return;
 
         try {
             setLoading(true);
@@ -51,7 +90,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
                 date: Timestamp.fromDate(selectedDate),
                 duration: parseInt(data.duration),
                 evidenceUrls: [],
-                location: data.location,
+                location: coords,
                 paid: false,
                 price,
                 platformComission: Math.round((price * baseComission)),
@@ -71,6 +110,10 @@ export default function CreateServiceScreen({ navigation }: Props) {
     const getEstCosts = (): string => {
         return duration ? `$${getCosts(parseInt(duration), baseCost, baseComission)} est.` : ''
     }
+
+    useEffect(() => {
+        getLocation();
+    }, []);
 
     return (
         <Layout>
@@ -129,9 +172,8 @@ export default function CreateServiceScreen({ navigation }: Props) {
                 <Controller
                     control={control}
                     name="location"
-                    rules={{ required: true }}
                     render={({ field: { onChange, value } }) => (
-                        <TextInput style={styles.input} value={value} onChangeText={onChange} />
+                        <TextInput placeholder="Dejar vacío si quere usar su posición actual" style={styles.input} value={value} onChangeText={onChange} />
                     )}
                 />
 

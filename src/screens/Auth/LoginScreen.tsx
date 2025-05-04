@@ -63,7 +63,7 @@ export default function LoginScreen({ navigation }: Props) {
                     <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
                     {
                         loading &&
-                        <Loader color={colors.azureblue} size={'small'}></Loader>
+                        <Loader color={colors.azureblue} size={'large'}></Loader>
                     }
                     {error && <Text style={styles.actionsText}>Credenciales Inválidas!!!</Text>}
                 </View>
