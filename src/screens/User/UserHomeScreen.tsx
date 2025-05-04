@@ -52,7 +52,7 @@ export default function UserHomeScreen({ navigation }: Props) {
         if (!uid) return;
         const userDoc = await getDoc(doc(db, dbKeys.users, uid));
         if (userDoc.exists()) {
-            setName(userDoc.data()?.name || '');
+            setName(userDoc.data()?.name ?? userDoc.data()?.displayName ?? '');
         }
     };
 

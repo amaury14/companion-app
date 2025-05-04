@@ -18,7 +18,7 @@ export default function App() {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, dbKeys.users, user.uid));
-                const type = userDoc.data()?.type;
+                const type = userDoc.data()?.type ?? 'user';
                 setUserType(type);
             } else {
                 setUserType(null);

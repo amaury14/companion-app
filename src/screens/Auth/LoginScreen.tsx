@@ -3,13 +3,15 @@ import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-nativ
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { getAuth, GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
-import { auth } from '../../services/firebase';
+import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
+import { dbKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
@@ -57,7 +59,25 @@ export default function LoginScreen({ navigation }: Props) {
             const googleCredential = GoogleAuthProvider.credential(idToken);
 
             // Sign-in the user with the credential
-            return signInWithCredential(getAuth(), googleCredential);
+            const credential = await signInWithCredential(auth, googleCredential);
+
+            // Checks for credentials
+            // Checks if the user is saved in db, if not saves it
+            if (credential?.user?.uid) {
+                const userDoc = await getDoc(doc(db, dbKeys.users, credential.user.uid));
+                if (!userDoc.exists()) {
+                    await setDoc(doc(db, dbKeys.users, credential.user.uid), {
+                        name: credential.user.displayName,
+                        email: credential.user.email,
+                        type: 'user',
+                        verified: false,
+                        reputationScore: 0,
+                        completedServices: 0,
+                    });
+                }
+            }
+
+            return credential;
         } catch (error) {
             setError(true);
         }

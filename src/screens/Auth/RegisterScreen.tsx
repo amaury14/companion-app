@@ -10,6 +10,7 @@ import Loader from '../../components/Loader';
 import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
+import { dbKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
@@ -37,7 +38,7 @@ export default function RegisterScreen({ navigation }: Props) {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const uid = userCredential.user.uid;
 
-            await setDoc(doc(db, 'users', uid), {
+            await setDoc(doc(db, dbKeys.users, uid), {
                 name,
                 email,
                 type: userType,
