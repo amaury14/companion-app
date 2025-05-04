@@ -4,8 +4,8 @@
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "npx eslint src/**/*.tsx --ext .ts,.tsx",
     "test": "jest"
@@ -35,7 +35,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-select-dropdown": "^4.0.1",
     "react-native-ui-datepicker": "^3.1.2",
-    "react-native-vector-icons": "^10.2.0"
+    "react-native-vector-icons": "^10.2.0",
+    "expo-location": "~18.0.10"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
