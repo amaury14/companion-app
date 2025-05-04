@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "528904479973",
+    "project_id": "companion-app-64c2d",
+    "storage_bucket": "companion-app-64c2d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:528904479973:android:4f263ab324f1cb4cabe00c",
+        "android_client_info": {
+          "package_name": "com.amaurychong.companionapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "528904479973-126olgl4l9bo541a3p84suhb7not34ae.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amaurychong.companionapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "528904479973-r24emqh7f4djq0svl9mopl0gmdhj0q9c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amaurychong.companionapp",
+            "certificate_hash": "878ccc6ae6afd140e23bb131496aeaf97ac2733a"
+          }
+        },
+        {
+          "client_id": "528904479973-v90isg9k5e78a2ne4e5ea4vavr3cf7m3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUtkGDOXszBmtjrHdisxdEMowN9A9AMqM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "528904479973-v90isg9k5e78a2ne4e5ea4vavr3cf7m3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "528904479973-dginbndf81mjjab0ht7ee2sckmdb00o8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.amaurychong.companionapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

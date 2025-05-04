@@ -10,17 +10,25 @@
         "splash": {
             "image": "./assets/splash-icon.png",
             "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
+            "backgroundColor": "#dad8c9"
         },
+        "plugins": [
+            "@react-native-google-signin/google-signin",
+            "@react-native-firebase/app",
+            "@react-native-firebase/auth"
+        ],
         "ios": {
-            "supportsTablet": true
+            "supportsTablet": true,
+            "bundleIdentifier": "com.amaurychong.companionapp",
+            "googleServicesFile": "./GoogleService-Info.plist"
         },
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#ffffff"
+                "backgroundColor": "#dad8c9"
             },
             "package": "com.amaurychong.companionapp",
+            "googleServicesFile": "./google-services.json",
             "versionCode": 1
         },
         "web": {
