@@ -5,6 +5,7 @@ export const colors = {
     dragonblue: '#6cb4ee',
     franceblue: '#6495ed',
     black: '#000',
+    lightGray: '#E9ECEF',
     gray: '#afbcc8',
     darkergray: '#777',
     header: '#246bce',

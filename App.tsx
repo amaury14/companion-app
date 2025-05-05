@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 
+import { UserProvider } from './src/components/UserContext';
 import AuthStack from './src/navigation/AuthStack/AuthStack';
 import CompanionStack from './src/navigation/CompanionStack/CompanionStack';
 import UserStack from './src/navigation/UserStack/UserStack';
@@ -33,12 +34,14 @@ export default function App() {
     if (initializing) return null;
 
     return (
-        <SafeAreaProvider>
-            <NavigationContainer>
-                {userType === 'user' && <UserStack />}
-                {userType === 'companion' && <CompanionStack />}
-                {userType === null && <AuthStack />}
-            </NavigationContainer>
-        </SafeAreaProvider>
+        <UserProvider>
+            <SafeAreaProvider>
+                <NavigationContainer>
+                    {userType === 'user' && <UserStack />}
+                    {userType === 'companion' && <CompanionStack />}
+                    {userType === null && <AuthStack />}
+                </NavigationContainer>
+            </SafeAreaProvider>
+        </UserProvider>
     );
 }

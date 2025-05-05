@@ -289,8 +289,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     estText: {
-        color: colors.azureblue,
-        fontSize: 16,
+        color: colors.white,
+        fontSize: 18,
         fontWeight: 'bold'
     }
 });

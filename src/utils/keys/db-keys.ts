@@ -4,5 +4,7 @@ export const dbKeys = {
 };
 
 export const fieldKeys = {
-    requesterId: 'requesterId'
+    companionId: 'companionId',
+    requesterId: 'requesterId',
+    status: 'status'
 };

@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
-import { collection, doc, getDoc, getDocs, query, Timestamp, updateDoc, where } from 'firebase/firestore';
+import { collection, doc, getDocs, query, Timestamp, updateDoc, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import ServiceItemRow from '../../components/ServiceItemRow';
@@ -19,42 +20,39 @@ import { sortServices } from '../../utils/util';
 type Props = NativeStackScreenProps<UserStackParamList, 'UserHome'>;
 
 export default function UserHomeScreen({ navigation }: Props) {
-    const [name, setName] = useState<string>('');
     const [refreshing, setRefreshing] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
     const [pending, setPending] = useState<Service[]>([]);
 
-    const fetchServices = async () => {
-        const uid = auth.currentUser?.uid;
-        if (!uid) return;
+    const fetchServices = useCallback(async () => {
+        try {
+            setRefreshing(true);
+            const uid = auth.currentUser?.uid;
+            if (!uid) return;
 
-        const queryObj = query(collection(db, dbKeys.services), where(fieldKeys.requesterId, '==', uid));
-        const querySnapshot = await getDocs(queryObj);
-        const fetched: Service[] = [];
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            fetched.push({
-                id: doc.id,
-                category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
-                status: statusData.find(item => item.value === data.status)?.name ?? data.status,
-                date: data.date?.toDate().toLocaleDateString() || 'Sin fecha',
-                price: data.price ?? 0,
-                timeStamp: (data.date as Timestamp).toMillis()
+            const queryObj = query(collection(db, dbKeys.services), where(fieldKeys.requesterId, '==', uid));
+            const querySnapshot = await getDocs(queryObj);
+            const fetched: Service[] = [];
+            querySnapshot.forEach((doc) => {
+                const data = doc.data() as Service;
+                fetched.push({
+                    ...data,
+                    id: doc.id,
+                    category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
+                    status: statusData.find(item => item.value === data.status)?.name ?? data.status,
+                    dateText: data.date?.toDate().toLocaleDateString() ?? 'Sin fecha',
+                    price: data.price ?? 0,
+                    timeStamp: (data.date as Timestamp).toMillis()
+                });
             });
-        });
-        const sorted = sortServices(fetched);
-        setServices(sorted);
-        setPending(sorted.filter(item => item.status === statusTexts.pending));
-    };
-
-    const fetchUserName = async () => {
-        const uid = auth.currentUser?.uid;
-        if (!uid) return;
-        const userDoc = await getDoc(doc(db, dbKeys.users, uid));
-        if (userDoc.exists()) {
-            setName(userDoc.data()?.name ?? userDoc.data()?.displayName ?? '');
+            const sorted = sortServices(fetched);
+            setServices(sorted);
+            setPending(sorted.filter(item => item.status === statusTexts.pending));
+        } catch (err) {
+            console.error(err);
         }
-    };
+        setRefreshing(false);
+    }, []);
 
     const updateServiceStatus = async (serviceId: string, newStatus: string) => {
         if (!serviceId) return;
@@ -65,22 +63,19 @@ export default function UserHomeScreen({ navigation }: Props) {
             await updateDoc(serviceRef, {
                 status: newStatus,
             });
+            setRefreshing(false);
 
             await fetchServices();
         } catch (error) {
             console.error('Error al actualizar el servicio:', error);
         }
-        setRefreshing(false);
     };
 
     const handleRefresh = useCallback(async () => {
-        setRefreshing(true);
         await fetchServices();
-        setRefreshing(false);
-    }, []);
+    }, [fetchServices]);
 
     useEffect(() => {
-        fetchUserName();
         fetchServices();
 
         const unsubscribe = navigation.addListener('focus', () => {
@@ -88,25 +83,16 @@ export default function UserHomeScreen({ navigation }: Props) {
         });
 
         return unsubscribe;
-    }, [navigation]);
+    }, [fetchServices, navigation]);
 
     const handleCreateService = () => {
         navigation.navigate('CreateService');
     };
 
-    const logout = () => {
-        auth.signOut();
-    };
-
     return (
         <Layout>
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Hola, {name || 'Usuario'}</Text>
-                    <TouchableOpacity style={styles.exitButton} onPress={logout}>
-                        <Text style={styles.exitButtonText}>Salir</Text>
-                    </TouchableOpacity>
-                </View>
+                <Header></Header>
 
                 <View style={styles.body}>
                     <TouchableOpacity
@@ -128,10 +114,11 @@ export default function UserHomeScreen({ navigation }: Props) {
                         renderItem={({ item }) => (
                             <ServiceItemRow
                                 id={item.id}
-                                date={item.date}
+                                date={item.dateText ?? 'Sin fecha'}
                                 category={item.category}
                                 status={item.status}
                                 price={item.price}
+                                duration={item.duration}
                                 onCancel={(id) => {
                                     Alert.alert('Cancelar servicio', '¿Estás seguro?', [
                                         { text: 'Cancelar', style: 'cancel' },
@@ -158,15 +145,6 @@ export default function UserHomeScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    header: {
-        alignItems: 'center',
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        backgroundColor: colors.header,
-        padding: 10
-    },
-    headerText: { color: colors.white, fontSize: 20, fontWeight: 'bold' },
     body: { flex: 1, padding: 20 },
     sectionTitle: { fontSize: 18, marginVertical: 20 },
     serviceItem: {
@@ -176,18 +154,6 @@ const styles = StyleSheet.create({
     },
     serviceText: { fontSize: 18 },
     status: { fontSize: 16, color: colors.black },
-    exitButton: {
-        alignItems: 'center',
-        backgroundColor: colors.azureblue,
-        borderRadius: 8,
-        marginTop: 0,
-        paddingHorizontal: 10,
-        paddingVertical: 5
-    },
-    exitButtonText: {
-        color: colors.white,
-        fontWeight: 'bold'
-    },
     newServiceButton: {
         alignItems: 'center',
         backgroundColor: colors.argentinianblue,
