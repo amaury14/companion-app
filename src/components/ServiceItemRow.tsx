@@ -12,15 +12,16 @@ export type ServiceItemRowProps = {
     id: string;
     price: number;
     status: string;
+    duration: number;
     onCancel: (id: string) => void;
 };
 
-export default function ServiceItemRow({ id, date, category, status, price, onCancel }: ServiceItemRowProps) {
+export default function ServiceItemRow({ id, date, category, status, price, duration, onCancel }: ServiceItemRowProps) {
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }}>
                 <Text style={styles.text}>{getStatusIcon(status)} {date} • {category}</Text>
-                <Text style={styles.subtext}>Estado: {status} • Costo: UYU {price}</Text>
+                <Text style={styles.subtext}>Estado: {status} • Costo: 💲UYU {price} • {duration} hora(s)</Text>
             </View>
             {
                 status === statusTexts.pending &&
@@ -36,8 +37,11 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderColor: colors.gray,
+        backgroundColor: colors.lightGray,
+        borderRadius: 8,
         flexDirection: 'row',
+        marginBottom: 8,
+        padding: 12,
         paddingHorizontal: 8,
         paddingVertical: 12
     },
