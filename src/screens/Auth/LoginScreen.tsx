@@ -71,12 +71,12 @@ export default function LoginScreen({ navigation }: Props) {
         <Layout>
             <View style={styles.container}>
                 <View style={styles.content}>
-                <Text style={styles.title}>Bienvenido a Companion</Text>
+                    <Text style={styles.title}>Bienvenido a Companion</Text>
                     <TouchableOpacity style={styles.button} onPress={signIn}>
                         <Text style={styles.buttonText}>Iniciar sesión con Google</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('LoginEmail')}>
-                        <Text style={styles.buttonText}>Iniciar sesión con Email</Text>
+                    <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.dragonblue }} onPress={() => navigation.navigate('LoginEmail')}>
+                        <Text style={styles.buttonText}>Iniciar sesión con Correo</Text>
                     </TouchableOpacity>
                     <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
                     {
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         padding: 5,
         width: '100%'
     },
-    title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+    title: { fontSize: 26, fontWeight: 'bold', marginBottom: 20 },
     button: {
         alignItems: 'center',
         backgroundColor: colors.header,
