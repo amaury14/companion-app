@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 import Layout from '../../components/Layout';
@@ -15,30 +14,13 @@ import { dbKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
-type LoginFormData = {
-    email: string;
-    password: string;
-};
-
 export default function LoginScreen({ navigation }: Props) {
-    const { control, handleSubmit } = useForm<LoginFormData>();
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
 
     GoogleSignin.configure({
         webClientId: process.env.FIREBASE_WEB_CLIENT_ID ?? '',
     });
-
-    const onLogin: SubmitHandler<LoginFormData> = async ({ email, password }) => {
-        try {
-            setError(false);
-            setLoading(true);
-            await signInWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-            setError(true);
-        }
-        setLoading(false);
-    };
 
     const signIn = async () => {
         try {
@@ -52,7 +34,8 @@ export default function LoginScreen({ navigation }: Props) {
             // Try the new style of google-sign in result, from v13+ of that module
             const idToken = signInResult.data?.idToken;
             if (!idToken) {
-                throw new Error('No ID token found');
+                alert('Error al iniciar sesión');
+                setError(true);
             }
 
             // Create a Google credential with the token
@@ -88,31 +71,12 @@ export default function LoginScreen({ navigation }: Props) {
         <Layout>
             <View style={styles.container}>
                 <View style={styles.content}>
-                    <Text style={styles.registerText}>Correo electrónico</Text>
-                    <View style={{ width: '80%' }}>
-                        <Controller
-                            control={control}
-                            name="email"
-                            render={({ field: { onChange, value } }) => (
-                                <TextInput value={value} onChangeText={onChange} style={styles.input} />
-                            )}
-                        />
-                    </View>
-                    <Text style={styles.registerText}>Contraseña</Text>
-                    <View style={{ width: '80%' }}>
-                        <Controller
-                            control={control}
-                            name="password"
-                            render={({ field: { onChange, value } }) => (
-                                <TextInput secureTextEntry value={value} onChangeText={onChange} style={styles.input} />
-                            )}
-                        />
-                    </View>
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
-                        <Text style={styles.buttonText}>INICIAR SESIÓN</Text>
-                    </TouchableOpacity>
+                <Text style={styles.title}>Bienvenido a Companion</Text>
                     <TouchableOpacity style={styles.button} onPress={signIn}>
-                        <Text style={styles.buttonText}>ENTRAR CON GOOGLE</Text>
+                        <Text style={styles.buttonText}>Iniciar sesión con Google</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('LoginEmail')}>
+                        <Text style={styles.buttonText}>Iniciar sesión con Email</Text>
                     </TouchableOpacity>
                     <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
                     {
@@ -140,7 +104,7 @@ const styles = StyleSheet.create({
         padding: 5,
         width: '100%'
     },
-    input: { borderBottomWidth: 1, fontSize: 18 },
+    title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
     button: {
         alignItems: 'center',
         backgroundColor: colors.header,
