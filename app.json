@@ -10,7 +10,7 @@
         "splash": {
             "image": "./assets/splash-icon.png",
             "resizeMode": "contain",
-            "backgroundColor": "#dad8c9"
+            "backgroundColor": "#6495ed"
         },
         "plugins": [
             "@react-native-google-signin/google-signin",
@@ -25,7 +25,7 @@
         "android": {
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
-                "backgroundColor": "#dad8c9"
+                "backgroundColor": "#6495ed"
             },
             "package": "com.amaurychong.companionapp",
             "googleServicesFile": "./google-services.json",
