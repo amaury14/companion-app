@@ -14,6 +14,6 @@ if (__DEV__) {
 
 Object.entries(firebaseConfig).forEach(([key, value]) => {
     if (!value) {
-        console.warn(`⚠️ Missing Firebase config for: ${key}`);
+        console.warn(`Missing Firebase config for: ${key}`);
     }
 });

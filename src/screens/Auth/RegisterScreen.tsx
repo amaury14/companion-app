@@ -18,17 +18,18 @@ type RegisterFormData = {
     email: string;
     name: string;
     password: string;
+    confirmPassword: string;
 };
 
 export default function RegisterScreen({ navigation }: Props) {
-    const { control, handleSubmit } = useForm<RegisterFormData>();
+    const { control, handleSubmit, formState: { errors } } = useForm<RegisterFormData>();
     const [userType, setUserType] = useState<'user' | 'companion' | null>('user');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
 
-    const onRegister: SubmitHandler<RegisterFormData> = async ({ name, email, password }) => {
-        if (!userType) {
-            alert('Seleccioná un tipo de usuario');
+    const onRegister: SubmitHandler<RegisterFormData> = async ({ name, email, password, confirmPassword }) => {
+        if (password !== confirmPassword) {
+            alert('Las contraseñas no coinciden');
             return;
         }
 
@@ -63,10 +64,12 @@ export default function RegisterScreen({ navigation }: Props) {
                         <Controller
                             control={control}
                             name="name"
+                            rules={{ required: 'Nombre es requerido' }}
                             render={({ field: { onChange, value } }) => (
                                 <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
                             )}
                         />
+                        {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
                     </View>
 
                     <Text style={styles.registerText}>Correo electrónico</Text>
@@ -74,21 +77,18 @@ export default function RegisterScreen({ navigation }: Props) {
                         <Controller
                             control={control}
                             name="email"
+                            rules={{
+                                required: 'Email es requerido',
+                                pattern: {
+                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                    message: 'Email inválido',
+                                },
+                            }}
                             render={({ field: { onChange, value } }) => (
                                 <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} keyboardType="email-address" />
                             )}
                         />
-                    </View>
-
-                    <Text style={styles.registerText}>Contraseña</Text>
-                    <View style={{ width: '80%' }}>
-                        <Controller
-                            control={control}
-                            name="password"
-                            render={({ field: { onChange, value } }) => (
-                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
-                            )}
-                        />
+                        {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
                     </View>
 
                     <Text style={styles.registerText}>Tipo de usuario</Text>
@@ -111,6 +111,39 @@ export default function RegisterScreen({ navigation }: Props) {
                                 borderRadius: 5
                             }}>🤝 Acompañante</Text>
                         </TouchableOpacity>
+                    </View>
+
+                    <Text style={styles.registerText}>Contraseña</Text>
+                    <View style={{ width: '80%' }}>
+                        <Controller
+                            control={control}
+                            name="password"
+                            rules={{
+                                required: 'Contraseña es requerida',
+                                minLength: { value: 6, message: 'Mínimo 6 caracteres' },
+                            }}
+                            render={({ field: { onChange, value } }) => (
+                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
+                            )}
+                        />
+                        {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+                    </View>
+
+                    <Text style={styles.registerText}>Repita Contraseña</Text>
+                    <View style={{ width: '80%' }}>
+                        <Controller
+                            control={control}
+                            name="confirmPassword"
+                            rules={{
+                                required: 'Confirma tu contraseña',
+                            }}
+                            render={({ field: { onChange, value } }) => (
+                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
+                            )}
+                        />
+                        {errors.confirmPassword && (
+                            <Text style={styles.error}>{errors.confirmPassword.message}</Text>
+                        )}
                     </View>
 
                     <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
@@ -174,5 +207,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginTop: 10
-    }
+    },
+    error: { color: colors.danger, marginBottom: 5, fontSize: 15 }
 });
