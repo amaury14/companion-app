@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 import { Service } from '../../types/service';
 import { statusTexts } from '../keys/status-keys';
 import { getCosts, getStatusIcon, sortServices } from '../util';
@@ -54,10 +56,12 @@ describe('sortServices', () => {
     const mock = (overrides: Partial<Service>): Service => ({
         id: '',
         category: '',
-        date: '',
+        date: new Timestamp(10, 0),
         price: 0,
         status: '',
         timeStamp: 0,
+        companionPayment: 0,
+        duration: 0,
         ...overrides,
     });
 
