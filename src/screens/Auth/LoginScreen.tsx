@@ -67,6 +67,50 @@ export default function LoginScreen({ navigation }: Props) {
         setLoading(false);
     };
 
+    const signIn = async () => {
+        try {
+            setError(false);
+            setLoading(true);
+            // Check if your device supports Google Play
+            await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+            // Get the users ID token
+            const signInResult = await GoogleSignin.signIn();
+
+            // Try the new style of google-sign in result, from v13+ of that module
+            const idToken = signInResult.data?.idToken;
+            if (!idToken) {
+                throw new Error('No ID token found');
+            }
+
+            // Create a Google credential with the token
+            const googleCredential = GoogleAuthProvider.credential(idToken);
+
+            // Sign-in the user with the credential
+            const credential = await signInWithCredential(auth, googleCredential);
+
+            // Checks for credentials
+            // Checks if the user is saved in db, if not saves it
+            if (credential?.user?.uid) {
+                const userDoc = await getDoc(doc(db, dbKeys.users, credential.user.uid));
+                if (!userDoc.exists()) {
+                    await setDoc(doc(db, dbKeys.users, credential.user.uid), {
+                        name: credential.user.displayName,
+                        email: credential.user.email,
+                        type: 'user',
+                        verified: false,
+                        reputationScore: 0,
+                        completedServices: 0,
+                    });
+                }
+            }
+
+            return credential;
+        } catch (error) {
+            setError(true);
+        }
+        setLoading(false);
+    };
+
     return (
         <Layout>
             <View style={styles.container}>
@@ -77,6 +121,9 @@ export default function LoginScreen({ navigation }: Props) {
                     </TouchableOpacity>
                     <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.dragonblue }} onPress={() => navigation.navigate('LoginEmail')}>
                         <Text style={styles.buttonText}>Iniciar sesión con Correo</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={signIn}>
+                        <Text style={styles.buttonText}>ENTRAR CON GOOGLE</Text>
                     </TouchableOpacity>
                     <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
                     {
