@@ -2,7 +2,7 @@ import { Timestamp } from 'firebase/firestore';
 
 import { Service } from '../../types/service';
 import { statusTexts } from '../keys/status-keys';
-import { getCosts, getStatusIcon, sortServices } from '../util';
+import { getCosts, getDistanceFromLatLonInKm, getStatusIcon, sortServices } from '../util';
 
 describe('getCosts', () => {
     it('should return correct costs', () => {
@@ -105,5 +105,32 @@ describe('sortServices', () => {
 
     it('should return empty', () => {
         expect(sortServices([])).toEqual([]);
+    });
+});
+
+describe('getDistanceFromLatLonInKm', () => {
+    it('returns 0 when both locations are the same', () => {
+        const dist = getDistanceFromLatLonInKm(0, 0, 0, 0);
+        expect(dist).toBeCloseTo(0, 5);
+    });
+
+    it('calculates correct distance between Montevideo and Buenos Aires', () => {
+        // Approx distance: ~203 km
+        const dist = getDistanceFromLatLonInKm(-34.9011, -56.1645, -34.6037, -58.3816);
+        expect(dist).toBeGreaterThan(200);
+        expect(dist).toBeLessThan(210);
+    });
+
+    it('calculates correct distance between New York and Los Angeles', () => {
+        // Approx distance: ~3940 km
+        const dist = getDistanceFromLatLonInKm(40.7128, -74.0060, 34.0522, -118.2437);
+        expect(dist).toBeGreaterThan(3900);
+        expect(dist).toBeLessThan(4000);
+    });
+
+    it('is symmetric (A to B equals B to A)', () => {
+        const d1 = getDistanceFromLatLonInKm(10, 20, 30, 40);
+        const d2 = getDistanceFromLatLonInKm(30, 40, 10, 20);
+        expect(d1).toBeCloseTo(d2, 5);
     });
 });

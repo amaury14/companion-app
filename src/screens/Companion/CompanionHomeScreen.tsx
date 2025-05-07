@@ -8,14 +8,17 @@ import CompanionServiceItemRow from '../../components/CompanionServiceItemRow';
 import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
+import { useUser } from '../../context/UserContext';
 import { CompanionStackParamList } from '../../navigation/CompanionStack/CompanionStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
+import { radioKilometers } from '../../utils/keys/costs-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
+import { getDistanceFromLatLonInKm } from '../../utils/util';
 
 type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionHome'>;
 
@@ -24,6 +27,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
     const [servicesRejected, setServicesRejected] = useState<string[]>([]);
     const [refreshing, setRefreshing] = useState(false);
     const [ableAccept, setAbleAccept] = useState(false);
+    const { user } = useUser();
     const authUser = auth?.currentUser;
 
     const fetchServices = useCallback(async () => {
@@ -53,14 +57,23 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                     const locationText = data.location?.latitude && data.location?.longitude
                         ? await getAddressFromCoords(data.location?.latitude ?? 0, data.location?.longitude ?? 0)
                         : 'Dirección no disponible';
-                    fetched.push({
-                        ...data,
-                        category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
-                        status: statusData.find(item => item.value === data.status)?.name ?? data.status,
-                        dateText: data.date?.toDate().toLocaleDateString() || 'Sin fecha',
-                        timeStamp: data.date?.toMillis(),
-                        locationText
-                    });
+                    const distance = getDistanceFromLatLonInKm(
+                        user?.address?.latitude ?? 0,
+                        user?.address?.longitude ?? 0,
+                        data.location?.latitude ?? 0,
+                        data.location?.longitude ?? 0
+                    );
+                    // Filter services close to the companion
+                    if (distance <= radioKilometers) {
+                        fetched.push({
+                            ...data,
+                            category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
+                            status: statusData.find(item => item.value === data.status)?.name ?? data.status,
+                            dateText: data.date?.toDate().toLocaleDateString() || 'Sin fecha',
+                            timeStamp: data.date?.toMillis(),
+                            locationText
+                        });
+                    }
                 }
             });
             setServices(fetched);
@@ -68,7 +81,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
             console.error(err);
         }
         setRefreshing(false);
-    }, [authUser?.uid, servicesRejected]);
+    }, [authUser?.uid, servicesRejected, user]);
 
     const handleRefresh = useCallback(async () => {
         await fetchServices();
@@ -141,7 +154,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                             />
                         )
                         }
-                        ListEmptyComponent={<Text style={styles.noRecords}>No tenés servicios registrados.</Text>}
+                        ListEmptyComponent={<Text style={styles.noRecords}>No existen servicios disponibles.</Text>}
                     />
                     {
                         refreshing &&
