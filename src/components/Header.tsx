@@ -1,10 +1,11 @@
+import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { useUser } from '../context/UserContext';
 import { auth } from '../services/firebase';
 import { colors } from '../theme/colors';
-import { useUser } from './UserContext';
 
-export default function Header() {
+function Header() {
     const { user } = useUser();
 
     const logout = () => {
@@ -44,3 +45,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     }
 });
+
+export default React.memo(Header);
