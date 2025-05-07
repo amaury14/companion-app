@@ -4,7 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 
-import { UserProvider } from './src/components/UserContext';
+import { UserProvider } from './src/context/UserContext';
 import AuthStack from './src/navigation/AuthStack/AuthStack';
 import CompanionStack from './src/navigation/CompanionStack/CompanionStack';
 import UserStack from './src/navigation/UserStack/UserStack';

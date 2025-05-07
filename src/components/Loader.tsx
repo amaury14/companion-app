@@ -6,7 +6,7 @@ export type LoaderProps = {
     size: number | "small" | "large" | undefined;
 };
 
-export default function Loader({ color, size }: LoaderProps) {
+function Loader({ color, size }: LoaderProps) {
     return (
         <View style={styles.indicatorContent}>
             <ActivityIndicator size={size} color={color} />
@@ -21,3 +21,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     }
 });
+
+export default React.memo(Loader);

@@ -4,7 +4,7 @@ import { LinearGradient } from 'react-native-linear-gradient';
 
 import { colors } from '../theme/colors';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+function Layout({ children }: { children: React.ReactNode }) {
     return (
         <SafeAreaView style={styles.container}>
             <LinearGradient
@@ -28,3 +28,5 @@ const styles = StyleSheet.create({
         flex: 1
     }
 });
+
+export default React.memo(Layout);
