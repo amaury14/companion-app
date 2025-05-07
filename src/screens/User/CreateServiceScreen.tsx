@@ -10,6 +10,7 @@ import * as Location from 'expo-location';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
+import { useUser } from '../../context/UserContext';
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
@@ -33,6 +34,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+    const { user } = useUser();
 
     const duration = watch('duration');
 
@@ -75,7 +77,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
 
         const coords = data.location
             ? await validateAddress(data.location)
-            : location;
+            : user?.address ?? location;
 
         if (!coords) return;
 
@@ -173,7 +175,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
                     control={control}
                     name="location"
                     render={({ field: { onChange, value } }) => (
-                        <TextInput placeholder="Dejar vacío si quere usar su posición actual" style={styles.input} value={value} onChangeText={onChange} />
+                        <TextInput placeholder="Dejar vacío si quiere usar su dirección registrada o posición actual" style={styles.input} value={value} onChangeText={onChange} />
                     )}
                 />
 

@@ -36,7 +36,6 @@ function ServiceItemRow({ id, date, category, status, price, duration, onCancel 
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        borderBottomWidth: 1,
         backgroundColor: colors.lightGray,
         borderRadius: 8,
         flexDirection: 'row',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -6,6 +6,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import * as Location from 'expo-location';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
@@ -17,6 +18,7 @@ import { asyncStorageKeys, dbKeys } from '../../utils/keys/db-keys';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
 type RegisterFormData = {
+    address: string;
     email: string;
     name: string;
     password: string;
@@ -24,28 +26,70 @@ type RegisterFormData = {
 };
 
 export default function RegisterScreen({ navigation }: Props) {
-    const { control, handleSubmit, formState: { errors } } = useForm<RegisterFormData>();
+    const { control, handleSubmit, formState: { errors }, getValues } = useForm<RegisterFormData>();
     const [userType, setUserType] = useState<'user' | 'companion' | null>('user');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
+    const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
     GoogleSignin.configure({
         webClientId: process.env.FIREBASE_WEB_CLIENT_ID ?? ''
     });
 
-    const onRegister: SubmitHandler<RegisterFormData> = async ({ name, email, password, confirmPassword }) => {
+    const getLocation = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Permiso de ubicación denegado');
+            return;
+        }
+
+        const loc = await Location.getCurrentPositionAsync({});
+        setLocation({
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+        });
+    };
+
+    const validateAddress = async (address: string) => {
+        try {
+            const geocoded = await Location.geocodeAsync(address);
+            if (geocoded.length === 0) {
+                alert('Dirección inválida. Intenta con una más específica.');
+                return null;
+            }
+
+            const { latitude, longitude } = geocoded[0];
+            return { latitude, longitude };
+        } catch (error) {
+            console.error('Error geocoding address:', error);
+            alert('Ocurrió un error al validar la dirección.');
+            return null;
+        }
+    };
+
+    const onRegister: SubmitHandler<RegisterFormData> = async ({ address, name, email, password, confirmPassword }) => {
         if (password !== confirmPassword) {
             alert('Las contraseñas no coinciden');
             return;
         }
 
         try {
+            // Get address from form
+            const coords = address
+                ? await validateAddress(address)
+                : location;
+            if (!coords?.latitude || !coords?.longitude) {
+                alert('Dirección es requerida');
+                return;
+            }
+
             setError(false);
             setLoading(true);
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const uid = userCredential.user.uid;
 
             await setDoc(doc(db, dbKeys.users, uid), {
+                address: coords,
                 name,
                 email,
                 type: userType,
@@ -63,6 +107,21 @@ export default function RegisterScreen({ navigation }: Props) {
 
     const signIn = async () => {
         try {
+            const form = getValues();
+            if (!form?.address) {
+                alert('Dirección es requerida');
+                return;
+            }
+
+            // Get address from form
+            const coords = form?.address
+                ? await validateAddress(form?.address)
+                : location;
+            if (!coords?.latitude || !coords?.longitude) {
+                alert('Dirección es requerida');
+                return;
+            }
+
             setError(false);
             setLoading(true);
             // Check if your device supports Google Play
@@ -89,6 +148,7 @@ export default function RegisterScreen({ navigation }: Props) {
                 const userDoc = await getDoc(doc(db, dbKeys.users, credential.user.uid));
                 if (!userDoc.exists()) {
                     await setDoc(doc(db, dbKeys.users, credential.user.uid), {
+                        address: coords,
                         name: credential.user.displayName,
                         email: credential.user.email,
                         type: userType,
@@ -112,6 +172,10 @@ export default function RegisterScreen({ navigation }: Props) {
         }
         setLoading(false);
     };
+
+    useEffect(() => {
+        getLocation();
+    }, []);
 
     return (
         <Layout>
@@ -171,6 +235,21 @@ export default function RegisterScreen({ navigation }: Props) {
                         </TouchableOpacity>
                     </View>
 
+                    <Text style={styles.registerText}>Dirección</Text>
+                    <View style={{ width: '80%' }}>
+                        <Controller
+                            control={control}
+                            name="address"
+                            rules={{
+                                required: 'Dirección es requerida'
+                            }}
+                            render={({ field: { onChange, value } }) => (
+                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
+                            )}
+                        />
+                        {errors.address && <Text style={styles.error}>{errors.address.message}</Text>}
+                    </View>
+
                     <Text style={styles.registerText}>Contraseña</Text>
                     <View style={{ width: '80%' }}>
                         <Controller
@@ -207,6 +286,8 @@ export default function RegisterScreen({ navigation }: Props) {
                     <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
                         <Text style={styles.buttonText}>Regístrame</Text>
                     </TouchableOpacity>
+                    <Text style={styles.registerText}>O</Text>
+                    <Text style={styles.registerTextGoogle}>Seleccione el tipo de usuario y rellene la dirección o se usará su ubicación actual</Text>
                     <TouchableOpacity style={styles.button} onPress={signIn}>
                         <Text style={styles.buttonText}>Registrarme con Google</Text>
                     </TouchableOpacity>
@@ -256,6 +337,12 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginTop: 10
+    },
+    registerTextGoogle: {
+        color: colors.black,
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center'
     },
     accountType: {
         flexDirection: 'row',

@@ -1,4 +1,8 @@
 export type UserData = {
+    address?: {
+        latitude: number;
+        longitude: number;
+    };
     completedServices: number;
     email: string;
     id: string;
