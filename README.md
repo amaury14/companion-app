@@ -22,3 +22,15 @@ A mobile app developed in **React Native + Expo** that connects **elderly caregi
 git clone https://github.com/amaury14/companion-app
 cd companion-app
 ```
+
+2. Prebuild app (when you add some new dependency):
+
+```bash
+npx expo prebuild
+```
+
+3. Run Andriod app:
+
+```bash
+npm run android
+```
