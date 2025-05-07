@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
 import * as Location from 'expo-location';
 
+import CompanionServiceItemRow from '../../components/CompanionServiceItemRow';
 import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
@@ -13,8 +14,8 @@ import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
+import { statusKeys } from '../../utils/keys/status-keys';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
-import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 
 type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionHome'>;
 
@@ -23,7 +24,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
     const [servicesRejected, setServicesRejected] = useState<string[]>([]);
     const [refreshing, setRefreshing] = useState(false);
     const [ableAccept, setAbleAccept] = useState(false);
-    const authUser = auth.currentUser;
+    const authUser = auth?.currentUser;
 
     const fetchServices = useCallback(async () => {
         try {
@@ -119,28 +120,6 @@ export default function CompanionHomeScreen({ navigation }: Props) {
         return unsubscribe;
     }, [fetchServices, navigation]);
 
-    const renderItem = ({ item }: { item: Service }) => (
-        <View style={styles.serviceItem}>
-            <Text style={styles.inputText}>📅 {item.dateText ?? 'Sin fecha'} • {item.category} • {item.status}</Text>
-            <Text style={styles.inputText}>💲 UYU {item.companionPayment} • {item.duration} hora(s)</Text>
-            <Text style={styles.inputText}>📍 {item.locationText || 'Dirección no disponible'}</Text>
-            <View style={styles.buttonRow}>
-                {
-                    ableAccept &&
-                    <TouchableOpacity style={styles.button} onPress={() => acceptService(item.id)}>
-                        <Text style={styles.buttonText}>Aceptar</Text>
-                    </TouchableOpacity>
-                }
-                {
-                    item.status !== statusTexts.in_progress &&
-                    <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.danger }} onPress={() => rejectService(item.id)}>
-                        <Text style={styles.buttonText}>Rechazar</Text>
-                    </TouchableOpacity>
-                }
-            </View>
-        </View>
-    );
-
     return (
         <Layout>
             <View style={styles.container}>
@@ -153,7 +132,15 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                         keyExtractor={(item) => item.id}
                         contentContainerStyle={{ paddingBottom: 16 }}
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-                        renderItem={renderItem}
+                        renderItem={({ item }) => (
+                            <CompanionServiceItemRow
+                                ableAccept={ableAccept}
+                                item={item}
+                                acceptService={() => acceptService(item.id)}
+                                rejectService={() => rejectService(item.id)}
+                            />
+                        )
+                        }
                         ListEmptyComponent={<Text style={styles.noRecords}>No tenés servicios registrados.</Text>}
                     />
                     {
@@ -176,40 +163,9 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginBottom: 12
     },
-    serviceItem: {
-        backgroundColor: colors.lightGray,
-        borderRadius: 8,
-        marginBottom: 8,
-        padding: 12,
-        paddingHorizontal: 8,
-        paddingVertical: 12
-    },
-    buttonRow: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        marginTop: 8
-    },
     noRecords: {
         color: colors.black,
         fontSize: 16,
         fontWeight: 'bold'
-    },
-    button: {
-        alignItems: 'center',
-        backgroundColor: colors.header,
-        borderRadius: 8,
-        marginLeft: 5,
-        paddingHorizontal: 6,
-        paddingVertical: 3
-    },
-    buttonText: {
-        color: colors.white,
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
-    inputText: {
-        color: colors.black,
-        fontSize: 16,
-        fontWeight: '500'
     }
 });

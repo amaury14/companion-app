@@ -16,7 +16,7 @@ export type ServiceItemRowProps = {
     onCancel: (id: string) => void;
 };
 
-export default function ServiceItemRow({ id, date, category, status, price, duration, onCancel }: ServiceItemRowProps) {
+function ServiceItemRow({ id, date, category, status, price, duration, onCancel }: ServiceItemRowProps) {
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }}>
@@ -59,3 +59,5 @@ const styles = StyleSheet.create({
         padding: 4
     }
 });
+
+export default React.memo(ServiceItemRow);
