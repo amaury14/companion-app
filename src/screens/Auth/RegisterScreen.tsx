@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
-import { dbKeys } from '../../utils/keys/db-keys';
+import { asyncStorageKeys, dbKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 
@@ -26,6 +28,10 @@ export default function RegisterScreen({ navigation }: Props) {
     const [userType, setUserType] = useState<'user' | 'companion' | null>('user');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
+
+    GoogleSignin.configure({
+        webClientId: process.env.FIREBASE_WEB_CLIENT_ID ?? ''
+    });
 
     const onRegister: SubmitHandler<RegisterFormData> = async ({ name, email, password, confirmPassword }) => {
         if (password !== confirmPassword) {
@@ -51,6 +57,58 @@ export default function RegisterScreen({ navigation }: Props) {
             console.error(error);
             setError(true);
             alert('Error al registrarse');
+        }
+        setLoading(false);
+    };
+
+    const signIn = async () => {
+        try {
+            setError(false);
+            setLoading(true);
+            // Check if your device supports Google Play
+            await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+            // Get the users ID token
+            const signInResult = await GoogleSignin.signIn();
+
+            // Try the new style of google-sign in result, from v13+ of that module
+            const idToken = signInResult.data?.idToken;
+            if (!idToken) {
+                alert('Error al iniciar sesión');
+                setError(true);
+            }
+
+            // Create a Google credential with the token
+            const googleCredential = GoogleAuthProvider.credential(idToken);
+
+            // Sign-in the user with the credential
+            const credential = await signInWithCredential(auth, googleCredential);
+
+            // Checks for credentials
+            // Checks if the user is saved in db, if not saves it
+            if (credential?.user?.uid) {
+                const userDoc = await getDoc(doc(db, dbKeys.users, credential.user.uid));
+                if (!userDoc.exists()) {
+                    await setDoc(doc(db, dbKeys.users, credential.user.uid), {
+                        name: credential.user.displayName,
+                        email: credential.user.email,
+                        type: userType,
+                        verified: false,
+                        reputationScore: 0,
+                        completedServices: 0,
+                    });
+                }
+
+                try {
+                    await AsyncStorage.setItem(asyncStorageKeys.login, JSON.stringify({ hasLogged: true }));
+                } catch (e) {
+                    console.error('Error al guardar los datos', e);
+                    setError(true);
+                }
+            }
+
+            return credential;
+        } catch (error) {
+            setError(true);
         }
         setLoading(false);
     };
@@ -147,7 +205,10 @@ export default function RegisterScreen({ navigation }: Props) {
                     </View>
 
                     <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
-                        <Text style={styles.buttonText}>REGÍSTRAME</Text>
+                        <Text style={styles.buttonText}>Regístrame</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={signIn}>
+                        <Text style={styles.buttonText}>Registrarme con Google</Text>
                     </TouchableOpacity>
                     <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>
                         ¿Ya tenés cuenta? Iniciá sesión

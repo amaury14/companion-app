@@ -8,3 +8,7 @@ export const fieldKeys = {
     requesterId: 'requesterId',
     status: 'status'
 };
+
+export const asyncStorageKeys = {
+    login: 'login'
+};

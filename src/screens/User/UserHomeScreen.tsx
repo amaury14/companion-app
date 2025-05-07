@@ -75,6 +75,10 @@ export default function UserHomeScreen({ navigation }: Props) {
         await fetchServices();
     }, [fetchServices]);
 
+    const handleCreateService = () => {
+        navigation.navigate('CreateService');
+    };
+
     useEffect(() => {
         fetchServices();
 
@@ -84,10 +88,6 @@ export default function UserHomeScreen({ navigation }: Props) {
 
         return unsubscribe;
     }, [fetchServices, navigation]);
-
-    const handleCreateService = () => {
-        navigation.navigate('CreateService');
-    };
 
     return (
         <Layout>

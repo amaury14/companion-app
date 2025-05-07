@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -10,16 +11,17 @@ import Loader from '../../components/Loader';
 import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
-import { dbKeys } from '../../utils/keys/db-keys';
+import { asyncStorageKeys, dbKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
+    const [loginData, setLoginData] = useState<{ hasLogged: boolean; }>({ hasLogged: false });
 
     GoogleSignin.configure({
-        webClientId: process.env.FIREBASE_WEB_CLIENT_ID ?? '',
+        webClientId: process.env.FIREBASE_WEB_CLIENT_ID ?? ''
     });
 
     const signIn = async () => {
@@ -67,14 +69,31 @@ export default function LoginScreen({ navigation }: Props) {
         setLoading(false);
     };
 
+    const getLoginData = useCallback(async () => {
+        try {
+            const jsonValue = await AsyncStorage.getItem(asyncStorageKeys.login);
+            setLoginData(jsonValue ? JSON.parse(jsonValue) : null);
+        } catch (e) {
+            console.error('Error al obtener los datos', e);
+            setError(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        getLoginData();
+    }, [getLoginData]);
+
     return (
         <Layout>
             <View style={styles.container}>
                 <View style={styles.content}>
                     <Text style={styles.title}>Bienvenido a Companion</Text>
-                    <TouchableOpacity style={styles.button} onPress={signIn}>
-                        <Text style={styles.buttonText}>Iniciar sesión con Google</Text>
-                    </TouchableOpacity>
+                    {
+                        loginData?.hasLogged &&
+                        <TouchableOpacity style={styles.button} onPress={signIn}>
+                            <Text style={styles.buttonText}>Iniciar sesión con Google</Text>
+                        </TouchableOpacity>
+                    }
                     <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.dragonblue }} onPress={() => navigation.navigate('LoginEmail')}>
                         <Text style={styles.buttonText}>Iniciar sesión con Correo</Text>
                     </TouchableOpacity>
