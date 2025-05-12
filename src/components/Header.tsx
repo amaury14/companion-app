@@ -4,8 +4,14 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useUser } from '../context/UserContext';
 import { auth } from '../services/firebase';
 import { colors } from '../theme/colors';
+import { UserData } from '../types/user';
+import { uiTexts } from '../utils/data/ui-text-data';
 
-function Header() {
+export type HeaderProps = {
+    userClick: (user: UserData | null) => void;
+};
+
+function Header({ userClick }: HeaderProps) {
     const { user } = useUser();
 
     const logout = () => {
@@ -14,9 +20,11 @@ function Header() {
 
     return (
         <View style={styles.header}>
-            <Text style={styles.headerText}>Hola, {user?.name ?? 'Usuario'}</Text>
+            <TouchableOpacity onPress={() => userClick(user)}>
+                <Text style={styles.headerText}>{uiTexts.hello}, {user?.name ?? uiTexts.user}</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.exitButton} onPress={logout}>
-                <Text style={styles.exitButtonText}>Salir</Text>
+                <Text style={styles.exitButtonText}>{uiTexts.logout}</Text>
             </TouchableOpacity>
         </View>
     );
@@ -25,13 +33,17 @@ function Header() {
 const styles = StyleSheet.create({
     header: {
         alignItems: 'center',
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexDirection: 'row',
         backgroundColor: colors.header,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         padding: 10
     },
-    headerText: { color: colors.white, fontSize: 20, fontWeight: 'bold' },
+    headerText: {
+        color: colors.white,
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
     exitButton: {
         alignItems: 'center',
         backgroundColor: colors.azureblue,

@@ -6,9 +6,10 @@ import CompanionHomeScreen from '../../screens/Companion/CompanionHomeScreen';
 // import ServiceTrackingScreen from '../../screens/Shared/ServiceTrackingScreen';
 
 export type CompanionStackParamList = {
-    CompanionHome: undefined;
     ActiveService: { serviceId: string };
+    CompanionHome: undefined;
     ServiceTracking: { serviceId: string };
+    UserProfile: { userId: string };
 };
 
 const Stack = createNativeStackNavigator<CompanionStackParamList>();

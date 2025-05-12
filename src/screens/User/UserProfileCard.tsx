@@ -75,7 +75,7 @@ export const UserProfileCard = () => {
                 <View style={styles.container}>
                     <View style={styles.header}>
                         <Text style={styles.name}>{userData?.name}</Text>
-                        {userData?.verified && <MaterialIcons name="verified" size={20} color="#4CAF50" />}
+                        {userData?.verified && <MaterialIcons name="verified" size={20} color={colors.success} />}
                     </View>
 
                     <Text style={styles.typeText}>
@@ -84,23 +84,23 @@ export const UserProfileCard = () => {
 
                     <View style={styles.statsContainer}>
                         <View style={styles.statItem}>
-                            <FontAwesome name="check-circle" size={16} color="#2196F3" />
-                            <Text style={styles.statText}>{userData?.completedServices} servicios completados</Text>
+                            <FontAwesome name="check-circle" size={16} color={colors.primary} />
+                            <Text style={styles.statText}>{userData?.completedServices} {userData?.type === 'companion' ? uiTexts.completedServices : uiTexts.receivedServices}</Text>
                         </View>
                         <View style={styles.statItem}>
-                            <FontAwesome name="star" size={16} color="#FFD700" />
-                            <Text style={styles.statText}>{userData?.reputationScore.toFixed(1)} reputación</Text>
+                            <FontAwesome name="star" size={16} color={colors.accent} />
+                            <Text style={styles.statText}>{userData?.reputationScore.toFixed(1)} {uiTexts.reputation}</Text>
                         </View>
                     </View>
 
                     <View style={styles.infoBlock}>
-                        <Text style={styles.label}>📧 Correo:</Text>
+                        <Text style={styles.label}>📧 {uiTexts.email}:</Text>
                         <Text style={styles.value}>{userData?.email}</Text>
                     </View>
 
                     {userData?.address && (
                         <View style={styles.infoBlock}>
-                            <Text style={styles.label}>📍 Ubicación:</Text>
+                            <Text style={styles.label}>📍 {uiTexts.location}:</Text>
                             <Text style={styles.value}>{userData?.locationText}</Text>
                         </View>
                     )}
@@ -114,53 +114,53 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.lightGray,
         borderRadius: 12,
-        padding: 15,
         elevation: 2,
         height: '95%',
         margin: 12,
-        shadowColor: '#000',
+        shadowColor: colors.black,
         shadowOpacity: 0.1,
         shadowRadius: 4,
+        padding: 15
     },
     header: {
-        flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 4,
+        flexDirection: 'row',
+        marginBottom: 4
     },
     name: {
         fontSize: 22,
         fontWeight: 'bold',
-        marginRight: 8,
+        marginRight: 8
     },
     typeText: {
+        color: colors.darkergray,
         fontSize: 19,
-        color: '#888',
-        marginBottom: 12,
+        marginBottom: 12
     },
     statsContainer: {
         flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: 'space-between'
     },
     statItem: {
         alignItems: 'center',
         flexDirection: 'row',
-        marginBottom: 10,
+        marginBottom: 10
     },
     statText: {
-        marginLeft: 6,
+        color: colors.black,
         fontSize: 19,
-        color: '#333',
+        marginLeft: 6
     },
     infoBlock: {
-        marginBottom: 8,
+        marginBottom: 8
     },
     label: {
-        fontWeight: '600',
+        color: colors.darkergray,
         fontSize: 19,
-        color: '#555',
+        fontWeight: '600'
     },
     value: {
-        fontSize: 18,
-        color: '#111',
-    },
+        color: colors.black,
+        fontSize: 18
+    }
 });

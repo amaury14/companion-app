@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '../theme/colors';
 import { Service } from '../types/service';
+import { uiTexts } from '../utils/data/ui-text-data';
 import { statusTexts } from '../utils/keys/status-keys';
 import { getStatusIcon } from '../utils/util';
 
@@ -18,7 +19,7 @@ function ServiceItemRow({ item, onCancel, onViewCompanion }: ServiceItemRowProps
         <View style={styles.container}>
             <View style={{ flex: 1 }}>
                 <Text style={styles.text}>{getStatusIcon(item.status)} {item.dateText} • {item.category}</Text>
-                <Text style={styles.subtext}>Estado: {item.status} • Costo: 💲UYU {item.price} • {item.duration} hora(s)</Text>
+                <Text style={styles.subtext}>{uiTexts.status}: {item.status} • {uiTexts.cost}: 💲{uiTexts.currency} {item.price} • {item.duration} {uiTexts.hours}</Text>
             </View>
             {
                 item.status === statusTexts.pending &&

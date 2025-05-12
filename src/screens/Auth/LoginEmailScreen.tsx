@@ -9,6 +9,7 @@ import Loader from '../../components/Loader';
 import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth } from '../../services/firebase';
 import { colors } from '../../theme/colors';
+import { uiTexts } from '../../utils/data/ui-text-data';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'LoginEmail'>;
 
@@ -37,17 +38,17 @@ export default function LoginEmailScreen({ navigation }: Props) {
         <Layout>
             <View style={styles.container}>
                 <View style={styles.content}>
-                    <Text style={styles.registerText}>Correo electrónico</Text>
+                    <Text style={styles.registerText}>{uiTexts.emailFormLabel}</Text>
                     <View style={{ width: '80%' }}>
                         <Controller
                             control={control}
                             name="email"
                             rules={{
-                                required: 'Email es requerido',
+                                required: uiTexts.requiredEmail,
                                 pattern: {
                                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                    message: 'Email inválido',
-                                },
+                                    message: uiTexts.invalidEmail
+                                }
                             }}
                             render={({ field: { onChange, value } }) => (
                                 <TextInput value={value} onChangeText={onChange} style={styles.input} keyboardType="email-address" />
@@ -55,14 +56,14 @@ export default function LoginEmailScreen({ navigation }: Props) {
                         />
                         {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
                     </View>
-                    <Text style={styles.registerText}>Contraseña</Text>
+                    <Text style={styles.registerText}>{uiTexts.passwordFormLabel}</Text>
                     <View style={{ width: '80%' }}>
                         <Controller
                             control={control}
                             name="password"
                             rules={{
-                                required: 'Contraseña es requerida',
-                                minLength: { value: 6, message: 'Mínimo 6 caracteres' },
+                                required: uiTexts.requiredPassword,
+                                minLength: { value: 6, message: uiTexts.minimum6Character }
                             }}
                             render={({ field: { onChange, value } }) => (
                                 <TextInput secureTextEntry value={value} onChangeText={onChange} style={styles.input} />
@@ -71,17 +72,15 @@ export default function LoginEmailScreen({ navigation }: Props) {
                         {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
                     </View>
                     <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
-                        <Text style={styles.buttonText}>Iniciar sesión</Text>
+                        <Text style={styles.buttonText}>{uiTexts.login}</Text>
                     </TouchableOpacity>
-                    <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
-                    <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>
-                        ← Volver
-                    </Text>
+                    <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>{uiTexts.noAccountRegister}</Text>
+                    <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>{uiTexts.goBack}</Text>
                     {
                         loading &&
                         <Loader color={colors.azureblue} size={'large'}></Loader>
                     }
-                    {error && <Text style={styles.actionsText}>Credenciales Inválidas!!!</Text>}
+                    {error && <Text style={styles.actionsText}>{uiTexts.invalidCredentials}</Text>}
                 </View>
             </View>
         </Layout>
@@ -97,8 +96,8 @@ const styles = StyleSheet.create({
     content: {
         alignItems: 'center',
         display: 'flex',
-        justifyContent: 'flex-start',
         height: 500,
+        justifyContent: 'flex-start',
         padding: 5,
         width: '100%'
     },
@@ -128,5 +127,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 20
     },
-    error: { color: colors.danger, marginBottom: 5, fontSize: 15 }
+    error: {
+        color: colors.danger,
+        fontSize: 15,
+        marginBottom: 5
+    }
 });
