@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { colors } from '../theme/colors';
 import { Service } from '../types/service';
+import { uiTexts } from '../utils/data/ui-text-data';
 import { statusTexts } from '../utils/keys/status-keys';
 
 export type CompanionServiceItemRowProps = {
@@ -15,9 +16,9 @@ export type CompanionServiceItemRowProps = {
 function CompanionServiceItemRow({ ableAccept, item, acceptService, rejectService }: CompanionServiceItemRowProps) {
     return (
         <View style={styles.serviceItem}>
-            <Text style={styles.inputText}>📅 {item.dateText ?? 'Sin fecha'} • {item.category} • {item.status}</Text>
+            <Text style={styles.inputText}>📅 {item.dateText ?? uiTexts.noDate} • {item.category} • {item.status}</Text>
             <Text style={styles.inputText}>💲 UYU {item.companionPayment} • {item.duration} hora(s)</Text>
-            <Text style={styles.inputText}>📍 {item.locationText || 'Dirección no disponible'}</Text>
+            <Text style={styles.inputText}>📍 {item.locationText || uiTexts.noAddress}</Text>
             <View style={styles.buttonRow}>
                 {
                     ableAccept &&

@@ -2,6 +2,7 @@ import { Timestamp } from 'firebase/firestore';
 
 export type Service = {
     category: string;
+    companionId: string;
     companionPayment: number;
     date: Timestamp;
     dateText?: string;

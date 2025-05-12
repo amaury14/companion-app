@@ -3,30 +3,33 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '../theme/colors';
+import { Service } from '../types/service';
 import { statusTexts } from '../utils/keys/status-keys';
 import { getStatusIcon } from '../utils/util';
 
 export type ServiceItemRowProps = {
-    category: string;
-    date: string;
-    id: string;
-    price: number;
-    status: string;
-    duration: number;
+    item: Service;
     onCancel: (id: string) => void;
+    onViewCompanion: (item: Service) => void;
 };
 
-function ServiceItemRow({ id, date, category, status, price, duration, onCancel }: ServiceItemRowProps) {
+function ServiceItemRow({ item, onCancel, onViewCompanion }: ServiceItemRowProps) {
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }}>
-                <Text style={styles.text}>{getStatusIcon(status)} {date} • {category}</Text>
-                <Text style={styles.subtext}>Estado: {status} • Costo: 💲UYU {price} • {duration} hora(s)</Text>
+                <Text style={styles.text}>{getStatusIcon(item.status)} {item.dateText} • {item.category}</Text>
+                <Text style={styles.subtext}>Estado: {item.status} • Costo: 💲UYU {item.price} • {item.duration} hora(s)</Text>
             </View>
             {
-                status === statusTexts.pending &&
-                <TouchableOpacity onPress={() => onCancel(id)} style={styles.cancelButton}>
+                item.status === statusTexts.pending &&
+                <TouchableOpacity onPress={() => onCancel(item.id)} style={styles.cancelButton}>
                     <Ionicons name="close-circle" size={35} color={colors.danger} />
+                </TouchableOpacity>
+            }
+            {
+                item.status === statusTexts.in_progress &&
+                <TouchableOpacity onPress={() => onViewCompanion(item)} style={styles.cancelButton}>
+                    <Ionicons name="person-outline" size={35} color={colors.franceblue} />
                 </TouchableOpacity>
             }
         </View>
