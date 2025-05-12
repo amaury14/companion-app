@@ -13,6 +13,7 @@ import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
+import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 import { sortServices } from '../../utils/util';
@@ -40,7 +41,7 @@ export default function UserHomeScreen({ navigation }: Props) {
                     id: doc.id,
                     category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
                     status: statusData.find(item => item.value === data.status)?.name ?? data.status,
-                    dateText: data.date?.toDate().toLocaleDateString() ?? 'Sin fecha',
+                    dateText: data.date?.toDate().toLocaleDateString() ?? uiTexts.noDate,
                     price: data.price ?? 0,
                     timeStamp: (data.date as Timestamp).toMillis()
                 });
@@ -79,6 +80,14 @@ export default function UserHomeScreen({ navigation }: Props) {
         navigation.navigate('CreateService');
     };
 
+    const handleViewUser = (userId: string) => {
+        if (userId) {
+            navigation.navigate('UserProfile', { userId });
+        } else {
+            alert('Ha fallado la búsqueda de información del usuario.');
+        }
+    };
+
     useEffect(() => {
         fetchServices();
 
@@ -113,12 +122,7 @@ export default function UserHomeScreen({ navigation }: Props) {
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
                         renderItem={({ item }) => (
                             <ServiceItemRow
-                                id={item.id}
-                                date={item.dateText ?? 'Sin fecha'}
-                                category={item.category}
-                                status={item.status}
-                                price={item.price}
-                                duration={item.duration}
+                                item={item}
                                 onCancel={(id) => {
                                     Alert.alert('Cancelar servicio', '¿Estás seguro?', [
                                         { text: 'Cancelar', style: 'cancel' },
@@ -129,6 +133,7 @@ export default function UserHomeScreen({ navigation }: Props) {
                                         },
                                     ]);
                                 }}
+                                onViewCompanion={(item) => handleViewUser(item.companionId)}
                             />
                         )}
                         ListEmptyComponent={<Text style={styles.noRecords}>No tenés servicios registrados.</Text>}

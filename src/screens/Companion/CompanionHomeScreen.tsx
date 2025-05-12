@@ -15,6 +15,7 @@ import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
+import { uiTexts } from '../../utils/data/ui-text-data';
 import { radioKilometers } from '../../utils/keys/costs-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
@@ -56,7 +57,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                 if (!servicesRejected?.find(item => item === data.id)) {
                     const locationText = data.location?.latitude && data.location?.longitude
                         ? await getAddressFromCoords(data.location?.latitude ?? 0, data.location?.longitude ?? 0)
-                        : 'Dirección no disponible';
+                        : uiTexts.noAddress;
                     const distance = getDistanceFromLatLonInKm(
                         user?.address?.latitude ?? 0,
                         user?.address?.longitude ?? 0,
@@ -69,7 +70,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                             ...data,
                             category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
                             status: statusData.find(item => item.value === data.status)?.name ?? data.status,
-                            dateText: data.date?.toDate().toLocaleDateString() || 'Sin fecha',
+                            dateText: data.date?.toDate().toLocaleDateString() || uiTexts.noDate,
                             timeStamp: data.date?.toMillis(),
                             locationText
                         });
@@ -93,7 +94,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                 status: statusKeys.in_progress,
                 companionId: authUser?.uid,
             });
-            alert('Servicio aceptado');
+            alert(uiTexts.serviceAccepted);
             fetchServices();
         } catch (err) {
             console.error(err);
@@ -103,7 +104,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
     const rejectService = (serviceId: string) => {
         setServices(services.filter(item => item.id !== serviceId));
         setServicesRejected([...servicesRejected, serviceId]);
-        alert('Servicio rechazado');
+        alert(uiTexts.serviceRejected);
         fetchServices();
     };
 
@@ -115,11 +116,11 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                 const { street, name, city, region } = addresses[0];
                 return `${street || name}, ${city}, ${region}`; //, ${country}
             } else {
-                return 'Dirección no disponible';
+                return uiTexts.noAddress;
             }
         } catch (error) {
             console.error('Error obteniendo la dirección:', error);
-            return 'Dirección no disponible';
+            return uiTexts.noAddress;
         }
     };
 
