@@ -60,6 +60,7 @@ describe('sortServices', () => {
         price: 0,
         status: '',
         timeStamp: 0,
+        companionId: '',
         companionPayment: 0,
         duration: 0,
         ...overrides,
