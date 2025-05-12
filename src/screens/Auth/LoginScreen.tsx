@@ -11,6 +11,7 @@ import Loader from '../../components/Loader';
 import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
+import { uiTexts } from '../../utils/data/ui-text-data';
 import { asyncStorageKeys, dbKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
@@ -36,7 +37,7 @@ export default function LoginScreen({ navigation }: Props) {
             // Try the new style of google-sign in result, from v13+ of that module
             const idToken = signInResult.data?.idToken;
             if (!idToken) {
-                alert('Error al iniciar sesión');
+                alert(uiTexts.loginError);
                 setError(true);
             }
 
@@ -87,22 +88,22 @@ export default function LoginScreen({ navigation }: Props) {
         <Layout>
             <View style={styles.container}>
                 <View style={styles.content}>
-                    <Text style={styles.title}>Bienvenido a Companion</Text>
+                    <Text style={styles.title}>{uiTexts.welcome}</Text>
                     {
                         loginData?.hasLogged &&
                         <TouchableOpacity style={styles.button} onPress={signIn}>
-                            <Text style={styles.buttonText}>Iniciar sesión con Google</Text>
+                            <Text style={styles.buttonText}>{uiTexts.loginGoogle}</Text>
                         </TouchableOpacity>
                     }
                     <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.dragonblue }} onPress={() => navigation.navigate('LoginEmail')}>
-                        <Text style={styles.buttonText}>Iniciar sesión con Correo</Text>
+                        <Text style={styles.buttonText}>{uiTexts.loginEmail}</Text>
                     </TouchableOpacity>
-                    <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>¿No tenés cuenta? Regístrate</Text>
+                    <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>{uiTexts.noAccountRegister}</Text>
                     {
                         loading &&
                         <Loader color={colors.azureblue} size={'large'}></Loader>
                     }
-                    {error && <Text style={styles.actionsText}>Credenciales Inválidas!!!</Text>}
+                    {error && <Text style={styles.actionsText}>{uiTexts.invalidCredentials}</Text>}
                 </View>
             </View>
         </Layout>
@@ -118,12 +119,16 @@ const styles = StyleSheet.create({
     content: {
         alignItems: 'center',
         display: 'flex',
-        justifyContent: 'flex-start',
         height: 500,
+        justifyContent: 'flex-start',
         padding: 5,
         width: '100%'
     },
-    title: { fontSize: 26, fontWeight: 'bold', marginBottom: 20 },
+    title: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        marginBottom: 20
+    },
     button: {
         alignItems: 'center',
         backgroundColor: colors.header,

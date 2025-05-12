@@ -16,6 +16,7 @@ import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Category } from '../../types/category';
 import { categoryData } from '../../utils/data/category-data';
+import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
 import { baseComission, baseCost } from '../../utils/keys/costs-keys';
@@ -41,7 +42,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
     const getLocation = async () => {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-            alert('Permiso de ubicación denegado');
+            alert(uiTexts.locationPermissionDenied);
             return;
         }
 
@@ -56,7 +57,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
         try {
             const geocoded = await Location.geocodeAsync(address);
             if (geocoded.length === 0) {
-                alert('Dirección inválida. Intenta con una más específica.');
+                alert(uiTexts.invalidAddress);
                 return null;
             }
 
@@ -64,7 +65,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
             return { latitude, longitude };
         } catch (error) {
             console.error('Error geocoding address:', error);
-            alert('Ocurrió un error al validar la dirección.');
+            alert(uiTexts.invalidAddress2);
             return null;
         }
     };
@@ -100,10 +101,10 @@ export default function CreateServiceScreen({ navigation }: Props) {
                 status: statusKeys.pending
             });
 
-            Alert.alert('¡Servicio solicitado!', 'Esperá la confirmación de un acompañante');
+            Alert.alert(uiTexts.serviceRequested, uiTexts.waitService);
             navigation.goBack();
         } catch (err) {
-            Alert.alert('Error', 'No se pudo crear el servicio');
+            Alert.alert(uiTexts.error, uiTexts.couldNotCreateService);
             console.error(err);
         }
         setLoading(false);
@@ -120,9 +121,9 @@ export default function CreateServiceScreen({ navigation }: Props) {
     return (
         <Layout>
             <View style={styles.container}>
-                <Text style={styles.title}>Solicitar nuevo servicio</Text>
+                <Text style={styles.title}>{uiTexts.newService}</Text>
 
-                <Text style={styles.inputText}>Categoría (compañía, trámites...)</Text>
+                <Text style={styles.inputText}>{uiTexts.categoryFormLabel}</Text>
                 <Controller
                     control={control}
                     name="category"
@@ -138,7 +139,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
                                     return (
                                         <View style={styles.dropdownButtonStyle}>
                                             <Text style={styles.dropdownButtonTxtStyle}>
-                                                {(selectedItem && selectedItem.name) || 'Seleccione la categoría'}
+                                                {(selectedItem && selectedItem.name) || uiTexts.selectCategory}
                                             </Text>
                                         </View>
                                     );
@@ -158,7 +159,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
                 />
 
                 <View style={styles.durationContent}>
-                    <Text style={styles.inputText}>Duración (horas)</Text>
+                    <Text style={styles.inputText}>{uiTexts.durationFormLabel}</Text>
                     <Text style={styles.estText}>{getEstCosts()}</Text>
                 </View>
                 <Controller
@@ -170,16 +171,16 @@ export default function CreateServiceScreen({ navigation }: Props) {
                     )}
                 />
 
-                <Text style={styles.inputText}>Ubicación (barrio, dirección)</Text>
+                <Text style={styles.inputText}>{uiTexts.locationFormLabel}</Text>
                 <Controller
                     control={control}
                     name="location"
                     render={({ field: { onChange, value } }) => (
-                        <TextInput placeholder="Dejar vacío si quiere usar su dirección registrada o posición actual" style={styles.input} value={value} onChangeText={onChange} />
+                        <TextInput placeholder={uiTexts.locationFormPlaceholder} style={styles.input} value={value} onChangeText={onChange} />
                     )}
                 />
 
-                <Text style={styles.inputText}>Fecha y hora</Text>
+                <Text style={styles.inputText}>{uiTexts.dateTimeFormLabel}</Text>
                 <View>
                     <DatePicker
                         date={selectedDate}
@@ -198,7 +199,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
 
                 <View>
                     <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
-                        <Text style={styles.buttonText}>Confirmar y solicitar</Text>
+                        <Text style={styles.buttonText}>{uiTexts.confirm}</Text>
                     </TouchableOpacity>
                     {
                         loading &&

@@ -124,6 +124,12 @@ export default function CompanionHomeScreen({ navigation }: Props) {
         }
     };
 
+    const handleViewUser = (userId: string) => {
+        if (userId?.length) {
+            navigation.navigate('UserProfile', { userId });
+        }
+    };
+
     useEffect(() => {
         fetchServices();
 
@@ -137,9 +143,10 @@ export default function CompanionHomeScreen({ navigation }: Props) {
     return (
         <Layout>
             <View style={styles.container}>
-                <Header></Header>
+                <Header userClick={(user) => handleViewUser(user?.id ?? '')}></Header>
+
                 <View style={styles.body}>
-                    <Text style={styles.title}>Servicios Disponibles</Text>
+                    <Text style={styles.title}>{uiTexts.availableServices}</Text>
 
                     <FlatList
                         data={services}
@@ -155,7 +162,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                             />
                         )
                         }
-                        ListEmptyComponent={<Text style={styles.noRecords}>No existen servicios disponibles.</Text>}
+                        ListEmptyComponent={<Text style={styles.noRecords}>{uiTexts.noServicesAvailable}</Text>}
                     />
                     {
                         refreshing &&

@@ -13,6 +13,7 @@ import Loader from '../../components/Loader';
 import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
+import { uiTexts } from '../../utils/data/ui-text-data';
 import { asyncStorageKeys, dbKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
@@ -39,7 +40,7 @@ export default function RegisterScreen({ navigation }: Props) {
     const getLocation = async () => {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
-            alert('Permiso de ubicación denegado');
+            alert(uiTexts.locationPermissionDenied);
             return;
         }
 
@@ -54,7 +55,7 @@ export default function RegisterScreen({ navigation }: Props) {
         try {
             const geocoded = await Location.geocodeAsync(address);
             if (geocoded.length === 0) {
-                alert('Dirección inválida. Intenta con una más específica.');
+                alert(uiTexts.invalidAddress3);
                 return null;
             }
 
@@ -62,14 +63,14 @@ export default function RegisterScreen({ navigation }: Props) {
             return { latitude, longitude };
         } catch (error) {
             console.error('Error geocoding address:', error);
-            alert('Ocurrió un error al validar la dirección.');
+            alert(uiTexts.invalidAddress2);
             return null;
         }
     };
 
     const onRegister: SubmitHandler<RegisterFormData> = async ({ address, name, email, password, confirmPassword }) => {
         if (password !== confirmPassword) {
-            alert('Las contraseñas no coinciden');
+            alert(uiTexts.passwordsDoNotMatch);
             return;
         }
 
@@ -79,7 +80,7 @@ export default function RegisterScreen({ navigation }: Props) {
                 ? await validateAddress(address)
                 : location;
             if (!coords?.latitude || !coords?.longitude) {
-                alert('Dirección es requerida');
+                alert(uiTexts.requiredAddress);
                 return;
             }
 
@@ -100,7 +101,7 @@ export default function RegisterScreen({ navigation }: Props) {
         } catch (error) {
             console.error(error);
             setError(true);
-            alert('Error al registrarse');
+            alert(uiTexts.registerError);
         }
         setLoading(false);
     };
@@ -109,7 +110,7 @@ export default function RegisterScreen({ navigation }: Props) {
         try {
             const form = getValues();
             if (!form?.address) {
-                alert('Dirección es requerida');
+                alert(uiTexts.requiredAddress);
                 return;
             }
 
@@ -118,7 +119,7 @@ export default function RegisterScreen({ navigation }: Props) {
                 ? await validateAddress(form?.address)
                 : location;
             if (!coords?.latitude || !coords?.longitude) {
-                alert('Dirección es requerida');
+                alert(uiTexts.requiredAddress);
                 return;
             }
 
@@ -132,7 +133,7 @@ export default function RegisterScreen({ navigation }: Props) {
             // Try the new style of google-sign in result, from v13+ of that module
             const idToken = signInResult.data?.idToken;
             if (!idToken) {
-                alert('Error al iniciar sesión');
+                alert(uiTexts.loginError);
                 setError(true);
             }
 
@@ -181,12 +182,12 @@ export default function RegisterScreen({ navigation }: Props) {
         <Layout>
             <View style={styles.container}>
                 <View style={styles.content}>
-                    <Text style={styles.registerText}>Nombre completo</Text>
+                    <Text style={styles.registerText}>{uiTexts.fullName}</Text>
                     <View style={{ width: '80%' }}>
                         <Controller
                             control={control}
                             name="name"
-                            rules={{ required: 'Nombre es requerido' }}
+                            rules={{ required: uiTexts.requiredName }}
                             render={({ field: { onChange, value } }) => (
                                 <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
                             )}
@@ -194,16 +195,16 @@ export default function RegisterScreen({ navigation }: Props) {
                         {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
                     </View>
 
-                    <Text style={styles.registerText}>Correo electrónico</Text>
+                    <Text style={styles.registerText}>{uiTexts.emailFormLabel}</Text>
                     <View style={{ width: '80%' }}>
                         <Controller
                             control={control}
                             name="email"
                             rules={{
-                                required: 'Email es requerido',
+                                required: uiTexts.requiredEmail,
                                 pattern: {
                                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                    message: 'Email inválido',
+                                    message: uiTexts.invalidEmail,
                                 },
                             }}
                             render={({ field: { onChange, value } }) => (
@@ -213,7 +214,7 @@ export default function RegisterScreen({ navigation }: Props) {
                         {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
                     </View>
 
-                    <Text style={styles.registerText}>Tipo de usuario</Text>
+                    <Text style={styles.registerText}>{uiTexts.userTypeFormLabel}</Text>
                     <View style={styles.accountType}>
                         <TouchableOpacity onPress={() => setUserType('user')}>
                             <Text style={{
@@ -222,7 +223,7 @@ export default function RegisterScreen({ navigation }: Props) {
                                 fontWeight: userType === 'user' ? 'bold' : 'normal',
                                 padding: 10,
                                 borderRadius: 5
-                            }}>🧑 Usuario</Text>
+                            }}>🧑 {uiTexts.user}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => setUserType('companion')}>
                             <Text style={{
@@ -231,17 +232,17 @@ export default function RegisterScreen({ navigation }: Props) {
                                 fontWeight: userType === 'companion' ? 'bold' : 'normal',
                                 padding: 10,
                                 borderRadius: 5
-                            }}>🤝 Acompañante</Text>
+                            }}>🤝 {uiTexts.companion}</Text>
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.registerText}>Dirección</Text>
+                    <Text style={styles.registerText}>{uiTexts.addressFormLabel}</Text>
                     <View style={{ width: '80%' }}>
                         <Controller
                             control={control}
                             name="address"
                             rules={{
-                                required: 'Dirección es requerida'
+                                required: uiTexts.requiredAddress
                             }}
                             render={({ field: { onChange, value } }) => (
                                 <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
@@ -250,14 +251,14 @@ export default function RegisterScreen({ navigation }: Props) {
                         {errors.address && <Text style={styles.error}>{errors.address.message}</Text>}
                     </View>
 
-                    <Text style={styles.registerText}>Contraseña</Text>
+                    <Text style={styles.registerText}>{uiTexts.passwordFormLabel}</Text>
                     <View style={{ width: '80%' }}>
                         <Controller
                             control={control}
                             name="password"
                             rules={{
-                                required: 'Contraseña es requerida',
-                                minLength: { value: 6, message: 'Mínimo 6 caracteres' },
+                                required: uiTexts.requiredPassword,
+                                minLength: { value: 6, message: uiTexts.minimum6Character },
                             }}
                             render={({ field: { onChange, value } }) => (
                                 <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
@@ -266,13 +267,13 @@ export default function RegisterScreen({ navigation }: Props) {
                         {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
                     </View>
 
-                    <Text style={styles.registerText}>Repita Contraseña</Text>
+                    <Text style={styles.registerText}>{uiTexts.repeatPasswordFormLabel}</Text>
                     <View style={{ width: '80%' }}>
                         <Controller
                             control={control}
                             name="confirmPassword"
                             rules={{
-                                required: 'Confirma tu contraseña',
+                                required: uiTexts.confirmPassword,
                             }}
                             render={({ field: { onChange, value } }) => (
                                 <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
@@ -284,21 +285,21 @@ export default function RegisterScreen({ navigation }: Props) {
                     </View>
 
                     <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
-                        <Text style={styles.buttonText}>Regístrame</Text>
+                        <Text style={styles.buttonText}>{uiTexts.registerMe}</Text>
                     </TouchableOpacity>
-                    <Text style={styles.registerText}>O</Text>
-                    <Text style={styles.registerTextGoogle}>Seleccione el tipo de usuario y rellene la dirección o se usará su ubicación actual</Text>
+                    <Text style={styles.registerText}>{uiTexts.or}</Text>
+                    <Text style={styles.registerTextGoogle}>{uiTexts.registerDisclaimer}</Text>
                     <TouchableOpacity style={styles.button} onPress={signIn}>
-                        <Text style={styles.buttonText}>Registrarme con Google</Text>
+                        <Text style={styles.buttonText}>{uiTexts.registerGoogle}</Text>
                     </TouchableOpacity>
                     <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>
-                        ¿Ya tenés cuenta? Iniciá sesión
+                        {uiTexts.haveAccountLogin}
                     </Text>
                     {
                         loading &&
                         <Loader color={colors.azureblue} size={'large'}></Loader>
                     }
-                    {error && <Text style={styles.actionsText}>Error al registrarse. Intente nuevamente.</Text>}
+                    {error && <Text style={styles.actionsText}>{uiTexts.registerErrorTryAgain}</Text>}
                 </View>
             </View>
         </Layout>
@@ -356,5 +357,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 10
     },
-    error: { color: colors.danger, marginBottom: 5, fontSize: 15 }
+    error: {
+        color: colors.danger,
+        fontSize: 15,
+        marginBottom: 5
+    }
 });

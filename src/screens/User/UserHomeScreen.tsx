@@ -81,10 +81,8 @@ export default function UserHomeScreen({ navigation }: Props) {
     };
 
     const handleViewUser = (userId: string) => {
-        if (userId) {
+        if (userId?.length) {
             navigation.navigate('UserProfile', { userId });
-        } else {
-            alert('Ha fallado la búsqueda de información del usuario.');
         }
     };
 
@@ -101,7 +99,7 @@ export default function UserHomeScreen({ navigation }: Props) {
     return (
         <Layout>
             <View style={styles.container}>
-                <Header></Header>
+                <Header userClick={(user) => handleViewUser(user?.id ?? '')}></Header>
 
                 <View style={styles.body}>
                     <TouchableOpacity
@@ -112,10 +110,10 @@ export default function UserHomeScreen({ navigation }: Props) {
                         }}
                         onPress={handleCreateService}
                     >
-                        <Text style={styles.newServiceButtonText}>Solicitar nuevo servicio</Text>
+                        <Text style={styles.newServiceButtonText}>{uiTexts.newService}</Text>
                     </TouchableOpacity>
 
-                    <Text style={styles.sectionTitle}>Tus servicios actuales/anteriores</Text>
+                    <Text style={styles.sectionTitle}>{uiTexts.services}</Text>
                     <FlatList
                         data={services}
                         keyExtractor={(item) => item.id}
@@ -124,10 +122,10 @@ export default function UserHomeScreen({ navigation }: Props) {
                             <ServiceItemRow
                                 item={item}
                                 onCancel={(id) => {
-                                    Alert.alert('Cancelar servicio', '¿Estás seguro?', [
-                                        { text: 'Cancelar', style: 'cancel' },
+                                    Alert.alert(uiTexts.cancelService, uiTexts.areYouSure, [
+                                        { text: uiTexts.cancel, style: 'cancel' },
                                         {
-                                            text: 'Sí',
+                                            text: uiTexts.yes,
                                             style: 'destructive',
                                             onPress: () => updateServiceStatus(id, statusKeys.cancelled)
                                         },
@@ -136,7 +134,7 @@ export default function UserHomeScreen({ navigation }: Props) {
                                 onViewCompanion={(item) => handleViewUser(item.companionId)}
                             />
                         )}
-                        ListEmptyComponent={<Text style={styles.noRecords}>No tenés servicios registrados.</Text>}
+                        ListEmptyComponent={<Text style={styles.noRecords}>{uiTexts.noServices}</Text>}
                     />
                     {
                         refreshing &&

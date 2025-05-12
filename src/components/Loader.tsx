@@ -17,8 +17,8 @@ function Loader({ color, size }: LoaderProps) {
 const styles = StyleSheet.create({
     indicatorContent: {
         alignItems: 'center',
-        marginTop: 10,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: 10
     }
 });
 

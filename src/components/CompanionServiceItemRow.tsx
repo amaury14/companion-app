@@ -17,19 +17,19 @@ function CompanionServiceItemRow({ ableAccept, item, acceptService, rejectServic
     return (
         <View style={styles.serviceItem}>
             <Text style={styles.inputText}>📅 {item.dateText ?? uiTexts.noDate} • {item.category} • {item.status}</Text>
-            <Text style={styles.inputText}>💲 UYU {item.companionPayment} • {item.duration} hora(s)</Text>
+            <Text style={styles.inputText}>💲 {uiTexts.currency} {item.companionPayment} • {item.duration} {uiTexts.hours}</Text>
             <Text style={styles.inputText}>📍 {item.locationText || uiTexts.noAddress}</Text>
             <View style={styles.buttonRow}>
                 {
                     ableAccept &&
                     <TouchableOpacity style={styles.button} onPress={() => acceptService(item.id)}>
-                        <Text style={styles.buttonText}>Aceptar</Text>
+                        <Text style={styles.buttonText}>{uiTexts.accept}</Text>
                     </TouchableOpacity>
                 }
                 {
                     item.status !== statusTexts.in_progress &&
                     <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.danger }} onPress={() => rejectService(item.id)}>
-                        <Text style={styles.buttonText}>Rechazar</Text>
+                        <Text style={styles.buttonText}>{uiTexts.reject}</Text>
                     </TouchableOpacity>
                 }
             </View>
