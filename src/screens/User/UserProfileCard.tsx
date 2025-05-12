@@ -17,6 +17,7 @@ import Loader from '../../components/Loader';
 export const UserProfileCard = () => {
     const route = useRoute<RouteProp<UserStackParamList, 'UserProfile'>>();
     const { userId } = route.params;
+
     const [loading, setLoading] = useState(false);
     const [userData, setUserData] = useState<UserData | null>(null);
 
@@ -62,7 +63,7 @@ export const UserProfileCard = () => {
         };
 
         fetchUserDataAsync();
-    }, [userId]);
+    }, [userId, fetchUserData]);
 
     return (
         <Layout>
