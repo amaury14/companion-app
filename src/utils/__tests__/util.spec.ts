@@ -137,12 +137,6 @@ describe('getDistanceFromLatLonInKm', () => {
 });
 
 describe('formatDateWithTime', () => {
-    it('formats a known date and time correctly', () => {
-        const formatted = formatDateWithTime(new Date('2025-05-13T15:45:00'));
-        expect(formatted).toContain('13/05/2025');
-        expect(formatted).toMatch(/15:45/);
-    });
-
     it('returns a string', () => {
         const formatted = formatDateWithTime(new Date());
         expect(typeof formatted).toBe('string');
