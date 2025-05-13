@@ -18,7 +18,8 @@ function ServiceItemRow({ item, onCancel, onViewCompanion }: ServiceItemRowProps
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }}>
-                <Text style={styles.text}>{getStatusIcon(item.status)} {item.dateText} • {item.category}</Text>
+                <Text style={styles.text}>{getStatusIcon(item.status)} {item.dateText}</Text>
+                <Text style={styles.text}>{item.category}</Text>
                 <Text style={styles.subtext}>{uiTexts.status}: {item.status} • {uiTexts.cost}: 💲{uiTexts.currency} {item.price} • {item.duration} {uiTexts.hours}</Text>
             </View>
             {

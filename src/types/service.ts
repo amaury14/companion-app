@@ -7,6 +7,7 @@ export type Service = {
     date: Timestamp;
     dateText?: string;
     duration: number;
+    endTime?: Timestamp;
     id: string;
     location?: {
         latitude: number;
@@ -15,5 +16,6 @@ export type Service = {
     locationText?: string;
     price: number;
     status: string;
+    startTime?: Timestamp;
     timeStamp: number;
 };

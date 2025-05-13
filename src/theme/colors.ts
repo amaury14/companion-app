@@ -12,7 +12,7 @@ export const colors = {
     white: 'white',
     primary: '#2196F3',
     primaryDark: '#1976D2',
-    accent: '#FFC107',
+    yellow: '#FFC107',
     surface: '#F5F5F5',
     text: '#212121',
     textLight: '#757575',

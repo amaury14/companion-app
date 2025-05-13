@@ -7,8 +7,9 @@ import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import ServiceItemRow from '../../components/ServiceItemRow';
+import { useUser } from '../../context/UserContext';
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
-import { auth, db } from '../../services/firebase';
+import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { categoryData } from '../../utils/data/category-data';
@@ -16,20 +17,21 @@ import { statusData } from '../../utils/data/status.data';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
-import { sortServices } from '../../utils/util';
+import { formatDateWithTime, sortServices } from '../../utils/util';
 
 type Props = NativeStackScreenProps<UserStackParamList, 'UserHome'>;
 
 export default function UserHomeScreen({ navigation }: Props) {
     const [refreshing, setRefreshing] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
-    const [pending, setPending] = useState<Service[]>([]);
+    const [ongoingServices, setOngoingServices] = useState<Service[]>([]);
+    const { user } = useUser();
 
     const fetchServices = useCallback(async () => {
         try {
-            setRefreshing(true);
-            const uid = auth.currentUser?.uid;
+            const uid = user?.id;
             if (!uid) return;
+            setRefreshing(true);
 
             const queryObj = query(collection(db, dbKeys.services), where(fieldKeys.requesterId, '==', uid));
             const querySnapshot = await getDocs(queryObj);
@@ -41,19 +43,23 @@ export default function UserHomeScreen({ navigation }: Props) {
                     id: doc.id,
                     category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
                     status: statusData.find(item => item.value === data.status)?.name ?? data.status,
-                    dateText: data.date?.toDate().toLocaleDateString() ?? uiTexts.noDate,
+                    dateText: formatDateWithTime(data.date?.toDate()) ?? uiTexts.noDate,
                     price: data.price ?? 0,
                     timeStamp: (data.date as Timestamp).toMillis()
                 });
             });
             const sorted = sortServices(fetched);
             setServices(sorted);
-            setPending(sorted.filter(item => item.status === statusTexts.pending));
+            setOngoingServices(sorted.filter(item =>
+                item.status === statusTexts.pending ||
+                item.status === statusTexts.in_progress ||
+                item.status === statusTexts.accepted
+            ));
         } catch (err) {
             console.error(err);
         }
         setRefreshing(false);
-    }, []);
+    }, [user]);
 
     const updateServiceStatus = async (serviceId: string, newStatus: string) => {
         if (!serviceId) return;
@@ -103,10 +109,10 @@ export default function UserHomeScreen({ navigation }: Props) {
 
                 <View style={styles.body}>
                     <TouchableOpacity
-                        disabled={pending.length > 0}
+                        disabled={ongoingServices.length > 0}
                         style={{
                             ...styles.newServiceButton,
-                            backgroundColor: pending.length > 0 ? colors.gray : colors.argentinianblue,
+                            backgroundColor: ongoingServices.length > 0 ? colors.gray : colors.argentinianblue,
                         }}
                         onPress={handleCreateService}
                     >

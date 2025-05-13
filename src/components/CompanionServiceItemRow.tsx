@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { isSameDay } from 'date-fns';
 
 import { colors } from '../theme/colors';
 import { Service } from '../types/service';
@@ -7,27 +8,34 @@ import { uiTexts } from '../utils/data/ui-text-data';
 import { statusTexts } from '../utils/keys/status-keys';
 
 export type CompanionServiceItemRowProps = {
-    ableAccept: boolean;
     acceptService: (id: string) => void;
     item: Service;
+    manageService: (item: Service) => void;
     rejectService: (id: string) => void;
 };
 
-function CompanionServiceItemRow({ ableAccept, item, acceptService, rejectService }: CompanionServiceItemRowProps) {
+function CompanionServiceItemRow({ acceptService, item, manageService, rejectService }: CompanionServiceItemRowProps) {
     return (
         <View style={styles.serviceItem}>
-            <Text style={styles.inputText}>📅 {item.dateText ?? uiTexts.noDate} • {item.category} • {item.status}</Text>
+            <Text style={styles.inputText}>📅 {item.dateText ?? uiTexts.noDate}</Text>
+            <Text style={styles.inputText}>📂 {item.category} • {item.status}</Text>
             <Text style={styles.inputText}>💲 {uiTexts.currency} {item.companionPayment} • {item.duration} {uiTexts.hours}</Text>
             <Text style={styles.inputText}>📍 {item.locationText || uiTexts.noAddress}</Text>
             <View style={styles.buttonRow}>
                 {
-                    ableAccept &&
+                    (item.status === statusTexts.in_progress || item.status === statusTexts.accepted) &&
+                    <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.azureblue }} onPress={() => manageService(item)}>
+                        <Text style={styles.buttonText}>{uiTexts.manage}</Text>
+                    </TouchableOpacity>
+                }
+                {
+                    item.status === statusTexts.pending && isSameDay(item.date.toDate(), new Date()) &&
                     <TouchableOpacity style={styles.button} onPress={() => acceptService(item.id)}>
                         <Text style={styles.buttonText}>{uiTexts.accept}</Text>
                     </TouchableOpacity>
                 }
                 {
-                    item.status !== statusTexts.in_progress &&
+                    item.status === statusTexts.pending &&
                     <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.danger }} onPress={() => rejectService(item.id)}>
                         <Text style={styles.buttonText}>{uiTexts.reject}</Text>
                     </TouchableOpacity>
