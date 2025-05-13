@@ -31,6 +31,12 @@ export const sortServices = (services: Service[]): Service[] => {
             if (a.status === statusTexts.pending && b.status !== statusTexts.pending) return -1;
             if (a.status !== statusTexts.pending && b.status === statusTexts.pending) return 1;
 
+            if (a.status === statusTexts.accepted && b.status !== statusTexts.accepted) return -1;
+            if (a.status !== statusTexts.accepted && b.status === statusTexts.accepted) return 1;
+
+            if (a.status === statusTexts.in_progress && b.status !== statusTexts.in_progress) return -1;
+            if (a.status !== statusTexts.in_progress && b.status === statusTexts.in_progress) return 1;
+
             return b.timeStamp - a.timeStamp;
         });
     }
@@ -49,3 +55,12 @@ export const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: numb
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 };
+
+export const formatDateWithTime = (date: Date): string =>
+    date?.toLocaleString('es-UY', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });

@@ -89,7 +89,7 @@ export const UserProfileCard = () => {
                             <Text style={styles.statText}>{userData?.completedServices} {userData?.type === 'companion' ? uiTexts.completedServices : uiTexts.receivedServices}</Text>
                         </View>
                         <View style={styles.statItem}>
-                            <FontAwesome name="star" size={16} color={colors.accent} />
+                            <FontAwesome name="star" size={16} color={colors.yellow} />
                             <Text style={styles.statText}>{userData?.reputationScore.toFixed(1)} {uiTexts.reputation}</Text>
                         </View>
                     </View>

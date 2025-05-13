@@ -10,32 +10,30 @@ import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import { useUser } from '../../context/UserContext';
 import { CompanionStackParamList } from '../../navigation/CompanionStack/CompanionStack';
-import { auth, db } from '../../services/firebase';
+import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { radioKilometers } from '../../utils/keys/costs-keys';
-import { statusKeys } from '../../utils/keys/status-keys';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
-import { getDistanceFromLatLonInKm } from '../../utils/util';
+import { statusKeys } from '../../utils/keys/status-keys';
+import { formatDateWithTime, getDistanceFromLatLonInKm, sortServices } from '../../utils/util';
 
 type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionHome'>;
 
 export default function CompanionHomeScreen({ navigation }: Props) {
+    const [refreshing, setRefreshing] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
     const [servicesRejected, setServicesRejected] = useState<string[]>([]);
-    const [refreshing, setRefreshing] = useState(false);
-    const [ableAccept, setAbleAccept] = useState(false);
     const { user } = useUser();
-    const authUser = auth?.currentUser;
 
     const fetchServices = useCallback(async () => {
         try {
-            if (!authUser?.uid) return;
+            const uid = user?.id;
+            if (!uid) return;
             setRefreshing(true);
-            setAbleAccept(false);
 
             const queryObjPending = query(
                 collection(db, dbKeys.services),
@@ -43,46 +41,63 @@ export default function CompanionHomeScreen({ navigation }: Props) {
             );
             const queryObjCompanion = query(
                 collection(db, dbKeys.services),
-                where(fieldKeys.companionId, '==', authUser?.uid)
+                where(fieldKeys.companionId, '==', uid)
             );
             const pending = await getDocs(queryObjPending);
             const companion = await getDocs(queryObjCompanion);
             const resultsStatus = pending?.docs?.map(doc => ({ id: doc.id, ...doc.data() } as Service));
             const resultsCompanion = companion?.docs?.map(doc => ({ id: doc.id, ...doc.data() } as Service));
 
-            setAbleAccept(!resultsCompanion.length);
+            const resultsStatusPromises = resultsStatus?.map(async data => {
+                if (servicesRejected?.includes(data.id)) return null;
 
-            const fetched: Service[] = [];
-            [...resultsStatus, ...resultsCompanion]?.forEach(async data => {
-                if (!servicesRejected?.find(item => item === data.id)) {
-                    const locationText = data.location?.latitude && data.location?.longitude
-                        ? await getAddressFromCoords(data.location?.latitude ?? 0, data.location?.longitude ?? 0)
-                        : uiTexts.noAddress;
-                    const distance = getDistanceFromLatLonInKm(
-                        user?.address?.latitude ?? 0,
-                        user?.address?.longitude ?? 0,
-                        data.location?.latitude ?? 0,
-                        data.location?.longitude ?? 0
-                    );
-                    // Filter services close to the companion
-                    if (distance <= radioKilometers) {
-                        fetched.push({
-                            ...data,
-                            category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
-                            status: statusData.find(item => item.value === data.status)?.name ?? data.status,
-                            dateText: data.date?.toDate().toLocaleDateString() || uiTexts.noDate,
-                            timeStamp: data.date?.toMillis(),
-                            locationText
-                        });
-                    }
-                }
+                const distance = getDistanceFromLatLonInKm(
+                    user?.address?.latitude ?? 0,
+                    user?.address?.longitude ?? 0,
+                    data.location?.latitude ?? 0,
+                    data.location?.longitude ?? 0
+                );
+                if (distance > radioKilometers) return null;
+
+                const locationText = data.location?.latitude && data.location?.longitude
+                    ? await getAddressFromCoords(data.location.latitude, data.location.longitude)
+                    : uiTexts.noAddress;
+
+                return {
+                    ...data,
+                    category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
+                    status: statusData.find(item => item.value === data.status)?.name ?? data.status,
+                    dateText: formatDateWithTime(data.date?.toDate()) || uiTexts.noDate,
+                    timeStamp: data.date?.toMillis(),
+                    locationText
+                } as Service;
             });
-            setServices(fetched);
+            const resultsCompanionPromises = resultsCompanion?.map(async data => {
+                const locationText = data.location?.latitude && data.location?.longitude
+                    ? await getAddressFromCoords(data.location.latitude, data.location.longitude)
+                    : uiTexts.noAddress;
+
+                return {
+                    ...data,
+                    category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
+                    status: statusData.find(item => item.value === data.status)?.name ?? data.status,
+                    dateText: formatDateWithTime(data.date?.toDate()) || uiTexts.noDate,
+                    timeStamp: data.date?.toMillis(),
+                    locationText
+                } as Service;
+            });
+            const allResults = await Promise.all([
+                ...(resultsStatusPromises ?? []),
+                ...(resultsCompanionPromises ?? [])
+            ]);
+            const fetched = allResults?.filter((item): item is Service => !!item);
+            const sorted = await sortServices(fetched);
+            setServices(sorted);
         } catch (err) {
             console.error(err);
         }
         setRefreshing(false);
-    }, [authUser?.uid, servicesRejected, user]);
+    }, [user, servicesRejected]);
 
     const handleRefresh = useCallback(async () => {
         await fetchServices();
@@ -91,8 +106,8 @@ export default function CompanionHomeScreen({ navigation }: Props) {
     const acceptService = async (serviceId: string) => {
         try {
             await updateDoc(doc(db, dbKeys.services, serviceId), {
-                status: statusKeys.in_progress,
-                companionId: authUser?.uid,
+                companionId: user?.id,
+                status: statusKeys.accepted
             });
             alert(uiTexts.serviceAccepted);
             fetchServices();
@@ -146,7 +161,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                 <Header userClick={(user) => handleViewUser(user?.id ?? '')}></Header>
 
                 <View style={styles.body}>
-                    <Text style={styles.title}>{uiTexts.availableServices}</Text>
+                    <Text style={styles.title}>{uiTexts.companionServices}</Text>
 
                     <FlatList
                         data={services}
@@ -155,9 +170,9 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
                         renderItem={({ item }) => (
                             <CompanionServiceItemRow
-                                ableAccept={ableAccept}
                                 item={item}
                                 acceptService={() => acceptService(item.id)}
+                                manageService={() => navigation.navigate('ActiveService', { service: item })}
                                 rejectService={() => rejectService(item.id)}
                             />
                         )
@@ -180,6 +195,7 @@ const styles = StyleSheet.create({
     },
     body: { flex: 1, padding: 20 },
     title: {
+        color: colors.white,
         fontSize: 22,
         fontWeight: '600',
         marginBottom: 12

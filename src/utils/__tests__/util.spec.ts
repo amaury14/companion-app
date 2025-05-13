@@ -2,7 +2,7 @@ import { Timestamp } from 'firebase/firestore';
 
 import { Service } from '../../types/service';
 import { statusTexts } from '../keys/status-keys';
-import { getCosts, getDistanceFromLatLonInKm, getStatusIcon, sortServices } from '../util';
+import { formatDateWithTime, getCosts, getDistanceFromLatLonInKm, getStatusIcon, sortServices } from '../util';
 
 describe('getCosts', () => {
     it('should return correct costs', () => {
@@ -133,5 +133,29 @@ describe('getDistanceFromLatLonInKm', () => {
         const d1 = getDistanceFromLatLonInKm(10, 20, 30, 40);
         const d2 = getDistanceFromLatLonInKm(30, 40, 10, 20);
         expect(d1).toBeCloseTo(d2, 5);
+    });
+});
+
+describe('formatDateWithTime', () => {
+    it('formats a known date and time correctly', () => {
+        const formatted = formatDateWithTime(new Date('2025-05-13T15:45:00'));
+        expect(formatted).toContain('13/05/2025');
+        expect(formatted).toMatch(/15:45/);
+    });
+
+    it('returns a string', () => {
+        const formatted = formatDateWithTime(new Date());
+        expect(typeof formatted).toBe('string');
+    });
+
+    it('includes day, month, year, hour and minute', () => {
+        const formatted = formatDateWithTime(new Date('2025-12-01T08:05:00'));
+        expect(formatted).toMatch(/\d{2}\/\d{2}\/\d{4}.*\d{2}:\d{2}/);
+    });
+
+    it('pads single-digit values with zeros', () => {
+        const formatted = formatDateWithTime(new Date('2025-01-02T04:07:00'));
+        expect(formatted).toContain('02/01/2025');
+        expect(formatted).toMatch(/04:07/);
     });
 });

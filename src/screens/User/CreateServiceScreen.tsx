@@ -188,6 +188,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
                         minDate={new Date()}
                         mode="single"
                         locale="es"
+                        timePicker={true}
                         onChange={({ date }) => setSelectedDate(dayjs(date).toDate())}
                         styles={{
                             today: { borderColor: colors.azureblue, borderWidth: 1 },
