@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-native-ui-datepicker';
@@ -54,7 +54,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
         });
     };
 
-    const validateAddress = async (address: string) => {
+    const validateAddress = useCallback(async (address: string) => {
         try {
             const geocoded = await Location.geocodeAsync(address);
             if (geocoded.length === 0) {
@@ -69,7 +69,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
             alert(uiTexts.invalidAddress2);
             return null;
         }
-    };
+    }, []);
 
     const onSubmit = async (data: FormData) => {
         const uid = auth.currentUser?.uid;
@@ -112,9 +112,9 @@ export default function CreateServiceScreen({ navigation }: Props) {
         setLoading(false);
     };
 
-    const getEstCosts = (): string => {
+    const getEstCosts = useMemo(() => {
         return duration ? `${getCosts(parseInt(duration), baseCost, baseComission)} ${uiTexts.est}.` : ''
-    }
+    }, [duration]);
 
     useEffect(() => {
         getLocation();
@@ -163,7 +163,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
 
                 <View style={styles.durationContent}>
                     <Text style={styles.inputText}>{uiTexts.durationFormLabel}</Text>
-                    <Text style={styles.estText}>💲{getEstCosts()}</Text>
+                    <Text style={styles.estText}>💲{getEstCosts}</Text>
                 </View>
                 <Controller
                     control={control}

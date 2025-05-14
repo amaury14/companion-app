@@ -1,29 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { Text, StyleSheet, ScrollView } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { doc, increment, Timestamp, updateDoc } from 'firebase/firestore';
-import { MaterialIcons } from '@expo/vector-icons';
 
 import Layout from '../../components/Layout';
 import ServiceCard from '../../components/ServiceCard';
-import { useUser } from '../../context/UserContext';
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
-import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { dbKeys } from '../../utils/keys/db-keys';
-import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 
-type Props = NativeStackScreenProps<UserStackParamList, 'UserActiveService'>;
-
-const UserActiveServiceScreen = ({ navigation }: Props) => {
+const UserActiveServiceScreen = () => {
     const route = useRoute<RouteProp<UserStackParamList, 'UserActiveService'>>();
     const { service } = route.params;
-    const { user } = useUser();
-
-    const [serviceData, setServiceData] = useState<Service>(service);
+    const [serviceData] = useState<Service>(service);
 
     return (
         <Layout>
@@ -82,12 +71,12 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: colors.white,
-        fontWeight: '600',
-        fontSize: 20
+        fontSize: 20,
+        fontWeight: '600'
     },
     waitForText: {
         color: colors.black,
-        fontWeight: '500',
-        fontSize: 17
+        fontSize: 17,
+        fontWeight: '500'
     }
 });

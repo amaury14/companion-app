@@ -1,8 +1,12 @@
+import * as Location from 'expo-location';
 import { Timestamp } from 'firebase/firestore';
 
 import { Service } from '../../types/service';
+import { uiTexts } from '../data/ui-text-data';
 import { statusTexts } from '../keys/status-keys';
-import { formatDateWithTime, getCosts, getDistanceFromLatLonInKm, getStatusIcon, sortServices } from '../util';
+import { formatDateWithTime, getAddressFromCoords, getCosts, getDistanceFromLatLonInKm, getStatusIcon, sortServices } from '../util';
+
+jest.mock('expo-location');
 
 describe('getCosts', () => {
     it('should return correct costs', () => {
@@ -153,5 +157,33 @@ describe('formatDateWithTime', () => {
         const formatted = formatDateWithTime(new Date('2025-01-02T04:07:00'));
         expect(formatted).toContain('02/01/2025');
         expect(formatted).toMatch(/04:07/);
+    });
+});
+
+describe('getAddressFromCoords', () => {
+    it('returns formatted address when geocode succeeds', async () => {
+        (Location.reverseGeocodeAsync as jest.Mock).mockResolvedValue([
+            {
+                street: 'Av. 18 de Julio',
+                city: 'Montevideo',
+                region: 'Montevideo',
+                name: 'Centro',
+            },
+        ]);
+
+        const result = await getAddressFromCoords(-34.9, -56.2);
+        expect(result).toBe('Av. 18 de Julio, Montevideo, Montevideo');
+    });
+
+    it('returns fallback text if no address found', async () => {
+        (Location.reverseGeocodeAsync as jest.Mock).mockResolvedValue([]);
+        const result = await getAddressFromCoords(-34.9, -56.2);
+        expect(result).toEqual(uiTexts.noAddress);
+    });
+
+    it('returns fallback text on error', async () => {
+        (Location.reverseGeocodeAsync as jest.Mock).mockRejectedValue(new Error('Failed'));
+        const result = await getAddressFromCoords(-34.9, -56.2);
+        expect(result).toEqual(uiTexts.noAddress);
     });
 });

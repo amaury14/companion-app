@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -51,7 +51,7 @@ export default function RegisterScreen({ navigation }: Props) {
         });
     };
 
-    const validateAddress = async (address: string) => {
+    const validateAddress = useCallback(async (address: string) => {
         try {
             const geocoded = await Location.geocodeAsync(address);
             if (geocoded.length === 0) {
@@ -66,7 +66,7 @@ export default function RegisterScreen({ navigation }: Props) {
             alert(uiTexts.invalidAddress2);
             return null;
         }
-    };
+    }, []);
 
     const onRegister: SubmitHandler<RegisterFormData> = async ({ address, name, email, password, confirmPassword }) => {
         if (password !== confirmPassword) {

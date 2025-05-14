@@ -6,5 +6,5 @@ module.exports = {
   transform: {
     '^.+.tsx?$': ['ts-jest', {}],
   },
-  testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
+  testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)']
 };
