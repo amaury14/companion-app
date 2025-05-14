@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-native-ui-datepicker';
 import SelectDropdown from 'react-native-select-dropdown';
@@ -19,11 +19,12 @@ import { categoryData } from '../../utils/data/category-data';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
-import { baseComission, baseCost } from '../../utils/keys/costs-keys';
+import { baseComission, baseCost, maxServiceHours, minServiceHours } from '../../utils/keys/costs-keys';
 import { getCosts } from '../../utils/util';
 
 type FormData = {
     category: Category;
+    comments: string;
     duration: string;
     location: string;
 };
@@ -31,7 +32,7 @@ type FormData = {
 type Props = NativeStackScreenProps<UserStackParamList, 'CreateService'>;
 
 export default function CreateServiceScreen({ navigation }: Props) {
-    const { control, handleSubmit, watch } = useForm<FormData>();
+    const { control, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -88,6 +89,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
                 category: data.category.value,
                 checkInTime: null,
                 checkOutTime: null,
+                comments: data.comments,
                 companionId: '',
                 companionPayment: Math.round(price - (price * baseComission)),
                 date: Timestamp.fromDate(selectedDate),
@@ -111,7 +113,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
     };
 
     const getEstCosts = (): string => {
-        return duration ? `$${getCosts(parseInt(duration), baseCost, baseComission)} est.` : ''
+        return duration ? `${getCosts(parseInt(duration), baseCost, baseComission)} ${uiTexts.est}.` : ''
     }
 
     useEffect(() => {
@@ -120,14 +122,14 @@ export default function CreateServiceScreen({ navigation }: Props) {
 
     return (
         <Layout>
-            <View style={styles.container}>
+            <ScrollView style={styles.container} contentContainerStyle={styles.content}>
                 <Text style={styles.title}>{uiTexts.newService}</Text>
 
                 <Text style={styles.inputText}>{uiTexts.categoryFormLabel}</Text>
                 <Controller
                     control={control}
                     name="category"
-                    rules={{ required: true }}
+                    rules={{ required: uiTexts.requiredCategory }}
                     render={({ field: { onChange } }) => (
                         <View style={{ width: '100%' }}>
                             <SelectDropdown
@@ -154,22 +156,24 @@ export default function CreateServiceScreen({ navigation }: Props) {
                                 showsVerticalScrollIndicator={false}
                                 dropdownStyle={styles.dropdownMenuStyle}
                             />
+                            {errors.category && <Text style={styles.error}>{errors.category.message}</Text>}
                         </View>
                     )}
                 />
 
                 <View style={styles.durationContent}>
                     <Text style={styles.inputText}>{uiTexts.durationFormLabel}</Text>
-                    <Text style={styles.estText}>{getEstCosts()}</Text>
+                    <Text style={styles.estText}>💲{getEstCosts()}</Text>
                 </View>
                 <Controller
                     control={control}
                     name="duration"
-                    rules={{ required: true }}
+                    rules={{ required: uiTexts.requiredDuration, min: minServiceHours, max: maxServiceHours }}
                     render={({ field: { onChange, value } }) => (
                         <TextInput style={styles.input} value={value} onChangeText={onChange} keyboardType="numeric" />
                     )}
                 />
+                {errors.duration && <Text style={styles.error}>{errors.duration.message}</Text>}
 
                 <Text style={styles.inputText}>{uiTexts.locationFormLabel}</Text>
                 <Controller
@@ -177,6 +181,23 @@ export default function CreateServiceScreen({ navigation }: Props) {
                     name="location"
                     render={({ field: { onChange, value } }) => (
                         <TextInput placeholder={uiTexts.locationFormPlaceholder} style={styles.input} value={value} onChangeText={onChange} />
+                    )}
+                />
+
+                <Text style={styles.inputText}>{uiTexts.commentsFormLabel}</Text>
+                <Controller
+                    control={control}
+                    name="comments"
+                    render={({ field: { onChange, value } }) => (
+                        <TextInput
+                            style={styles.textArea}
+                            multiline
+                            numberOfLines={4}
+                            placeholder={uiTexts.commentsFormPlaceholder}
+                            textAlignVertical="top"
+                            value={value}
+                            onChangeText={onChange}
+                        />
                     )}
                 />
 
@@ -207,14 +228,20 @@ export default function CreateServiceScreen({ navigation }: Props) {
                         <Loader color={colors.azureblue} size={'large'}></Loader>
                     }
                 </View>
-            </View>
+            </ScrollView>
         </Layout>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20 },
-    title: { fontSize: 20, fontWeight: 'bold', marginBottom: 5 },
+    container: { flex: 1 },
+    content: { padding: 20 },
+    title: {
+        color: colors.white,
+        fontSize: 22,
+        fontWeight: 'bold',
+        marginBottom: 5
+    },
     input: {
         borderBottomWidth: 1,
         fontSize: 14,
@@ -296,5 +323,20 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontSize: 18,
         fontWeight: 'bold'
+    },
+    textArea: {
+        backgroundColor: colors.gray,
+        borderColor: colors.azureblue,
+        borderRadius: 8,
+        borderWidth: 1,
+        color: colors.black,
+        height: 120,
+        fontSize: 18,
+        padding: 12
+    },
+    error: {
+        color: colors.danger,
+        fontSize: 15,
+        marginBottom: 5
     }
 });

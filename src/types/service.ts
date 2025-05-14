@@ -2,12 +2,14 @@ import { Timestamp } from 'firebase/firestore';
 
 export type Service = {
     category: string;
+    checkInTime?: Timestamp;
+    checkOutTime?: Timestamp;
+    comments: string;
     companionId: string;
     companionPayment: number;
     date: Timestamp;
     dateText?: string;
     duration: number;
-    endTime?: Timestamp;
     id: string;
     location?: {
         latitude: number;
@@ -15,7 +17,7 @@ export type Service = {
     };
     locationText?: string;
     price: number;
+    requesterId: string;
     status: string;
-    startTime?: Timestamp;
     timeStamp: number;
 };

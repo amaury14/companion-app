@@ -56,6 +56,7 @@ describe('sortServices', () => {
     const mock = (overrides: Partial<Service>): Service => ({
         id: '',
         category: '',
+        comments: '',
         date: new Timestamp(10, 0),
         price: 0,
         status: '',
@@ -63,6 +64,7 @@ describe('sortServices', () => {
         companionId: '',
         companionPayment: 0,
         duration: 0,
+        requesterId: '',
         ...overrides,
     });
 
