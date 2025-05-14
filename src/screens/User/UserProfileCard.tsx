@@ -2,17 +2,17 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import * as Location from 'expo-location';
 
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import Layout from '../../components/Layout';
+import Loader from '../../components/Loader';
 import { colors } from '../../theme/colors';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { doc, getDoc } from 'firebase/firestore';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { db } from '../../services/firebase';
 import { UserData } from '../../types/user';
-import Loader from '../../components/Loader';
+import { getAddressFromCoords } from '../../utils/util';
 
 export const UserProfileCard = () => {
     const route = useRoute<RouteProp<UserStackParamList, 'UserProfile'>>();
@@ -20,22 +20,6 @@ export const UserProfileCard = () => {
 
     const [loading, setLoading] = useState(false);
     const [userData, setUserData] = useState<UserData | null>(null);
-
-    const getAddressFromCoords = async (latitude: number, longitude: number) => {
-        try {
-            const addresses = await Location.reverseGeocodeAsync({ latitude, longitude });
-
-            if (addresses.length > 0) {
-                const { street, name, city, region } = addresses[0];
-                return `${street || name}, ${city}, ${region}`; //, ${country}
-            } else {
-                return uiTexts.noAddress;
-            }
-        } catch (error) {
-            console.error('Error obteniendo la dirección:', error);
-            return uiTexts.noAddress;
-        }
-    };
 
     const fetchUserData = useCallback(async (id: string) => {
         try {

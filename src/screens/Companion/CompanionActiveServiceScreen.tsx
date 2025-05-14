@@ -16,10 +16,10 @@ import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 
-type Props = NativeStackScreenProps<CompanionStackParamList, 'ActiveService'>;
+type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionActiveService'>;
 
-const ActiveServiceScreen = ({ navigation }: Props) => {
-    const route = useRoute<RouteProp<CompanionStackParamList, 'ActiveService'>>();
+const CompanionActiveServiceScreen = ({ navigation }: Props) => {
+    const route = useRoute<RouteProp<CompanionStackParamList, 'CompanionActiveService'>>();
     const { service } = route.params;
     const { user } = useUser();
 
@@ -99,7 +99,7 @@ const ActiveServiceScreen = ({ navigation }: Props) => {
     );
 };
 
-export default ActiveServiceScreen;
+export default CompanionActiveServiceScreen;
 
 const styles = StyleSheet.create({
     container: {
