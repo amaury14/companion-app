@@ -10,11 +10,12 @@ import { getStatusIcon } from '../utils/util';
 
 export type ServiceItemRowProps = {
     item: Service;
+    manageService: (item: Service) => void;
     onCancel: (id: string) => void;
     onViewCompanion: (item: Service) => void;
 };
 
-function ServiceItemRow({ item, onCancel, onViewCompanion }: ServiceItemRowProps) {
+function ServiceItemRow({ item, manageService, onCancel, onViewCompanion }: ServiceItemRowProps) {
     return (
         <View style={styles.container}>
             <View style={{ flex: 1 }}>
@@ -29,15 +30,21 @@ function ServiceItemRow({ item, onCancel, onViewCompanion }: ServiceItemRowProps
                 </Text>
             </View>
             {
+                (item.status === statusTexts.in_progress || item.status === statusTexts.accepted) &&
+                <TouchableOpacity onPress={() => manageService(item)} style={styles.cancelButton}>
+                    <Ionicons name="settings" size={35} color={colors.dragonblue} />
+                </TouchableOpacity>
+            }
+            {
                 item.status === statusTexts.pending &&
                 <TouchableOpacity onPress={() => onCancel(item.id)} style={styles.cancelButton}>
                     <Ionicons name="close-circle" size={35} color={colors.danger} />
                 </TouchableOpacity>
             }
             {
-                item.status === statusTexts.in_progress &&
+                (item.status === statusTexts.in_progress || item.status === statusTexts.accepted) &&
                 <TouchableOpacity onPress={() => onViewCompanion(item)} style={styles.cancelButton}>
-                    <Ionicons name="person-outline" size={35} color={colors.franceblue} />
+                    <Ionicons name="person" size={35} color={colors.success} />
                 </TouchableOpacity>
             }
         </View>
@@ -65,7 +72,6 @@ const styles = StyleSheet.create({
         marginTop: 2
     },
     cancelButton: {
-        marginLeft: 12,
         padding: 4
     }
 });

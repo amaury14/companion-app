@@ -1,5 +1,8 @@
-import { Service } from '../types/service';
+import * as Location from 'expo-location';
+
+import { uiTexts } from './data/ui-text-data';
 import { statusTexts } from './keys/status-keys';
+import { Service } from '../types/service';
 
 export const getCosts = (duration: number, basePrice: number, comission: number): number => {
     const baseCost = duration * basePrice;
@@ -64,3 +67,19 @@ export const formatDateWithTime = (date: Date): string =>
         hour: '2-digit',
         minute: '2-digit',
     });
+
+export const getAddressFromCoords = async (latitude: number, longitude: number) => {
+    try {
+        const addresses = await Location.reverseGeocodeAsync({ latitude, longitude });
+
+        if (addresses.length > 0) {
+            const { street, name, city, region } = addresses[0];
+            return `${street || name}, ${city}, ${region}`; //, ${country}
+        } else {
+            return uiTexts.noAddress;
+        }
+    } catch (error) {
+        console.error('Error obteniendo la dirección:', error);
+        return uiTexts.noAddress;
+    }
+};

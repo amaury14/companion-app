@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
-import { collection, doc, getDocs, query, Timestamp, updateDoc, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { collection, doc, getDocs, query, Timestamp, updateDoc, where } from 'firebase/firestore';
 
 import Header from '../../components/Header';
 import Layout from '../../components/Layout';
@@ -17,7 +17,7 @@ import { statusData } from '../../utils/data/status.data';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
-import { formatDateWithTime, sortServices } from '../../utils/util';
+import { formatDateWithTime, getAddressFromCoords, sortServices } from '../../utils/util';
 
 type Props = NativeStackScreenProps<UserStackParamList, 'UserHome'>;
 
@@ -35,20 +35,25 @@ export default function UserHomeScreen({ navigation }: Props) {
 
             const queryObj = query(collection(db, dbKeys.services), where(fieldKeys.requesterId, '==', uid));
             const querySnapshot = await getDocs(queryObj);
-            const fetched: Service[] = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data() as Service;
-                fetched.push({
+            const queryData = querySnapshot?.docs?.map(doc => ({ id: doc.id, ...doc.data() } as Service));
+            const queryDataPromises = queryData?.map(async data => {
+                const locationText = data.location?.latitude && data.location?.longitude
+                    ? await getAddressFromCoords(data.location.latitude, data.location.longitude)
+                    : uiTexts.noAddress;
+                return {
                     ...data,
-                    id: doc.id,
                     category: categoryData.find(item => item.value === data.category)?.name ?? data.category,
                     status: statusData.find(item => item.value === data.status)?.name ?? data.status,
                     dateText: formatDateWithTime(data.date?.toDate()) ?? uiTexts.noDate,
                     price: data.price ?? 0,
-                    timeStamp: (data.date as Timestamp).toMillis()
-                });
+                    timeStamp: (data.date as Timestamp).toMillis(),
+                    locationText
+                };
             });
-            const sorted = sortServices(fetched);
+            const allResults = await Promise.all([
+                ...(queryDataPromises ?? [])
+            ]);
+            const sorted = sortServices(allResults);
             setServices(sorted);
             setOngoingServices(sorted.filter(item =>
                 item.status === statusTexts.pending ||
@@ -127,6 +132,7 @@ export default function UserHomeScreen({ navigation }: Props) {
                         renderItem={({ item }) => (
                             <ServiceItemRow
                                 item={item}
+                                manageService={() => navigation.navigate('UserActiveService', { service: item })}
                                 onCancel={(id) => {
                                     Alert.alert(uiTexts.cancelService, uiTexts.areYouSure, [
                                         { text: uiTexts.cancel, style: 'cancel' },

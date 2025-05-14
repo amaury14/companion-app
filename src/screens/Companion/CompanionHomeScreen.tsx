@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
-import * as Location from 'expo-location';
 
 import CompanionServiceItemRow from '../../components/CompanionServiceItemRow';
 import Header from '../../components/Header';
@@ -19,7 +18,7 @@ import { uiTexts } from '../../utils/data/ui-text-data';
 import { radioKilometers } from '../../utils/keys/costs-keys';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
-import { formatDateWithTime, getDistanceFromLatLonInKm, sortServices } from '../../utils/util';
+import { formatDateWithTime, getAddressFromCoords, getDistanceFromLatLonInKm, sortServices } from '../../utils/util';
 
 type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionHome'>;
 
@@ -123,22 +122,6 @@ export default function CompanionHomeScreen({ navigation }: Props) {
         fetchServices();
     };
 
-    const getAddressFromCoords = async (latitude: number, longitude: number) => {
-        try {
-            const addresses = await Location.reverseGeocodeAsync({ latitude, longitude });
-
-            if (addresses.length > 0) {
-                const { street, name, city, region } = addresses[0];
-                return `${street || name}, ${city}, ${region}`; //, ${country}
-            } else {
-                return uiTexts.noAddress;
-            }
-        } catch (error) {
-            console.error('Error obteniendo la dirección:', error);
-            return uiTexts.noAddress;
-        }
-    };
-
     const handleViewUser = (userId: string) => {
         if (userId?.length) {
             navigation.navigate('UserProfile', { userId });
@@ -172,7 +155,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                             <CompanionServiceItemRow
                                 item={item}
                                 acceptService={() => acceptService(item.id)}
-                                manageService={() => navigation.navigate('ActiveService', { service: item })}
+                                manageService={() => navigation.navigate('CompanionActiveService', { service: item })}
                                 rejectService={() => rejectService(item.id)}
                             />
                         )
