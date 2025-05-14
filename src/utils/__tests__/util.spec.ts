@@ -58,9 +58,9 @@ describe('getStatusIcon', () => {
 
 describe('sortServices', () => {
     const mock = (overrides: Partial<Service>): Service => ({
+        additionalInfo: '',
         id: '',
         category: '',
-        comments: '',
         date: new Timestamp(10, 0),
         price: 0,
         status: '',

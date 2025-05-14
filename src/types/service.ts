@@ -1,10 +1,10 @@
 import { Timestamp } from 'firebase/firestore';
 
 export type Service = {
+    additionalInfo: string;
     category: string;
     checkInTime?: Timestamp;
     checkOutTime?: Timestamp;
-    comments: string;
     companionId: string;
     companionPayment: number;
     date: Timestamp;
