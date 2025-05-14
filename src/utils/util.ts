@@ -1,8 +1,8 @@
 import * as Location from 'expo-location';
 
+import { Service } from '../types/service';
 import { uiTexts } from './data/ui-text-data';
 import { statusTexts } from './keys/status-keys';
-import { Service } from '../types/service';
 
 export const getCosts = (duration: number, basePrice: number, comission: number): number => {
     const baseCost = duration * basePrice;

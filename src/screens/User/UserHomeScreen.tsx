@@ -66,7 +66,7 @@ export default function UserHomeScreen({ navigation }: Props) {
         setRefreshing(false);
     }, [user]);
 
-    const updateServiceStatus = async (serviceId: string, newStatus: string) => {
+    const updateServiceStatus = useCallback(async (serviceId: string, newStatus: string) => {
         if (!serviceId) return;
         try {
             setRefreshing(true);
@@ -81,7 +81,7 @@ export default function UserHomeScreen({ navigation }: Props) {
         } catch (error) {
             console.error('Error al actualizar el servicio:', error);
         }
-    };
+    }, [fetchServices]);
 
     const handleRefresh = useCallback(async () => {
         await fetchServices();
