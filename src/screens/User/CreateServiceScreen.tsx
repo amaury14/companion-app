@@ -23,8 +23,8 @@ import { baseComission, baseCost, maxServiceHours, minServiceHours } from '../..
 import { getCosts } from '../../utils/util';
 
 type FormData = {
+    additionalInfo: string;
     category: Category;
-    comments: string;
     duration: string;
     location: string;
 };
@@ -86,10 +86,10 @@ export default function CreateServiceScreen({ navigation }: Props) {
         try {
             setLoading(true);
             await addDoc(collection(db, dbKeys.services), {
+                additionalInfo: data.additionalInfo,
                 category: data.category.value,
                 checkInTime: null,
                 checkOutTime: null,
-                comments: data.comments,
                 companionId: '',
                 companionPayment: Math.round(price - (price * baseComission)),
                 date: Timestamp.fromDate(selectedDate),
@@ -184,16 +184,16 @@ export default function CreateServiceScreen({ navigation }: Props) {
                     )}
                 />
 
-                <Text style={styles.inputText}>{uiTexts.commentsFormLabel}</Text>
+                <Text style={styles.inputText}>{uiTexts.additionalInfoFormLabel}</Text>
                 <Controller
                     control={control}
-                    name="comments"
+                    name="additionalInfo"
                     render={({ field: { onChange, value } }) => (
                         <TextInput
                             style={styles.textArea}
                             multiline
                             numberOfLines={4}
-                            placeholder={uiTexts.commentsFormPlaceholder}
+                            placeholder={uiTexts.additionalInfoFormPlaceholder}
                             textAlignVertical="top"
                             value={value}
                             onChangeText={onChange}

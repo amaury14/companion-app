@@ -23,7 +23,7 @@ function CompanionServiceItemRow({ acceptService, item, manageService, rejectSer
             <Text style={styles.inputText}>📂 {item.category} • {item.status}</Text>
             {
                 isActive &&
-                <Text style={styles.inputText}>💡 {item.comments}</Text>
+                <Text style={styles.inputText}>💡 {item.additionalInfo}</Text>
             }
             <Text style={styles.inputText}>💲 {uiTexts.currency} {item.companionPayment} • {item.duration} {uiTexts.hours}</Text>
             {

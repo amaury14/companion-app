@@ -44,7 +44,7 @@ function ServiceCard({ serviceData }: ServiceCardProps) {
         <View style={styles.card}>
             <Info label={`📅 ${uiTexts.date}`} value={serviceData.dateText ?? uiTexts.notAvailable} />
             <Info label={`📍 ${uiTexts.location}`} value={serviceData.locationText ?? uiTexts.notAvailable} />
-            <Info label={`💡 ${uiTexts.commentsFormLabel}`} value={serviceData.comments ?? uiTexts.notAvailable} />
+            <Info label={`💡 ${uiTexts.additionalInfoFormLabel}`} value={serviceData.additionalInfo ?? uiTexts.notAvailable} />
             <Info label={`📂 ${uiTexts.category}`} value={serviceData.category} />
             <Info label={`⏱ ${uiTexts.estimatedDuration}`} value={`${serviceData.duration} ${uiTexts.hours}`} />
             <Info label={`⏳ ${uiTexts.elapsedTime}`} value={`${elapsedTime}`} />
