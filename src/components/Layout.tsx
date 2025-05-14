@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, StatusBar } from 'react-native';
+import { KeyboardAvoidingView, SafeAreaView, StyleSheet, StatusBar, Platform } from 'react-native';
 import { LinearGradient } from 'react-native-linear-gradient';
 
 import { colors } from '../theme/colors';
@@ -13,7 +13,12 @@ function Layout({ children }: { children: React.ReactNode }) {
                 style={styles.gradient}
             >
                 <StatusBar barStyle="light-content" backgroundColor="black" />
-                {children}
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                    style={{ flex: 1 }}
+                >
+                    {children}
+                </KeyboardAvoidingView>
             </LinearGradient>
         </SafeAreaView>
     );

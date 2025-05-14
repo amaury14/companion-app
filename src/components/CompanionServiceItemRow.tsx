@@ -15,32 +15,44 @@ export type CompanionServiceItemRowProps = {
 };
 
 function CompanionServiceItemRow({ acceptService, item, manageService, rejectService }: CompanionServiceItemRowProps) {
+    const isActive = item.status === statusTexts.pending || item.status === statusTexts.in_progress || item.status === statusTexts.accepted;
+
     return (
         <View style={styles.serviceItem}>
             <Text style={styles.inputText}>📅 {item.dateText ?? uiTexts.noDate}</Text>
             <Text style={styles.inputText}>📂 {item.category} • {item.status}</Text>
+            {
+                isActive &&
+                <Text style={styles.inputText}>💡 {item.comments}</Text>
+            }
             <Text style={styles.inputText}>💲 {uiTexts.currency} {item.companionPayment} • {item.duration} {uiTexts.hours}</Text>
-            <Text style={styles.inputText}>📍 {item.locationText || uiTexts.noAddress}</Text>
-            <View style={styles.buttonRow}>
-                {
-                    (item.status === statusTexts.in_progress || item.status === statusTexts.accepted) &&
-                    <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.azureblue }} onPress={() => manageService(item)}>
-                        <Text style={styles.buttonText}>{uiTexts.manage}</Text>
-                    </TouchableOpacity>
-                }
-                {
-                    item.status === statusTexts.pending && isSameDay(item.date.toDate(), new Date()) &&
-                    <TouchableOpacity style={styles.button} onPress={() => acceptService(item.id)}>
-                        <Text style={styles.buttonText}>{uiTexts.accept}</Text>
-                    </TouchableOpacity>
-                }
-                {
-                    item.status === statusTexts.pending &&
-                    <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.danger }} onPress={() => rejectService(item.id)}>
-                        <Text style={styles.buttonText}>{uiTexts.reject}</Text>
-                    </TouchableOpacity>
-                }
-            </View>
+            {
+                isActive &&
+                <Text style={styles.inputText}>📍 {item.locationText || uiTexts.noAddress}</Text>
+            }
+            {
+                isActive &&
+                <View style={styles.buttonRow}>
+                    {
+                        (item.status === statusTexts.in_progress || item.status === statusTexts.accepted) &&
+                        <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.azureblue }} onPress={() => manageService(item)}>
+                            <Text style={styles.buttonText}>{uiTexts.manage}</Text>
+                        </TouchableOpacity>
+                    }
+                    {
+                        item.status === statusTexts.pending && isSameDay(item.date.toDate(), new Date()) &&
+                        <TouchableOpacity style={styles.button} onPress={() => acceptService(item.id)}>
+                            <Text style={styles.buttonText}>{uiTexts.accept}</Text>
+                        </TouchableOpacity>
+                    }
+                    {
+                        item.status === statusTexts.pending &&
+                        <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.danger }} onPress={() => rejectService(item.id)}>
+                            <Text style={styles.buttonText}>{uiTexts.reject}</Text>
+                        </TouchableOpacity>
+                    }
+                </View>
+            }
         </View>
     );
 }
