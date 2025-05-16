@@ -31,6 +31,9 @@ type FormData = {
 
 type Props = NativeStackScreenProps<UserStackParamList, 'CreateService'>;
 
+/**
+ * Form for users to request a new service. Includes location selection, category dropdown, date/time picker, and input validation.
+ */
 export default function CreateServiceScreen({ navigation }: Props) {
     const { control, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
     const [loading, setLoading] = useState<boolean>(false);

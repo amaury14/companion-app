@@ -18,7 +18,10 @@ import { dbKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<UserStackParamList, 'UserActiveService'>;
 
-const UserActiveServiceScreen = ({ navigation }: Props) => {
+/**
+ * Shows detailed information about an ongoing service from the user's perspective, with status, companion info, and time tracking.
+ */
+export default function UserActiveServiceScreen({ navigation }: Props) {
     const route = useRoute<RouteProp<UserStackParamList, 'UserActiveService'>>();
     const { service } = route.params;
     const [serviceData, setServiceData] = useState<Service>(service);
@@ -72,9 +75,7 @@ const UserActiveServiceScreen = ({ navigation }: Props) => {
             </ScrollView>
         </Layout>
     );
-};
-
-export default UserActiveServiceScreen;
+}
 
 const styles = StyleSheet.create({
     container: {

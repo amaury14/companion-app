@@ -13,6 +13,9 @@ export type AuthStackParamList = {
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
+/**
+ * Stack navigator for screens related to authentication (register, login).
+ */
 export default function AuthStack() {
     return (
         <Stack.Navigator

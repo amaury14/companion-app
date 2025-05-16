@@ -6,6 +6,9 @@ export type LoaderProps = {
     size: number | "small" | "large" | undefined;
 };
 
+/**
+ * Simple centralized loading spinner component used throughout the app.
+ */
 function Loader({ color, size }: LoaderProps) {
     return (
         <View style={styles.indicatorContent}>

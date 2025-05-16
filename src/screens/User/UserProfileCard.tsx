@@ -14,6 +14,9 @@ import { db } from '../../services/firebase';
 import { UserData } from '../../types/user';
 import { getAddressFromCoords } from '../../utils/util';
 
+/**
+ * Displays detailed profile information of a user or companion, including completed services, reputation, and contact info. Styled with a modern, app-like layout.
+ */
 export const UserProfileCard = () => {
     const route = useRoute<RouteProp<UserStackParamList, 'UserProfile'>>();
     const { userId } = route.params;

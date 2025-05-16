@@ -13,6 +13,9 @@ export type ServiceCardProps = {
     serviceData: Service;
 };
 
+/**
+ * Reusable card component for displaying all information regarding a service.
+ */
 function ServiceCard({ serviceData }: ServiceCardProps) {
     const [elapsedTime, setElapsedTime] = useState<string>(
         serviceData?.checkInTime ? getTimeDiffText(serviceData.checkInTime?.toDate(), new Date()) : `0 ${uiTexts.min}`

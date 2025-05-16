@@ -16,6 +16,9 @@ export type CompanionStackParamList = {
 
 const Stack = createNativeStackNavigator<CompanionStackParamList>();
 
+/**
+ * Stack navigator for screens available to authenticated companions.
+ */
 export default function CompanionStack() {
     return (
         <Stack.Navigator initialRouteName="CompanionHome" screenOptions={{ headerShown: false }}>

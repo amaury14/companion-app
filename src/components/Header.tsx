@@ -11,6 +11,9 @@ export type HeaderProps = {
     userClick: (user: UserData | null) => void;
 };
 
+/**
+ * Top header component used to show screen title and optional navigation or action icons (like logout).
+ */
 function Header({ userClick }: HeaderProps) {
     const { user } = useUser();
 
