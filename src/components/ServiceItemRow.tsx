@@ -29,24 +29,34 @@ function ServiceItemRow({ item, manageService, onCancel, onViewCompanion }: Serv
                     }
                 </Text>
             </View>
+            <View style={styles.buttonHolder}>
             {
-                (item.status === statusTexts.in_progress || item.status === statusTexts.accepted) &&
+                (
+                    item.status === statusTexts.in_progress ||
+                    item.status === statusTexts.accepted ||
+                    (item.status === statusTexts.completed && !item.confirmed)
+                ) &&
                 <TouchableOpacity onPress={() => manageService(item)} style={styles.cancelButton}>
-                    <Ionicons name="settings" size={35} color={colors.dragonblue} />
+                    <Ionicons name="settings" size={30} color={colors.dragonblue} />
                 </TouchableOpacity>
             }
             {
                 item.status === statusTexts.pending &&
                 <TouchableOpacity onPress={() => onCancel(item.id)} style={styles.cancelButton}>
-                    <Ionicons name="close-circle" size={35} color={colors.danger} />
+                    <Ionicons name="close-circle" size={30} color={colors.danger} />
                 </TouchableOpacity>
             }
             {
-                (item.status === statusTexts.in_progress || item.status === statusTexts.accepted) &&
+                (
+                    item.status === statusTexts.in_progress ||
+                    item.status === statusTexts.accepted ||
+                    item.status === statusTexts.completed
+                ) &&
                 <TouchableOpacity onPress={() => onViewCompanion(item)} style={styles.cancelButton}>
-                    <Ionicons name="person" size={35} color={colors.success} />
+                    <Ionicons name="person" size={30} color={colors.success} />
                 </TouchableOpacity>
             }
+            </View>
         </View>
     );
 }
@@ -70,6 +80,12 @@ const styles = StyleSheet.create({
         color: colors.black,
         fontSize: 16,
         marginTop: 2
+    },
+    buttonHolder: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center'
     },
     cancelButton: {
         padding: 4

@@ -1,42 +1,74 @@
+import { MaterialIcons } from '@expo/vector-icons';
+import { doc, increment, updateDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
-import { Text, StyleSheet, ScrollView } from 'react-native';
+import { Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Layout from '../../components/Layout';
 import ServiceCard from '../../components/ServiceCard';
+import { useUser } from '../../context/UserContext';
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
+import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { uiTexts } from '../../utils/data/ui-text-data';
+import { statusTexts } from '../../utils/keys/status-keys';
+import { dbKeys } from '../../utils/keys/db-keys';
 
-const UserActiveServiceScreen = () => {
+type Props = NativeStackScreenProps<UserStackParamList, 'UserActiveService'>;
+
+const UserActiveServiceScreen = ({ navigation }: Props) => {
     const route = useRoute<RouteProp<UserStackParamList, 'UserActiveService'>>();
     const { service } = route.params;
-    const [serviceData] = useState<Service>(service);
+    const [serviceData, setServiceData] = useState<Service>(service);
+    const { user } = useUser();
+
+    const handleComplete = async () => {
+        try {
+            await updateDoc(doc(db, dbKeys.services, serviceData.id), { confirmed: true });
+            setServiceData({
+                ...serviceData,
+                confirmed: true
+            });
+            if (user?.id) {
+                await updateDoc(doc(db, dbKeys.users, user?.id), { completedServices: increment(1) });
+            }
+            if (serviceData?.companionId) {
+                await updateDoc(doc(db, dbKeys.users, serviceData?.companionId), { completedServices: increment(1) });
+            }
+            Alert.alert(`✅ ${uiTexts.serviceCompleted}`);
+            navigation.navigate('UserHome');
+        } catch (error) {
+            console.error(uiTexts.errorOnCompleteService, error);
+            Alert.alert(`❌ ${uiTexts.errorOnCompleteService}`);
+        }
+    };
 
     return (
         <Layout>
             <ScrollView style={styles.container} contentContainerStyle={styles.content}>
                 <Text style={styles.header}>{uiTexts.serviceOngoing}</Text>
                 <ServiceCard serviceData={serviceData}></ServiceCard>
-                {/* {
-                    !serviceData.checkInTime &&
-                    <Pressable style={[styles.button, isFuture && styles.buttonDisabled]} disabled={isFuture} onPress={handleStart}>
-                        <MaterialIcons name="arrow-right" size={22} color={colors.white} />
-                        <Text style={styles.buttonText}>{uiTexts.startService}</Text>
-                    </Pressable>
-                }
                 {
-                    isFuture &&
-                    <Text style={styles.waitForText}>{uiTexts.waitForServicedTime}</Text>
-                }
-                {
-                    serviceData.checkInTime &&
-                    <Pressable style={styles.button} onPress={handleComplete}>
+                    serviceData.status === statusTexts.completed && !serviceData.confirmed &&
+                    <Pressable
+                        style={styles.button}
+                        onPress={() => {
+                            Alert.alert(uiTexts.confirmService, uiTexts.areYouSure, [
+                                { text: uiTexts.no, style: 'cancel' },
+                                {
+                                    text: uiTexts.yes,
+                                    style: 'destructive',
+                                    onPress: () => handleComplete()
+                                }
+                            ])
+                        }}
+                    >
                         <MaterialIcons name="check-circle" size={22} color={colors.white} />
-                        <Text style={styles.buttonText}>{uiTexts.endService}</Text>
+                        <Text style={styles.buttonText}>{uiTexts.confirmService}</Text>
                     </Pressable>
-                } */}
+                }
             </ScrollView>
         </Layout>
     );

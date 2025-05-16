@@ -5,6 +5,7 @@ export type Service = {
     category: string;
     checkInTime?: Timestamp;
     checkOutTime?: Timestamp;
+    confirmed: boolean;
     companionId: string;
     companionPayment: number;
     date: Timestamp;

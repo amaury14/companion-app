@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet, RefreshControl, Alert } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import CompanionServiceItemRow from '../../components/CompanionServiceItemRow';
 import Header from '../../components/Header';
@@ -156,7 +156,16 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                                 item={item}
                                 acceptService={() => acceptService(item.id)}
                                 manageService={() => navigation.navigate('CompanionActiveService', { service: item })}
-                                rejectService={() => rejectService(item.id)}
+                                rejectService={() => {
+                                    Alert.alert(uiTexts.rejectService, uiTexts.areYouSure, [
+                                        { text: uiTexts.cancel, style: 'cancel' },
+                                        {
+                                            text: uiTexts.yes,
+                                            style: 'destructive',
+                                            onPress: () => rejectService(item.id)
+                                        }
+                                    ])
+                                }}
                             />
                         )
                         }

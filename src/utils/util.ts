@@ -1,3 +1,4 @@
+import { differenceInMinutes } from 'date-fns';
 import * as Location from 'expo-location';
 
 import { Service } from '../types/service';
@@ -82,4 +83,15 @@ export const getAddressFromCoords = async (latitude: number, longitude: number) 
         console.error('Error obteniendo la dirección:', error);
         return uiTexts.noAddress;
     }
+};
+
+export const getTimeDiffText = (dateA: Date, dateB: Date): string => {
+    if (dateA) {
+        const totalMinutes = Math.abs(differenceInMinutes(dateA, dateB)); // valor absoluto
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        return `${hours} ${uiTexts.hours} ${minutes} ${uiTexts.min}`;
+    }
+    return `0 ${uiTexts.min}`;
 };
