@@ -44,7 +44,7 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
         }, updateMinute);
 
         return () => clearInterval(interval); // cleanup on unmount
-    }, [serviceData?.date]);
+    }, [serviceData?.date, isStartEnable]);
 
     useEffect(() => {
         if (!serviceData?.checkInTime) return;

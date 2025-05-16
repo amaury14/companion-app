@@ -4,7 +4,7 @@ import { Timestamp } from 'firebase/firestore';
 import { Service } from '../../types/service';
 import { uiTexts } from '../data/ui-text-data';
 import { statusTexts } from '../keys/status-keys';
-import { formatDateWithTime, getAddressFromCoords, getCosts, getDistanceFromLatLonInKm, getStatusIcon, sortServices } from '../util';
+import { formatDateWithTime, getAddressFromCoords, getCosts, getDistanceFromLatLonInKm, getStatusIcon, getTimeDiffText, sortServices } from '../util';
 
 jest.mock('expo-location');
 
@@ -186,5 +186,35 @@ describe('getAddressFromCoords', () => {
         (Location.reverseGeocodeAsync as jest.Mock).mockRejectedValue(new Error('Failed'));
         const result = await getAddressFromCoords(-34.9, -56.2);
         expect(result).toEqual(uiTexts.noAddress);
+    });
+});
+
+describe('getTimeDiffText', () => {
+    it('returns 0 hours 0 minutes when both dates are the same', () => {
+        const now = new Date();
+        expect(getTimeDiffText(now, now)).toBe(`0 ${uiTexts.hours} 0 ${uiTexts.min}`);
+    });
+
+    it('returns correct diff for 2h 15min', () => {
+        const dateA = new Date('2025-05-16T10:00:00');
+        const dateB = new Date('2025-05-16T12:15:00');
+        expect(getTimeDiffText(dateA, dateB)).toBe(`2 ${uiTexts.hours} 15 ${uiTexts.min}`);
+    });
+
+    it('works even if dateB is before dateA', () => {
+        const dateA = new Date('2025-05-16T14:00:00');
+        const dateB = new Date('2025-05-16T13:30:00');
+        expect(getTimeDiffText(dateA, dateB)).toBe(`0 ${uiTexts.hours} 30 ${uiTexts.min}`);
+    });
+
+    it('returns only minutes if duration is less than 1 hour', () => {
+        const dateA = new Date('2025-05-16T10:00:00');
+        const dateB = new Date('2025-05-16T10:45:00');
+        expect(getTimeDiffText(dateA, dateB)).toBe(`0 ${uiTexts.hours} 45 ${uiTexts.min}`);
+    });
+
+    it('returns default text if dateA is undefined', () => {
+        const dateB = new Date();
+        expect(getTimeDiffText(undefined as unknown as Date, dateB)).toBe(`0 ${uiTexts.min}`);
     });
 });
