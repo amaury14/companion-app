@@ -61,6 +61,7 @@ describe('sortServices', () => {
         additionalInfo: '',
         id: '',
         category: '',
+        confirmed: false,
         date: new Timestamp(10, 0),
         price: 0,
         status: '',

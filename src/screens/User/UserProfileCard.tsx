@@ -1,7 +1,7 @@
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import Layout from '../../components/Layout';

@@ -1,7 +1,7 @@
+import { collection, doc, getDocs, query, Timestamp, updateDoc, where } from 'firebase/firestore';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { collection, doc, getDocs, query, Timestamp, updateDoc, where } from 'firebase/firestore';
 
 import Header from '../../components/Header';
 import Layout from '../../components/Layout';

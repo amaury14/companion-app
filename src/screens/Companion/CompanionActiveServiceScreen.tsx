@@ -1,18 +1,19 @@
+import { addHours } from 'date-fns';
+import { MaterialIcons } from '@expo/vector-icons';
+import { doc, Timestamp, updateDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { doc, increment, Timestamp, updateDoc } from 'firebase/firestore';
-import { MaterialIcons } from '@expo/vector-icons';
 
 import Layout from '../../components/Layout';
 import ServiceCard from '../../components/ServiceCard';
-import { useUser } from '../../context/UserContext';
 import { CompanionStackParamList } from '../../navigation/CompanionStack/CompanionStack';
 import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { uiTexts } from '../../utils/data/ui-text-data';
+import { update5Minute, updateMinute } from '../../utils/keys/costs-keys';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 
@@ -21,16 +22,45 @@ type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionActiveSer
 const CompanionActiveServiceScreen = ({ navigation }: Props) => {
     const route = useRoute<RouteProp<CompanionStackParamList, 'CompanionActiveService'>>();
     const { service } = route.params;
-    const { user } = useUser();
 
     const [serviceData, setServiceData] = useState<Service>(service);
-    const [isFuture, setIsFuture] = useState<boolean>(true);
+    const [isStartEnable, setIsStartEnable] = useState<boolean>(false);
+    const [ableToComplete, setAbleToComplete] = useState<boolean>(false);
 
     useEffect(() => {
-        if (serviceData?.date) {
-            setIsFuture(new Date() < serviceData.date.toDate());
-        }
+        if (!serviceData?.date || isStartEnable) return;
+
+        const interval = setInterval(() => {
+            const now = new Date();
+            const target = serviceData.date.toDate();
+
+            if (now >= target) {
+                setIsStartEnable(true);
+                clearInterval(interval); // stop checking once condition is met
+            }
+        }, updateMinute);
+
+        return () => clearInterval(interval); // cleanup on unmount
     }, [serviceData?.date]);
+
+    useEffect(() => {
+        if (!serviceData?.checkInTime) return;
+
+        const now = new Date();
+        const interval = setInterval(() => {
+            if (now > addHours(serviceData.checkInTime?.toDate() ?? now, serviceData.duration)) {
+                setAbleToComplete(true);
+                clearInterval(interval); // stop checking once condition is met
+            }
+        }, update5Minute);
+
+        if (now > addHours(serviceData.checkInTime?.toDate() ?? now, serviceData.duration)) {
+            setAbleToComplete(true);
+            clearInterval(interval); // stop checking once condition is met
+        }
+
+        return () => clearInterval(interval); // cleanup on unmount
+    }, [serviceData?.checkInTime, serviceData?.duration]);
 
     const handleStart = async () => {
         try {
@@ -57,13 +87,7 @@ const CompanionActiveServiceScreen = ({ navigation }: Props) => {
                 checkOutTime: Timestamp.fromDate(checkOutTime),
                 status: statusTexts.completed
             });
-            if (user?.id) {
-                await updateDoc(doc(db, dbKeys.users, user?.id), { completedServices: increment(1) });
-            }
-            if (serviceData?.requesterId) {
-                await updateDoc(doc(db, dbKeys.users, serviceData?.requesterId), { completedServices: increment(1) });
-            }
-            Alert.alert(`✅ ${uiTexts.serviceCompleted}`);
+            Alert.alert(`✅ ${uiTexts.serviceCompleted}`, uiTexts.askClientConfirm);
             navigation.navigate('CompanionHome');
         } catch (error) {
             console.error(uiTexts.errorOnCompleteService, error);
@@ -78,18 +102,18 @@ const CompanionActiveServiceScreen = ({ navigation }: Props) => {
                 <ServiceCard serviceData={serviceData}></ServiceCard>
                 {
                     !serviceData.checkInTime &&
-                    <Pressable style={[styles.button, isFuture && styles.buttonDisabled]} disabled={isFuture} onPress={handleStart}>
-                        <MaterialIcons name="arrow-right" size={22} color={colors.white} />
+                    <Pressable style={[styles.button, !isStartEnable && styles.buttonDisabled]} disabled={!isStartEnable} onPress={handleStart}>
+                        <MaterialIcons name="arrow-right" size={35} color={colors.white} />
                         <Text style={styles.buttonText}>{uiTexts.startService}</Text>
                     </Pressable>
                 }
                 {
-                    isFuture &&
+                    !isStartEnable && !serviceData.checkInTime &&
                     <Text style={styles.waitForText}>{uiTexts.waitForServicedTime}</Text>
                 }
                 {
                     serviceData.checkInTime &&
-                    <Pressable style={styles.button} onPress={handleComplete}>
+                    <Pressable style={[styles.button, !ableToComplete && styles.buttonDisabled]} disabled={!ableToComplete} onPress={handleComplete}>
                         <MaterialIcons name="check-circle" size={22} color={colors.white} />
                         <Text style={styles.buttonText}>{uiTexts.endService}</Text>
                     </Pressable>
