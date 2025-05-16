@@ -1,40 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { differenceInHours, differenceInMinutes } from 'date-fns';
 import * as Progress from 'react-native-progress';
 
 import { colors } from '../theme/colors';
 import { Service } from '../types/service';
 import { uiTexts } from '../utils/data/ui-text-data';
-import { updateTime } from '../utils/keys/costs-keys';
+import { updateMinute } from '../utils/keys/costs-keys';
 import { statusTexts } from '../utils/keys/status-keys';
+import { getTimeDiffText } from '../utils/util';
 
 export type ServiceCardProps = {
     serviceData: Service;
 };
 
 function ServiceCard({ serviceData }: ServiceCardProps) {
-
-    const getElapsedTime = (checkInTime: Date) => {
-        if (checkInTime) {
-            const now = new Date();
-            const diffHours = differenceInHours(now, checkInTime);
-            const diffMin = differenceInMinutes(now, checkInTime);
-            return diffMin > 60 ? `${diffHours} ${uiTexts.hours}` : `${diffMin} ${uiTexts.min}`;
-        }
-        return `0 ${uiTexts.min}`;
-    }
-
     const [elapsedTime, setElapsedTime] = useState<string>(
-        serviceData?.checkInTime ? getElapsedTime(serviceData.checkInTime?.toDate()) : `0 ${uiTexts.min}`
+        serviceData?.checkInTime ? getTimeDiffText(serviceData.checkInTime?.toDate(), new Date()) : `0 ${uiTexts.min}`
     );
 
     useEffect(() => {
         if (serviceData?.checkInTime) {
             const start = serviceData.checkInTime.toDate();
             const interval = setInterval(() => {
-                setElapsedTime(getElapsedTime(start));
-            }, updateTime);
+                setElapsedTime(getTimeDiffText(start, new Date()));
+            }, updateMinute);
 
             return () => clearInterval(interval);
         }

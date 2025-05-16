@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useState } from 'react';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';

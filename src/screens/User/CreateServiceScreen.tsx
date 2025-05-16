@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import DatePicker from 'react-native-ui-datepicker';
-import SelectDropdown from 'react-native-select-dropdown';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import * as Location from 'expo-location';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-native';
+import SelectDropdown from 'react-native-select-dropdown';
+import DatePicker from 'react-native-ui-datepicker';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
@@ -75,7 +75,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
         const uid = auth.currentUser?.uid;
         if (!uid) return;
 
-        const price = getCosts(parseInt(data.duration), baseCost, baseComission);
+        const price = getCosts(parseFloat(data.duration), baseCost, baseComission);
 
         const coords = data.location
             ? await validateAddress(data.location)
@@ -93,7 +93,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
                 companionId: '',
                 companionPayment: Math.round(price - (price * baseComission)),
                 date: Timestamp.fromDate(selectedDate),
-                duration: parseInt(data.duration),
+                duration: parseFloat(data.duration),
                 evidenceUrls: [],
                 location: coords,
                 paid: false,
@@ -113,7 +113,7 @@ export default function CreateServiceScreen({ navigation }: Props) {
     };
 
     const getEstCosts = useMemo(() => {
-        return duration ? `${getCosts(parseInt(duration), baseCost, baseComission)} ${uiTexts.est}.` : ''
+        return duration ? `${getCosts(parseFloat(duration), baseCost, baseComission)} ${uiTexts.est}.` : ''
     }, [duration]);
 
     useEffect(() => {

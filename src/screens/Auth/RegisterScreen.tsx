@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import * as Location from 'expo-location';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
