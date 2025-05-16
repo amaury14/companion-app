@@ -18,6 +18,9 @@ export type UserStackParamList = {
 
 const Stack = createNativeStackNavigator<UserStackParamList>();
 
+/**
+ * Stack navigator for screens available to authenticated users.
+ */
 export default function UserStack() {
     return (
         <Stack.Navigator initialRouteName="UserHome" screenOptions={{ headerShown: false }}>

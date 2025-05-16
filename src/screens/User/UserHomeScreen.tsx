@@ -21,6 +21,9 @@ import { formatDateWithTime, getAddressFromCoords, sortServices } from '../../ut
 
 type Props = NativeStackScreenProps<UserStackParamList, 'UserHome'>;
 
+/**
+ * Main screen for the user role. Shows a summary of past services and allows requesting new ones.
+ */
 export default function UserHomeScreen({ navigation }: Props) {
     const [refreshing, setRefreshing] = useState(false);
     const [services, setServices] = useState<Service[]>([]);

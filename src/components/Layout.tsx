@@ -4,6 +4,9 @@ import { LinearGradient } from 'react-native-linear-gradient';
 
 import { colors } from '../theme/colors';
 
+/**
+ * General screen wrapper with gradient background, SafeAreaView, and optional scroll handling.
+ */
 function Layout({ children }: { children: React.ReactNode }) {
     return (
         <SafeAreaView style={styles.container}>

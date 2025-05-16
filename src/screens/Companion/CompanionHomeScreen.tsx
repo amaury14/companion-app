@@ -22,6 +22,9 @@ import { formatDateWithTime, getAddressFromCoords, getDistanceFromLatLonInKm, so
 
 type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionHome'>;
 
+/**
+ * Main screen for companions. Lists available nearby services filtered by distance and allows accepting/rejecting and manage them.
+ */
 export default function CompanionHomeScreen({ navigation }: Props) {
     const [refreshing, setRefreshing] = useState(false);
     const [services, setServices] = useState<Service[]>([]);

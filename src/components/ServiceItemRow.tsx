@@ -15,6 +15,9 @@ export type ServiceItemRowProps = {
     onViewCompanion: (item: Service) => void;
 };
 
+/**
+ * Reusable row component for displaying a summary of a service, with status, location, and quick action buttons (e.g., cancel).
+ */
 function ServiceItemRow({ item, manageService, onCancel, onViewCompanion }: ServiceItemRowProps) {
     return (
         <View style={styles.container}>

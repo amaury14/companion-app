@@ -26,6 +26,9 @@ type RegisterFormData = {
     confirmPassword: string;
 };
 
+/**
+ * User and companion registration form. Supports field validation and Google Sign-In.
+ */
 export default function RegisterScreen({ navigation }: Props) {
     const { control, handleSubmit, formState: { errors }, getValues } = useForm<RegisterFormData>();
     const [userType, setUserType] = useState<'user' | 'companion' | null>('user');
