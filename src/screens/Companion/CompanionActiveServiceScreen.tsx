@@ -19,7 +19,10 @@ import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 
 type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionActiveService'>;
 
-const CompanionActiveServiceScreen = ({ navigation }: Props) => {
+/**
+ * Displays real-time service progress, including a timer and animated progress bar. Allows marking the service as complete.
+ */
+export default function CompanionActiveServiceScreen({ navigation }: Props) {
     const route = useRoute<RouteProp<CompanionStackParamList, 'CompanionActiveService'>>();
     const { service } = route.params;
 
@@ -121,9 +124,7 @@ const CompanionActiveServiceScreen = ({ navigation }: Props) => {
             </ScrollView>
         </Layout>
     );
-};
-
-export default CompanionActiveServiceScreen;
+}
 
 const styles = StyleSheet.create({
     container: {

@@ -10,6 +10,9 @@ type UserContextType = {
     user: UserData | null;
 };
 
+/**
+ * Provides current user data and loading state globally, initialized from Firebase Auth + Firestore.
+ */
 const UserContext = createContext<UserContextType>({ user: null });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {

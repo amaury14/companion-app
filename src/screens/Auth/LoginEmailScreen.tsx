@@ -18,6 +18,9 @@ type LoginFormData = {
     password: string;
 };
 
+/**
+ * Email/password login form for existing users with validation and error feedback.
+ */
 export default function LoginEmailScreen({ navigation }: Props) {
     const { control, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
     const [loading, setLoading] = useState<boolean>(false);

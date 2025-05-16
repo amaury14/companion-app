@@ -14,6 +14,9 @@ export type CompanionServiceItemRowProps = {
     rejectService: (id: string) => void;
 };
 
+/**
+ * Specialized version of ServiceItemRow for companions, showing accept/reject buttons and proximity details.
+ */
 function CompanionServiceItemRow({ acceptService, item, manageService, rejectService }: CompanionServiceItemRowProps) {
     const isActive = item.status === statusTexts.pending || item.status === statusTexts.in_progress || item.status === statusTexts.accepted;
 

@@ -16,6 +16,9 @@ import { asyncStorageKeys, dbKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
+/**
+ * Entry screen for authentication. Offers options to log in via email/password or Google.
+ */
 export default function LoginScreen({ navigation }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
