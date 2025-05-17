@@ -37,7 +37,8 @@ function ServiceItemRow({ item, manageService, onCancel, onViewCompanion }: Serv
                 (
                     item.status === statusTexts.in_progress ||
                     item.status === statusTexts.accepted ||
-                    (item.status === statusTexts.completed && !item.confirmed)
+                    (item.status === statusTexts.completed && !item.confirmed) ||
+                    (item.status === statusTexts.completed && !item.reviewed)
                 ) &&
                 <TouchableOpacity onPress={() => manageService(item)} style={styles.cancelButton}>
                     <Ionicons name="settings" size={30} color={colors.dragonblue} />
