@@ -76,8 +76,8 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
             });
             Alert.alert(`⏳ ${uiTexts.serviceStarted}`);
         } catch (error) {
-            console.error(uiTexts.erroOnStartingService, error);
-            Alert.alert(`❌ ${uiTexts.erroOnStartingService}`);
+            console.error(uiTexts.errorOnStartingService, error);
+            Alert.alert(`❌ ${uiTexts.errorOnStartingService}`);
         }
     };
 

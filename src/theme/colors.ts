@@ -20,4 +20,5 @@ export const colors = {
     danger: '#F44336',
     warning: '#FF9800',
     divider: '#E0E0E0',
+    star: '#FBBF24'
 };

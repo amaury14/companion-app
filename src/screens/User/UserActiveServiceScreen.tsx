@@ -15,6 +15,7 @@ import { Service } from '../../types/service';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { statusTexts } from '../../utils/keys/status-keys';
 import { dbKeys } from '../../utils/keys/db-keys';
+import ReviewForm from '../Review/ReviewForm';
 
 type Props = NativeStackScreenProps<UserStackParamList, 'UserActiveService'>;
 
@@ -40,8 +41,7 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
             if (serviceData?.companionId) {
                 await updateDoc(doc(db, dbKeys.users, serviceData?.companionId), { completedServices: increment(1) });
             }
-            Alert.alert(`✅ ${uiTexts.serviceCompleted}`);
-            navigation.navigate('UserHome');
+            Alert.alert(`✅ ${uiTexts.serviceCompleted}`, `${uiTexts.reviewService}`);
         } catch (error) {
             console.error(uiTexts.errorOnCompleteService, error);
             Alert.alert(`❌ ${uiTexts.errorOnCompleteService}`);
@@ -71,6 +71,15 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
                         <MaterialIcons name="check-circle" size={22} color={colors.white} />
                         <Text style={styles.buttonText}>{uiTexts.confirmService}</Text>
                     </Pressable>
+                }
+                {
+                    serviceData.status === statusTexts.completed && serviceData.confirmed &&
+                    <ReviewForm
+                        reviewerId={serviceData.requesterId}
+                        reviewedUserId={serviceData.companionId}
+                        serviceId={serviceData.id}
+                        onSuccess={() => navigation.navigate('UserHome')}
+                    ></ReviewForm>
                 }
             </ScrollView>
         </Layout>
