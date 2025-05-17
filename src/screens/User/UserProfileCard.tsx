@@ -1,16 +1,18 @@
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { FlatList, Text, StyleSheet, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
 import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
+import ReviewItem from '../../components/ReviewItem';
 import { colors } from '../../theme/colors';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { doc, getDoc } from 'firebase/firestore';
-import { dbKeys } from '../../utils/keys/db-keys';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { db } from '../../services/firebase';
+import { Review } from '../../types/review';
 import { UserData } from '../../types/user';
 import { getAddressFromCoords } from '../../utils/util';
 
@@ -22,7 +24,9 @@ export const UserProfileCard = () => {
     const { userId } = route.params;
 
     const [loading, setLoading] = useState(false);
+    const [reviews, setReviews] = useState<Review[]>([]);
     const [userData, setUserData] = useState<UserData | null>(null);
+    const [reputationScore, setReputationScore] = useState<number>(0);
 
     const fetchUserData = useCallback(async (id: string) => {
         try {
@@ -40,8 +44,30 @@ export const UserProfileCard = () => {
             }
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
+    }, []);
+
+    const fetchReviews = useCallback(async (id: string) => {
+        try {
+            setLoading(true);
+            const queryObj = query(
+                collection(db, dbKeys.reviews),
+                where(fieldKeys.reviewedUserId, '==', id)
+            );
+            const snapshot = await getDocs(queryObj);
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Review));
+            setReviews(data);
+            // Calculates reputation score
+            const total = data.reduce((sum, curr) => sum + curr.rating, 0);
+            const score = parseFloat((total / data.length).toFixed(1));
+            setReputationScore(score ? score : 0);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
     useEffect(() => {
@@ -51,6 +77,14 @@ export const UserProfileCard = () => {
 
         fetchUserDataAsync();
     }, [userId, fetchUserData]);
+
+    useEffect(() => {
+        const fetchReviewsDataAsync = async () => {
+            await fetchReviews(userId);
+        };
+
+        fetchReviewsDataAsync();
+    }, [userId, fetchReviews]);
 
     return (
         <Layout>
@@ -77,7 +111,7 @@ export const UserProfileCard = () => {
                         </View>
                         <View style={styles.statItem}>
                             <FontAwesome name="star" size={16} color={colors.yellow} />
-                            <Text style={styles.statText}>{userData?.reputationScore.toFixed(1)} {uiTexts.reputation}</Text>
+                            <Text style={styles.statText}>{reputationScore.toFixed(1)} {uiTexts.reputation}</Text>
                         </View>
                     </View>
 
@@ -86,12 +120,29 @@ export const UserProfileCard = () => {
                         <Text style={styles.value}>{userData?.email}</Text>
                     </View>
 
-                    {userData?.address && (
-                        <View style={styles.infoBlock}>
-                            <Text style={styles.label}>📍 {uiTexts.location}:</Text>
-                            <Text style={styles.value}>{userData?.locationText}</Text>
-                        </View>
-                    )}
+                    {
+                        userData?.address && (
+                            <View style={styles.infoBlock}>
+                                <Text style={styles.label}>📍 {uiTexts.location}:</Text>
+                                <Text style={styles.value}>{userData?.locationText}</Text>
+                            </View>
+                        )}
+
+                    {
+                        reviews.length > 0 && (
+                            <>
+                                <Text style={styles.subTitle}>{uiTexts.previousReviews}</Text>
+                                <FlatList
+                                    data={reviews}
+                                    keyExtractor={item => item.id}
+                                    renderItem={({ item }) => (
+                                        <ReviewItem item={item}></ReviewItem>
+                                    )}
+                                    ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+                                />
+                            </>
+                        )
+                    }
                 </View>
             }
         </Layout>
@@ -150,5 +201,11 @@ const styles = StyleSheet.create({
     value: {
         color: colors.black,
         fontSize: 18
+    },
+    subTitle: {
+        color: colors.black,
+        fontSize: 18,
+        fontWeight: '500',
+        marginBottom: 12
     }
 });

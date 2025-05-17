@@ -19,6 +19,7 @@ export type Service = {
     locationText?: string;
     price: number;
     requesterId: string;
+    reviewed: boolean;
     status: string;
     timeStamp: number;
 };

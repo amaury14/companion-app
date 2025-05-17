@@ -70,6 +70,7 @@ describe('sortServices', () => {
         companionPayment: 0,
         duration: 0,
         requesterId: '',
+        reviewed: false,
         ...overrides,
     });
 
