@@ -129,7 +129,7 @@ export const UserProfileCard = () => {
                         )}
 
                     {
-                        reviews.length > 0 && (
+                        reviews?.length && (
                             <>
                                 <Text style={styles.subTitle}>{uiTexts.previousReviews}</Text>
                                 <FlatList
