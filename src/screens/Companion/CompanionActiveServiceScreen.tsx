@@ -8,22 +8,22 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Layout from '../../components/Layout';
 import ServiceCard from '../../components/ServiceCard';
-import { CompanionStackParamList } from '../../navigation/CompanionStack/CompanionStack';
 import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
+import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { update5Minute, updateMinute } from '../../utils/keys/costs-keys';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 
-type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionActiveService'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'CompanionActiveService'>;
 
 /**
  * Displays real-time service progress, including a timer and animated progress bar. Allows marking the service as complete.
  */
 export default function CompanionActiveServiceScreen({ navigation }: Props) {
-    const route = useRoute<RouteProp<CompanionStackParamList, 'CompanionActiveService'>>();
+    const route = useRoute<RouteProp<AppStackParamList, 'CompanionActiveService'>>();
     const { service } = route.params;
 
     const [serviceData, setServiceData] = useState<Service>(service);

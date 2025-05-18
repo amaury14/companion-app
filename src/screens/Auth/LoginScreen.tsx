@@ -8,13 +8,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
-import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
+import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { asyncStorageKeys, dbKeys } from '../../utils/keys/db-keys';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'Login'>;
 
 /**
  * Entry screen for authentication. Offers options to log in via email/password or Google.
