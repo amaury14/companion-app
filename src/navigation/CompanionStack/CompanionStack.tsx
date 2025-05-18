@@ -4,17 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CompanionActiveServiceScreen from '../../screens/Companion/CompanionActiveServiceScreen';
 import CompanionHomeScreen from '../../screens/Companion/CompanionHomeScreen';
 import { UserProfileCard } from '../../screens/User/UserProfileCard';
-import { Service } from '../../types/service';
+import { AppStackParamList } from '../../types/stack-param-list';
 // import ServiceTrackingScreen from '../../screens/Shared/ServiceTrackingScreen';
 
-export type CompanionStackParamList = {
-    CompanionActiveService: { service: Service };
-    CompanionHome: undefined;
-    ServiceTracking: { serviceId: string };
-    UserProfile: { userId: string };
-};
-
-const Stack = createNativeStackNavigator<CompanionStackParamList>();
+const Stack = createNativeStackNavigator<AppStackParamList>();
 
 /**
  * Stack navigator for screens available to authenticated companions.

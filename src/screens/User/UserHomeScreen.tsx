@@ -8,10 +8,10 @@ import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import ServiceItemRow from '../../components/ServiceItemRow';
 import { useUser } from '../../context/UserContext';
-import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
+import { AppStackParamList } from '../../types/stack-param-list';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
 import { uiTexts } from '../../utils/data/ui-text-data';
@@ -19,7 +19,7 @@ import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 import { formatDateWithTime, getAddressFromCoords, sortServices } from '../../utils/util';
 
-type Props = NativeStackScreenProps<UserStackParamList, 'UserHome'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'UserHome'>;
 
 /**
  * Main screen for the user role. Shows a summary of past services and allows requesting new ones.

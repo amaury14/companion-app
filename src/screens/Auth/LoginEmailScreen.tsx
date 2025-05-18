@@ -6,12 +6,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
-import { AuthStackParamList } from '../../navigation/AuthStack/AuthStack';
 import { auth } from '../../services/firebase';
 import { colors } from '../../theme/colors';
+import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
 
-type Props = NativeStackScreenProps<AuthStackParamList, 'LoginEmail'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'LoginEmail'>;
 
 type LoginFormData = {
     email: string;

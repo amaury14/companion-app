@@ -8,22 +8,22 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Layout from '../../components/Layout';
 import ServiceCard from '../../components/ServiceCard';
 import { useUser } from '../../context/UserContext';
-import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
+import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { statusTexts } from '../../utils/keys/status-keys';
 import { dbKeys } from '../../utils/keys/db-keys';
 import ReviewForm from '../Review/ReviewForm';
 
-type Props = NativeStackScreenProps<UserStackParamList, 'UserActiveService'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'UserActiveService'>;
 
 /**
  * Shows detailed information about an ongoing service from the user's perspective, with status, companion info, and time tracking.
  */
 export default function UserActiveServiceScreen({ navigation }: Props) {
-    const route = useRoute<RouteProp<UserStackParamList, 'UserActiveService'>>();
+    const route = useRoute<RouteProp<AppStackParamList, 'UserActiveService'>>();
     const { service } = route.params;
     const [serviceData, setServiceData] = useState<Service>(service);
     const { user } = useUser();
