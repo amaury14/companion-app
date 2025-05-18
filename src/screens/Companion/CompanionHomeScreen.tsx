@@ -8,19 +8,20 @@ import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import { useUser } from '../../context/UserContext';
-import { CompanionStackParamList } from '../../navigation/CompanionStack/CompanionStack';
 import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
+import { AppStackParamList } from '../../types/stack-param-list';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { radioKilometers } from '../../utils/keys/costs-keys';
+import { radioKilometers, update15Minute, updateMinute } from '../../utils/keys/costs-keys';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
+import { scheduleReminder } from '../../utils/notifications';
 import { formatDateWithTime, getAddressFromCoords, getDistanceFromLatLonInKm, sortServices } from '../../utils/util';
 
-type Props = NativeStackScreenProps<CompanionStackParamList, 'CompanionHome'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'CompanionHome'>;
 
 /**
  * Main screen for companions. Lists available nearby services filtered by distance and allows accepting/rejecting and manage them.
@@ -105,12 +106,26 @@ export default function CompanionHomeScreen({ navigation }: Props) {
         await fetchServices();
     }, [fetchServices]);
 
-    const acceptService = async (serviceId: string) => {
+    const acceptService = async (service: Service) => {
         try {
-            await updateDoc(doc(db, dbKeys.services, serviceId), {
+            await updateDoc(doc(db, dbKeys.services, service?.id), {
                 companionId: user?.id,
                 status: statusKeys.accepted
             });
+            // Adding notification 15 minutes previous service
+            await scheduleReminder(
+                service,
+                update15Minute,
+                `⏰ ${uiTexts.reminderService}`,
+                `${uiTexts.serviceStartsAt} ${service?.dateText}`
+            );
+            // Adding notification 1 minute previous service
+            await scheduleReminder(
+                service,
+                updateMinute,
+                `⏰ ${uiTexts.reminderService}`,
+                `${uiTexts.serviceStartsAt} ${service?.dateText}`
+            );
             alert(uiTexts.serviceAccepted);
             fetchServices();
         } catch (err) {
@@ -157,7 +172,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                         renderItem={({ item }) => (
                             <CompanionServiceItemRow
                                 item={item}
-                                acceptService={() => acceptService(item.id)}
+                                acceptService={() => acceptService(item)}
                                 manageService={() => navigation.navigate('CompanionActiveService', { service: item })}
                                 rejectService={() => {
                                     Alert.alert(uiTexts.rejectService, uiTexts.areYouSure, [

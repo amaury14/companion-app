@@ -4,14 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../../screens/Auth/LoginScreen';
 import LoginEmailScreen from '../../screens/Auth/LoginEmailScreen';
 import RegisterScreen from '../../screens/Auth/RegisterScreen';
+import { AppStackParamList } from '../../types/stack-param-list';
 
-export type AuthStackParamList = {
-    Login: undefined;
-    LoginEmail: undefined;
-    Register: undefined;
-};
-
-const Stack = createNativeStackNavigator<AuthStackParamList>();
+const Stack = createNativeStackNavigator<AppStackParamList>();
 
 /**
  * Stack navigator for screens related to authentication (register, login).

@@ -15,3 +15,8 @@ export const fieldKeys = {
 export const asyncStorageKeys = {
     login: 'login'
 };
+
+export const reminderKeys = {
+    remindersId: 'app-companion-reminders',
+    remindersName: 'Companion Recordatorios'
+};

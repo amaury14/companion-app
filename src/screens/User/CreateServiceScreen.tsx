@@ -11,10 +11,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import { useUser } from '../../context/UserContext';
-import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Category } from '../../types/category';
+import { AppStackParamList } from '../../types/stack-param-list';
 import { categoryData } from '../../utils/data/category-data';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys } from '../../utils/keys/db-keys';
@@ -29,7 +29,7 @@ type FormData = {
     location: string;
 };
 
-type Props = NativeStackScreenProps<UserStackParamList, 'CreateService'>;
+type Props = NativeStackScreenProps<AppStackParamList, 'CreateService'>;
 
 /**
  * Form for users to request a new service. Includes location selection, category dropdown, date/time picker, and input validation.

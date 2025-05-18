@@ -24,6 +24,8 @@
     "expo": "~52.0.46",
     "expo-auth-session": "~6.0.3",
     "expo-dev-client": "~5.0.20",
+    "expo-device": "~7.0.3",
+    "expo-notifications": "~0.29.14",
     "expo-location": "~18.0.10",
     "expo-status-bar": "~2.0.1",
     "expo-web-browser": "~14.0.2",

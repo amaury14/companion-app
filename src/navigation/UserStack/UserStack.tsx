@@ -5,18 +5,10 @@ import UserHomeScreen from '../../screens/User/UserHomeScreen';
 import CreateServiceScreen from '../../screens/User/CreateServiceScreen';
 import UserActiveServiceScreen from '../../screens/User/UserActiveServiceScreen';
 import { UserProfileCard } from '../../screens/User/UserProfileCard';
-import { Service } from '../../types/service';
+import { AppStackParamList } from '../../types/stack-param-list';
 // import ServiceTrackingScreen from '../screens/Shared/ServiceTrackingScreen';
 
-export type UserStackParamList = {
-    CreateService: undefined;
-    ServiceTracking: { serviceId: string };
-    UserActiveService: { service: Service };
-    UserHome: undefined;
-    UserProfile: { userId: string };
-};
-
-const Stack = createNativeStackNavigator<UserStackParamList>();
+const Stack = createNativeStackNavigator<AppStackParamList>();
 
 /**
  * Stack navigator for screens available to authenticated users.

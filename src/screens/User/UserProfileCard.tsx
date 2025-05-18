@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, Text, StyleSheet, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
-import { UserStackParamList } from '../../navigation/UserStack/UserStack';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import ReviewItem from '../../components/ReviewItem';
@@ -13,6 +12,7 @@ import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firesto
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { db } from '../../services/firebase';
 import { Review } from '../../types/review';
+import { AppStackParamList } from '../../types/stack-param-list';
 import { UserData } from '../../types/user';
 import { getAddressFromCoords } from '../../utils/util';
 
@@ -20,7 +20,7 @@ import { getAddressFromCoords } from '../../utils/util';
  * Displays detailed profile information of a user or companion, including completed services, reputation, and contact info. Styled with a modern, app-like layout.
  */
 export const UserProfileCard = () => {
-    const route = useRoute<RouteProp<UserStackParamList, 'UserProfile'>>();
+    const route = useRoute<RouteProp<AppStackParamList, 'UserProfile'>>();
     const { userId } = route.params;
 
     const [loading, setLoading] = useState(false);
