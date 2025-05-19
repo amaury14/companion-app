@@ -1,6 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import ChatScreen from '../../screens/Chat/ChatScreen';
 import CompanionActiveServiceScreen from '../../screens/Companion/CompanionActiveServiceScreen';
 import CompanionHomeScreen from '../../screens/Companion/CompanionHomeScreen';
 import { UserProfileCard } from '../../screens/User/UserProfileCard';
@@ -18,6 +19,7 @@ export default function CompanionStack() {
             <Stack.Screen name="CompanionHome" component={CompanionHomeScreen} />
             <Stack.Screen name="CompanionActiveService" component={CompanionActiveServiceScreen} />
             <Stack.Screen name="UserProfile" component={UserProfileCard} />
+            <Stack.Screen name="ChatScreen" component={ChatScreen} />
         </Stack.Navigator>
         //     <Stack.Screen name="ServiceTracking" component={ServiceTrackingScreen} />
     );

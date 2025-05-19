@@ -33,15 +33,19 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
     useEffect(() => {
         if (!serviceData?.date || isStartEnable) return;
 
+        const now = new Date();
+        const target = serviceData.date.toDate();
         const interval = setInterval(() => {
-            const now = new Date();
-            const target = serviceData.date.toDate();
-
             if (now >= target) {
                 setIsStartEnable(true);
                 clearInterval(interval); // stop checking once condition is met
             }
         }, updateMinute);
+
+        if (now >= target) {
+            setIsStartEnable(true);
+            clearInterval(interval); // stop checking once condition is met
+        }
 
         return () => clearInterval(interval); // cleanup on unmount
     }, [serviceData?.date, isStartEnable]);
@@ -121,6 +125,10 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
                         <Text style={styles.buttonText}>{uiTexts.endService}</Text>
                     </Pressable>
                 }
+                <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
+                    <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
+                    <Text style={styles.buttonText}>{uiTexts.sendMessageToClient}</Text>
+                </Pressable>
             </ScrollView>
         </Layout>
     );
@@ -145,6 +153,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         flexDirection: 'row',
         gap: 8,
+        marginBottom: 5,
         justifyContent: 'center',
         padding: 12
     },

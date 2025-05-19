@@ -1,6 +1,7 @@
 import { Service } from './service';
 
 export type AppStackParamList = {
+    ChatScreen: { chatId: string };
     CompanionActiveService: { service: Service; };
     CompanionHome: undefined;
     CreateService: undefined;

@@ -20,5 +20,7 @@ export const colors = {
     danger: '#F44336',
     warning: '#FF9800',
     divider: '#E0E0E0',
-    star: '#FBBF24'
+    star: '#FBBF24',
+    mymessage: '#DCF8C6',
+    theirmessage: '#E5E7EB'
 };

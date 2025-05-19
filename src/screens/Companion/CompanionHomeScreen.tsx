@@ -1,4 +1,4 @@
-import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, query, where, setDoc, serverTimestamp } from 'firebase/firestore';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, RefreshControl, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -15,7 +15,7 @@ import { AppStackParamList } from '../../types/stack-param-list';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { radioKilometers, update15Minute, updateMinute } from '../../utils/keys/costs-keys';
+import { radioKilometers, update5Minute } from '../../utils/keys/costs-keys';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
 import { scheduleReminder } from '../../utils/notifications';
@@ -108,21 +108,21 @@ export default function CompanionHomeScreen({ navigation }: Props) {
 
     const acceptService = async (service: Service) => {
         try {
+            // Updates service companionId and status
             await updateDoc(doc(db, dbKeys.services, service?.id), {
                 companionId: user?.id,
                 status: statusKeys.accepted
             });
-            // Adding notification 15 minutes previous service
+            // Creates the chat room for this service
+            await setDoc(doc(db, dbKeys.chatRooms, service?.id), {
+                createdAt: serverTimestamp(),
+                participants: [user?.id, service?.requesterId],
+                serviceId: service?.id
+            });
+            // Adding notification 5 minutes previous service
             await scheduleReminder(
                 service,
-                update15Minute,
-                `⏰ ${uiTexts.reminderService}`,
-                `${uiTexts.serviceStartsAt} ${service?.dateText}`
-            );
-            // Adding notification 1 minute previous service
-            await scheduleReminder(
-                service,
-                updateMinute,
+                update5Minute,
                 `⏰ ${uiTexts.reminderService}`,
                 `${uiTexts.serviceStartsAt} ${service?.dateText}`
             );
