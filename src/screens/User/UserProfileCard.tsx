@@ -126,7 +126,8 @@ export const UserProfileCard = () => {
                                 <Text style={styles.label}>📍 {uiTexts.location}:</Text>
                                 <Text style={styles.value}>{userData?.locationText}</Text>
                             </View>
-                        )}
+                        )
+                    }
 
                     {
                         reviews?.length && (

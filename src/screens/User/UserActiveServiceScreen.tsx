@@ -81,6 +81,10 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
                         onSuccess={() => navigation.navigate('UserHome')}
                     ></ReviewForm>
                 }
+                <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
+                    <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
+                    <Text style={styles.buttonText}>{uiTexts.sendMessageToCompanion}</Text>
+                </Pressable>
             </ScrollView>
         </Layout>
     );

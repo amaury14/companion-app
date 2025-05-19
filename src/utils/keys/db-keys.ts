@@ -1,4 +1,6 @@
 export const dbKeys = {
+    chatRooms: 'chatRooms',
+    messages: 'messages',
     reviews: 'reviews',
     services: 'services',
     users: 'users'
