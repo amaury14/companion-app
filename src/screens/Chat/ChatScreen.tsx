@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     },
     messages: {
         padding: 12,
-        paddingBottom: 80,
+        paddingBottom: 80
     },
     inputRow: {
         backgroundColor: colors.lightGray,
