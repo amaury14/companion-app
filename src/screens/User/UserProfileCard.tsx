@@ -121,28 +121,26 @@ export const UserProfileCard = () => {
                     </View>
 
                     {
-                        userData?.address && (
-                            <View style={styles.infoBlock}>
-                                <Text style={styles.label}>📍 {uiTexts.location}:</Text>
-                                <Text style={styles.value}>{userData?.locationText}</Text>
-                            </View>
-                        )
+                        userData?.address &&
+                        <View style={styles.infoBlock}>
+                            <Text style={styles.label}>📍 {uiTexts.location}:</Text>
+                            <Text style={styles.value}>{userData?.locationText}</Text>
+                        </View>
                     }
 
                     {
-                        reviews?.length && (
-                            <>
-                                <Text style={styles.subTitle}>{uiTexts.previousReviews}</Text>
-                                <FlatList
-                                    data={reviews}
-                                    keyExtractor={item => item.id}
-                                    renderItem={({ item }) => (
-                                        <ReviewItem item={item}></ReviewItem>
-                                    )}
-                                    ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-                                />
-                            </>
-                        )
+                        reviews?.length &&
+                        <View>
+                            <Text style={styles.subTitle}>{uiTexts.previousReviews}</Text>
+                            <FlatList
+                                data={reviews}
+                                keyExtractor={item => item.id}
+                                renderItem={({ item }) => (
+                                    <ReviewItem item={item}></ReviewItem>
+                                )}
+                                ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+                            />
+                        </View>
                     }
                 </View>
             }
