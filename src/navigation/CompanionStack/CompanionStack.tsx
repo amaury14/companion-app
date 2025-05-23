@@ -4,9 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ChatScreen from '../../screens/Chat/ChatScreen';
 import CompanionActiveServiceScreen from '../../screens/Companion/CompanionActiveServiceScreen';
 import CompanionHomeScreen from '../../screens/Companion/CompanionHomeScreen';
+import ServiceTrackingScreen from '../../screens/Tracking/ServiceTrackingScreen';
 import { UserProfileCard } from '../../screens/User/UserProfileCard';
 import { AppStackParamList } from '../../types/stack-param-list';
-// import ServiceTrackingScreen from '../../screens/Shared/ServiceTrackingScreen';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -20,7 +20,7 @@ export default function CompanionStack() {
             <Stack.Screen name="CompanionActiveService" component={CompanionActiveServiceScreen} />
             <Stack.Screen name="UserProfile" component={UserProfileCard} />
             <Stack.Screen name="ChatScreen" component={ChatScreen} />
+            <Stack.Screen name="ServiceTracking" component={ServiceTrackingScreen} />
         </Stack.Navigator>
-        //     <Stack.Screen name="ServiceTracking" component={ServiceTrackingScreen} />
     );
 }

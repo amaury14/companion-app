@@ -1,5 +1,6 @@
 import { differenceInMinutes } from 'date-fns';
 import * as Location from 'expo-location';
+import { LatLng } from 'react-native-maps';
 
 import { Service } from '../types/service';
 import { uiTexts } from './data/ui-text-data';
@@ -95,3 +96,28 @@ export const getTimeDiffText = (dateA: Date, dateB: Date): string => {
     }
     return `0 ${uiTexts.min}`;
 };
+
+export const areLocationsClose = (
+    latlon1: LatLng,
+    latlon2: LatLng,
+    maxDistanceKm = 1 // default 1km
+): boolean => {
+    const toRad = (value: number) => (value * Math.PI) / 180;
+
+    const R = 6371; // Radius of the Earth in km
+    const dLat = toRad(latlon2.latitude - latlon1.latitude);
+    const dLon = toRad(latlon2.longitude - latlon1.longitude);
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(latlon1.latitude)) *
+        Math.cos(toRad(latlon2.latitude)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+
+    return distance <= maxDistanceKm;
+};
+

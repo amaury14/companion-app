@@ -8,6 +8,11 @@ export type Service = {
     confirmed: boolean;
     companionId: string;
     companionPayment: number;
+    companionLiveLocation?: {
+        latitude: number;
+        longitude: number;
+        updatedAt: Timestamp;
+    };
     date: Timestamp;
     dateText?: string;
     duration: number;
@@ -19,6 +24,11 @@ export type Service = {
     locationText?: string;
     price: number;
     requesterId: string;
+    requesterLiveLocation?: {
+        latitude: number;
+        longitude: number;
+        updatedAt: Timestamp;
+    };
     reviewed: boolean;
     status: string;
     timeStamp: number;
