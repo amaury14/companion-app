@@ -1,8 +1,8 @@
 import { addHours } from 'date-fns';
 import { MaterialIcons } from '@expo/vector-icons';
 import { doc, Timestamp, updateDoc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Text, StyleSheet, ScrollView, Pressable, Alert, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -38,12 +38,12 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
         }
     };
 
-    const checkCompleteTime = (interval: NodeJS.Timeout) => {
+    const checkCompleteTime = useCallback((interval: NodeJS.Timeout) => {
         if (new Date() > addHours(serviceData.checkInTime?.toDate() ?? new Date(), serviceData.duration)) {
             setAbleToComplete(true);
             clearInterval(interval); // stop checking once condition is met
         }
-    };
+    }, [serviceData]);
 
     useEffect(() => {
         if (!serviceData?.date || isStartEnable) return;
@@ -68,7 +68,7 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
         checkCompleteTime(interval);
 
         return () => clearInterval(interval); // cleanup on unmount
-    }, [serviceData?.checkInTime, serviceData?.duration]);
+    }, [serviceData, checkCompleteTime]);
 
     const handleStart = async () => {
         try {
@@ -126,10 +126,19 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
                         <Text style={styles.buttonText}>{uiTexts.endService}</Text>
                     </Pressable>
                 }
-                <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
-                    <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
-                    <Text style={styles.buttonText}>{uiTexts.sendMessageToClient}</Text>
-                </Pressable>
+                <View style={styles.bottomButtonsBar}>
+                    <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
+                        <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
+                        <Text style={styles.buttonText}>{uiTexts.messaging}</Text>
+                    </Pressable>
+                    <Pressable style={styles.button} onPress={() => navigation.navigate('ServiceTracking', {
+                        serviceId: serviceData.id,
+                        destination: serviceData.location ?? { latitude: 0, longitude: 0 }
+                    })}>
+                        <MaterialIcons name="map" size={22} color={colors.white} />
+                        <Text style={styles.buttonText}>{uiTexts.trackService}</Text>
+                    </Pressable>
+                </View>
             </ScrollView>
         </Layout>
     );
@@ -149,6 +158,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 8,
         marginBottom: 5,
+        marginRight: 5,
         justifyContent: 'center',
         padding: 12
     },
@@ -159,6 +169,12 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontWeight: '600',
         fontSize: 20
+    },
+    bottomButtonsBar: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
     waitForText: {
         color: colors.black,

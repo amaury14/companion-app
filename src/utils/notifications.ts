@@ -73,3 +73,20 @@ export async function scheduleReminder(service: Service, minutesBefore: number, 
         }
     });
 }
+
+export async function scheduleTextReminder(title: string, body: string) {
+    const notificationTime = new Date().getSeconds();
+
+    await Notifications.scheduleNotificationAsync({
+        content: {
+            body,
+            sound: true,
+            title
+        },
+        trigger: {
+            channelId: reminderKeys.remindersId,
+            seconds: notificationTime,
+            type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL
+        }
+    });
+}
