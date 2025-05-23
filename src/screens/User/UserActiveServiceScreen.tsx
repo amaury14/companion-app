@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         flexDirection: 'row',
         gap: 8,
+        marginBottom: 5,
         justifyContent: 'center',
         padding: 12
     },
