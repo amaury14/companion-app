@@ -1,6 +1,6 @@
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, Text, StyleSheet, View } from 'react-native';
+import { Dimensions, FlatList, Text, StyleSheet, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
 import Layout from '../../components/Layout';
@@ -130,7 +130,7 @@ export const UserProfileCard = () => {
 
                     {
                         reviews?.length &&
-                        <View>
+                        <View style={styles.reviewContent}>
                             <Text style={styles.subTitle}>{uiTexts.previousReviews}</Text>
                             <FlatList
                                 data={reviews}
@@ -147,6 +147,8 @@ export const UserProfileCard = () => {
         </Layout>
     );
 };
+
+const { height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
@@ -206,5 +208,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         marginBottom: 12
-    }
+    },
+    reviewContent: { height: height - 400 }
 });

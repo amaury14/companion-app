@@ -8,6 +8,7 @@ import SelectDropdown from 'react-native-select-dropdown';
 import DatePicker from 'react-native-ui-datepicker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import { useUser } from '../../context/UserContext';
@@ -125,8 +126,8 @@ export default function CreateServiceScreen({ navigation }: Props) {
 
     return (
         <Layout>
+            <Header title={uiTexts.newService}></Header>
             <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-                <Text style={styles.title}>{uiTexts.newService}</Text>
 
                 <Text style={styles.inputText}>{uiTexts.categoryFormLabel}</Text>
                 <Controller
@@ -239,12 +240,6 @@ export default function CreateServiceScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
     container: { flex: 1 },
     content: { padding: 20 },
-    title: {
-        color: colors.white,
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 5
-    },
     input: {
         borderBottomWidth: 1,
         fontSize: 14,

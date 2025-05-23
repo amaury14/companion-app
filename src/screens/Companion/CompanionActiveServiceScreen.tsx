@@ -6,6 +6,7 @@ import { Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import ServiceCard from '../../components/ServiceCard';
 import { db } from '../../services/firebase';
@@ -13,7 +14,7 @@ import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { update5Minute, updateMinute } from '../../utils/keys/costs-keys';
+import { update10Seconds, update5Minute } from '../../utils/keys/costs-keys';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 
@@ -30,22 +31,29 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
     const [isStartEnable, setIsStartEnable] = useState<boolean>(false);
     const [ableToComplete, setAbleToComplete] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (!serviceData?.date || isStartEnable) return;
-
-        const now = new Date();
-        const target = serviceData.date.toDate();
-        const interval = setInterval(() => {
-            if (now >= target) {
-                setIsStartEnable(true);
-                clearInterval(interval); // stop checking once condition is met
-            }
-        }, updateMinute);
-
-        if (now >= target) {
+    const checkStartTime = (interval: NodeJS.Timeout, target: Date) => {
+        if (new Date() >= target) {
             setIsStartEnable(true);
             clearInterval(interval); // stop checking once condition is met
         }
+    };
+
+    const checkCompleteTime = (interval: NodeJS.Timeout) => {
+        if (new Date() > addHours(serviceData.checkInTime?.toDate() ?? new Date(), serviceData.duration)) {
+            setAbleToComplete(true);
+            clearInterval(interval); // stop checking once condition is met
+        }
+    };
+
+    useEffect(() => {
+        if (!serviceData?.date || isStartEnable) return;
+
+        const target = serviceData.date.toDate();
+        const interval = setInterval(() => {
+            checkStartTime(interval, target);
+        }, update10Seconds);
+
+        checkStartTime(interval, target);
 
         return () => clearInterval(interval); // cleanup on unmount
     }, [serviceData?.date, isStartEnable]);
@@ -53,18 +61,11 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
     useEffect(() => {
         if (!serviceData?.checkInTime) return;
 
-        const now = new Date();
         const interval = setInterval(() => {
-            if (now > addHours(serviceData.checkInTime?.toDate() ?? now, serviceData.duration)) {
-                setAbleToComplete(true);
-                clearInterval(interval); // stop checking once condition is met
-            }
+            checkCompleteTime(interval);
         }, update5Minute);
 
-        if (now > addHours(serviceData.checkInTime?.toDate() ?? now, serviceData.duration)) {
-            setAbleToComplete(true);
-            clearInterval(interval); // stop checking once condition is met
-        }
+        checkCompleteTime(interval);
 
         return () => clearInterval(interval); // cleanup on unmount
     }, [serviceData?.checkInTime, serviceData?.duration]);
@@ -104,8 +105,8 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
 
     return (
         <Layout>
+            <Header title={uiTexts.serviceOngoing}></Header>
             <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-                <Text style={styles.header}>{uiTexts.serviceOngoing}</Text>
                 <ServiceCard serviceData={serviceData}></ServiceCard>
                 {
                     !serviceData.checkInTime &&
@@ -140,12 +141,6 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 20
-    },
-    header: {
-        color: colors.white,
-        fontSize: 24,
-        fontWeight: '700',
-        marginBottom: 16
     },
     button: {
         alignItems: 'center',

@@ -12,6 +12,7 @@ import {
     Platform,
 } from 'react-native';
 
+import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import { useUser } from '../../context/UserContext';
 import { db } from '../../services/firebase';
@@ -73,32 +74,33 @@ const ChatScreen = ({ route }: Props) => {
 
     return (
         <Layout>
-        <KeyboardAvoidingView
-            style={styles.wrapper}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            keyboardVerticalOffset={80}
-        >
-            <FlatList
-                data={messages}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-                ref={flatListRef}
-                contentContainerStyle={styles.messages}
-            />
-
-            <View style={styles.inputRow}>
-                <TextInput
-                    style={styles.input}
-                    placeholder={uiTexts.typeMessage}
-                    multiline={true}
-                    value={text}
-                    onChangeText={setText}
+            <Header title={uiTexts.messaging}></Header>
+            <KeyboardAvoidingView
+                style={styles.wrapper}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                keyboardVerticalOffset={80}
+            >
+                <FlatList
+                    data={messages}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                    ref={flatListRef}
+                    contentContainerStyle={styles.messages}
                 />
-                <Pressable onPress={sendMessage} style={styles.sendButton}>
-                    <MaterialIcons name="send" size={22} color={colors.white} />
-                </Pressable>
-            </View>
-        </KeyboardAvoidingView>
+
+                <View style={styles.inputRow}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder={uiTexts.typeMessage}
+                        multiline={true}
+                        value={text}
+                        onChangeText={setText}
+                    />
+                    <Pressable onPress={sendMessage} style={styles.sendButton}>
+                        <MaterialIcons name="send" size={22} color={colors.white} />
+                    </Pressable>
+                </View>
+            </KeyboardAvoidingView>
         </Layout>
     );
 };

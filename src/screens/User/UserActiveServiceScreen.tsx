@@ -1,10 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { doc, increment, updateDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
-import { Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
+import { Text, StyleSheet, ScrollView, Pressable, Alert, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import ServiceCard from '../../components/ServiceCard';
 import { useUser } from '../../context/UserContext';
@@ -50,8 +51,8 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
 
     return (
         <Layout>
+            <Header title={uiTexts.serviceOngoing}></Header>
             <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-                <Text style={styles.header}>{uiTexts.serviceOngoing}</Text>
                 <ServiceCard serviceData={serviceData}></ServiceCard>
                 {
                     serviceData.status === statusTexts.completed && !serviceData.confirmed &&
@@ -74,12 +75,14 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
                 }
                 {
                     serviceData.status === statusTexts.completed && serviceData.confirmed &&
-                    <ReviewForm
-                        reviewerId={serviceData.requesterId}
-                        reviewedUserId={serviceData.companionId}
-                        serviceId={serviceData.id}
-                        onSuccess={() => navigation.navigate('UserHome')}
-                    ></ReviewForm>
+                    <View style={{ marginBottom: 5 }}>
+                        <ReviewForm
+                            reviewerId={serviceData.requesterId}
+                            reviewedUserId={serviceData.companionId}
+                            serviceId={serviceData.id}
+                            onSuccess={() => navigation.navigate('UserHome')}
+                        ></ReviewForm>
+                    </View>
                 }
                 <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
                     <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
@@ -96,12 +99,6 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 20
-    },
-    header: {
-        color: colors.white,
-        fontSize: 24,
-        fontWeight: '700',
-        marginBottom: 16
     },
     button: {
         alignItems: 'center',
