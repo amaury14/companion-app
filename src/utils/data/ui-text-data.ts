@@ -44,6 +44,7 @@ export const uiTexts = {
     invalidEmail: 'Email inválido',
     goBack: '← Volver',
     manage: 'Administrar',
+    messaging: 'Mensajería',
     min: 'min',
     minimum6Character: 'Mínimo 6 caracteres',
     newService: 'Solicitar nuevo servicio',

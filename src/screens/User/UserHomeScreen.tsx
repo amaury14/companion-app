@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import Header from '../../components/Header';
+import UserHeader from '../../components/UserHeader';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import ServiceItemRow from '../../components/ServiceItemRow';
@@ -113,7 +113,7 @@ export default function UserHomeScreen({ navigation }: Props) {
     return (
         <Layout>
             <View style={styles.container}>
-                <Header userClick={(user) => handleViewUser(user?.id ?? '')}></Header>
+                <UserHeader userClick={(user) => handleViewUser(user?.id ?? '')}></UserHeader>
 
                 <View style={styles.body}>
                     <TouchableOpacity
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
     body: { flex: 1, padding: 20 },
     sectionTitle: { fontSize: 18, marginVertical: 20 },
     serviceItem: {
-        padding: 12,
         borderBottomColor: colors.gray,
         borderBottomWidth: 1
     },
@@ -178,7 +177,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginTop: 0,
         paddingHorizontal: 10,
-        paddingVertical: 10
+        paddingVertical: 5
     },
     newServiceButtonText: {
         color: colors.white,
