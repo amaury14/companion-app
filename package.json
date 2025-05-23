@@ -8,7 +8,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "npx eslint src/**/*.tsx --ext .ts,.tsx",
-    "test": "jest"
+    "test": "jest",
+    "prebuild": "npx expo prebuild"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.23.1",

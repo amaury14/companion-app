@@ -57,7 +57,7 @@ const ChatScreen = ({ route }: Props) => {
         await addDoc(collection(db, dbKeys.chatRooms, chatId, dbKeys.messages), {
             senderId: user?.id,
             text: text.trim(),
-            createdAt: serverTimestamp(),
+            createdAt: serverTimestamp()
         });
         setText('');
     };
