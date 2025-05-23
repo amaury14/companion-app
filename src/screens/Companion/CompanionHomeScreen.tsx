@@ -4,9 +4,9 @@ import { View, Text, FlatList, StyleSheet, RefreshControl, Alert } from 'react-n
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import CompanionServiceItemRow from '../../components/CompanionServiceItemRow';
-import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
+import UserHeader from '../../components/UserHeader';
 import { useUser } from '../../context/UserContext';
 import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
@@ -159,7 +159,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
     return (
         <Layout>
             <View style={styles.container}>
-                <Header userClick={(user) => handleViewUser(user?.id ?? '')}></Header>
+                <UserHeader userClick={(user) => handleViewUser(user?.id ?? '')}></UserHeader>
 
                 <View style={styles.body}>
                     <Text style={styles.title}>{uiTexts.companionServices}</Text>

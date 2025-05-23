@@ -1,6 +1,8 @@
 export const baseComission = 0.05; // cost comission
 export const baseCost = 130; // cost by hour
 export const radioKilometers = 5; // kilometer radio
+export const update10Seconds = 10_000; // update every 10 seconds
+export const update30Seconds = 30_000; // update every 30 seconds
 export const updateMinute = 60_000; // update every minute
 export const update5Minute = updateMinute * 5; // update every 5 minute
 export const update15Minute = updateMinute * 15; // update every 15 minute
