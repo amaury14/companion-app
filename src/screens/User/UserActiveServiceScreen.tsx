@@ -14,8 +14,8 @@ import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { statusTexts } from '../../utils/keys/status-keys';
 import { dbKeys } from '../../utils/keys/db-keys';
+import { statusTexts } from '../../utils/keys/status-keys';
 import ReviewForm from '../Review/ReviewForm';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'UserActiveService'>;
@@ -84,10 +84,17 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
                         ></ReviewForm>
                     </View>
                 }
-                <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
-                    <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
-                    <Text style={styles.buttonText}>{uiTexts.sendMessageToCompanion}</Text>
-                </Pressable>
+                <View style={styles.bottomButtonsBar}>
+                    <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
+                        <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
+                    </Pressable>
+                    <Pressable style={styles.button} onPress={() => navigation.navigate('ServiceTracking', {
+                        serviceId: serviceData.id,
+                        destination: serviceData.location ?? { latitude: 0, longitude: 0 }
+                    })}>
+                        <MaterialIcons name="map" size={22} color={colors.white} />
+                    </Pressable>
+                </View>
             </ScrollView>
         </Layout>
     );
@@ -117,6 +124,12 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontSize: 20,
         fontWeight: '600'
+    },
+    bottomButtonsBar: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
     waitForText: {
         color: colors.black,

@@ -1,3 +1,5 @@
+import { LatLng } from 'react-native-maps';
+
 import { Service } from './service';
 
 export type AppStackParamList = {
@@ -8,7 +10,7 @@ export type AppStackParamList = {
     Login: undefined;
     LoginEmail: undefined;
     Register: undefined;
-    ServiceTracking: { serviceId: string; };
+    ServiceTracking: { serviceId: string; destination: LatLng; };
     UserActiveService: { service: Service; };
     UserHome: undefined;
     UserProfile: { userId: string; };

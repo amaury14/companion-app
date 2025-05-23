@@ -30,7 +30,12 @@
             },
             "package": "com.amaurychong.companionapp",
             "googleServicesFile": "./google-services.json",
-            "versionCode": 1
+            "versionCode": 1,
+            "config": {
+                "googleMaps": {
+                    "apiKey": "AIzaSyDTE9j9PnRUVueaUoDf7G4cabUdXwhu6MY"
+                }
+            }
         },
         "web": {
             "favicon": "./assets/favicon.png"

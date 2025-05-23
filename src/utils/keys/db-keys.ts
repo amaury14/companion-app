@@ -8,10 +8,12 @@ export const dbKeys = {
 
 export const fieldKeys = {
     companionId: 'companionId',
+    companionLiveLocation: 'companionLiveLocation',
     createdAt: 'createdAt',
     requesterId: 'requesterId',
-    status: 'status',
-    reviewedUserId: 'reviewedUserId'
+    requesterLiveLocation: 'requesterLiveLocation',
+    reviewedUserId: 'reviewedUserId',
+    status: 'status'
 };
 
 export const asyncStorageKeys = {
