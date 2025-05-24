@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Dimensions, FlatList, Text, StyleSheet, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
+import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
 import ReviewItem from '../../components/ReviewItem';
@@ -88,6 +89,7 @@ export const UserProfileCard = () => {
 
     return (
         <Layout>
+            <Header title={uiTexts.userProfile}></Header>
             {
                 loading &&
                 <Loader color={colors.argentinianblue} size={'large'}></Loader>
@@ -129,7 +131,7 @@ export const UserProfileCard = () => {
                     }
 
                     {
-                        reviews?.length &&
+                        reviews?.length > 0 &&
                         <View style={styles.reviewContent}>
                             <Text style={styles.subTitle}>{uiTexts.previousReviews}</Text>
                             <FlatList
@@ -155,7 +157,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.lightGray,
         borderRadius: 12,
         elevation: 2,
-        height: '95%',
+        height: 'auto',
         margin: 12,
         shadowColor: colors.black,
         shadowOpacity: 0.1,

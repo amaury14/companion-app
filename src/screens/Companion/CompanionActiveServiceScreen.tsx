@@ -17,6 +17,7 @@ import { uiTexts } from '../../utils/data/ui-text-data';
 import { update10Seconds, update5Minute } from '../../utils/keys/costs-keys';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
+import ReviewForm from '../Review/ReviewForm';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'CompanionActiveService'>;
 
@@ -96,7 +97,6 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
                 status: statusTexts.completed
             });
             Alert.alert(`✅ ${uiTexts.serviceCompleted}`, uiTexts.askClientConfirm);
-            navigation.navigate('CompanionHome');
         } catch (error) {
             console.error(uiTexts.errorOnCompleteService, error);
             Alert.alert(`❌ ${uiTexts.errorOnCompleteService}`);
@@ -120,11 +120,22 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
                     <Text style={styles.waitForText}>{uiTexts.waitForServicedTime}</Text>
                 }
                 {
-                    serviceData.checkInTime &&
+                    serviceData.checkInTime && serviceData.status === statusTexts.in_progress &&
                     <Pressable style={[styles.button, !ableToComplete && styles.buttonDisabled]} disabled={!ableToComplete} onPress={handleComplete}>
                         <MaterialIcons name="check-circle" size={22} color={colors.white} />
                         <Text style={styles.buttonText}>{uiTexts.endService}</Text>
                     </Pressable>
+                }
+                {
+                    serviceData.status === statusTexts.completed &&
+                    <View style={{ marginBottom: 5 }}>
+                        <ReviewForm
+                            reviewerId={serviceData.companionId}
+                            reviewedUserId={serviceData.requesterId}
+                            serviceId={serviceData.id}
+                            onSuccess={() => navigation.navigate('CompanionHome')}
+                        ></ReviewForm>
+                    </View>
                 }
                 <View style={styles.bottomButtonsBar}>
                     <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
@@ -160,7 +171,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         marginRight: 5,
         justifyContent: 'center',
-        padding: 12
+        padding: 5
     },
     buttonDisabled: {
         backgroundColor: colors.gray
