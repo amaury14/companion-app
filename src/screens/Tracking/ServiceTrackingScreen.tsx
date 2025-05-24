@@ -1,7 +1,8 @@
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import MapView, { Marker, LatLng } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 
 import { useUser } from '../../context/UserContext';
 import { db } from '../../services/firebase';
@@ -27,6 +28,7 @@ const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
     const { serviceId, destination } = route.params;
     const [isCloseActive, setCloseActive] = useState<boolean>(false);
     const [location, setLocation] = useState<LatLng | null>(null);
+    const mapRef = useRef<MapView>(null);
 
     const startLocationSharing = async (serviceId: string, field: string) => {
         const { granted } = await getForegroundPermissionsAsync();
@@ -85,6 +87,20 @@ const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
         return () => clearInterval(interval); // cleanup on unmount
     }, [destination, location, checkLocationClose]);
 
+    useEffect(() => {
+        if (location && mapRef?.current) {
+            mapRef.current.animateToRegion(
+                {
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                },
+                1000
+            );
+        }
+    }, [location]);
+
     if (!location) {
         return (
             <View style={styles.loadingContainer}>
@@ -117,6 +133,13 @@ const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
                 coordinate={destination}
                 title={uiTexts.serviceLocation}
                 pinColor={colors.danger}
+            />
+            <MapViewDirections
+                origin={location}
+                destination={destination}
+                apikey={process.env.GOOGLE_MAPS_API_KEY}
+                strokeWidth={4}
+                strokeColor={colors.success}
             />
         </MapView>
     );

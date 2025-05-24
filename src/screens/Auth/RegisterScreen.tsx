@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredentia
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TextInput, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -183,137 +183,133 @@ export default function RegisterScreen({ navigation }: Props) {
 
     return (
         <Layout>
-            <View style={styles.container}>
-                <View style={styles.content}>
-                    <Text style={styles.registerText}>{uiTexts.fullName}</Text>
-                    <View style={{ width: '80%' }}>
-                        <Controller
-                            control={control}
-                            name="name"
-                            rules={{ required: uiTexts.requiredName }}
-                            render={({ field: { onChange, value } }) => (
-                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
-                            )}
-                        />
-                        {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
-                    </View>
-
-                    <Text style={styles.registerText}>{uiTexts.emailFormLabel}</Text>
-                    <View style={{ width: '80%' }}>
-                        <Controller
-                            control={control}
-                            name="email"
-                            rules={{
-                                required: uiTexts.requiredEmail,
-                                pattern: {
-                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                    message: uiTexts.invalidEmail,
-                                },
-                            }}
-                            render={({ field: { onChange, value } }) => (
-                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} keyboardType="email-address" />
-                            )}
-                        />
-                        {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
-                    </View>
-
-                    <Text style={styles.registerText}>{uiTexts.userTypeFormLabel}</Text>
-                    <View style={styles.accountType}>
-                        <TouchableOpacity onPress={() => setUserType('user')}>
-                            <Text style={{
-                                backgroundColor: userType === 'user' ? colors.argentinianblue : colors.white,
-                                fontSize: 18,
-                                fontWeight: userType === 'user' ? 'bold' : 'normal',
-                                padding: 10,
-                                borderRadius: 5
-                            }}>🧑 {uiTexts.user}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setUserType('companion')}>
-                            <Text style={{
-                                backgroundColor: userType === 'companion' ? colors.argentinianblue : colors.white,
-                                fontSize: 18,
-                                fontWeight: userType === 'companion' ? 'bold' : 'normal',
-                                padding: 10,
-                                borderRadius: 5
-                            }}>🤝 {uiTexts.companion}</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    <Text style={styles.registerText}>{uiTexts.addressFormLabel}</Text>
-                    <View style={{ width: '80%' }}>
-                        <Controller
-                            control={control}
-                            name="address"
-                            rules={{
-                                required: uiTexts.requiredAddress
-                            }}
-                            render={({ field: { onChange, value } }) => (
-                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
-                            )}
-                        />
-                        {errors.address && <Text style={styles.error}>{errors.address.message}</Text>}
-                    </View>
-
-                    <Text style={styles.registerText}>{uiTexts.passwordFormLabel}</Text>
-                    <View style={{ width: '80%' }}>
-                        <Controller
-                            control={control}
-                            name="password"
-                            rules={{
-                                required: uiTexts.requiredPassword,
-                                minLength: { value: 6, message: uiTexts.minimum6Character },
-                            }}
-                            render={({ field: { onChange, value } }) => (
-                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
-                            )}
-                        />
-                        {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-                    </View>
-
-                    <Text style={styles.registerText}>{uiTexts.repeatPasswordFormLabel}</Text>
-                    <View style={{ width: '80%' }}>
-                        <Controller
-                            control={control}
-                            name="confirmPassword"
-                            rules={{
-                                required: uiTexts.confirmPassword,
-                            }}
-                            render={({ field: { onChange, value } }) => (
-                                <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
-                            )}
-                        />
-                        {errors.confirmPassword && (
-                            <Text style={styles.error}>{errors.confirmPassword.message}</Text>
+            <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+                <Text style={styles.registerText}>{uiTexts.fullName}</Text>
+                <View style={{ width: '80%' }}>
+                    <Controller
+                        control={control}
+                        name="name"
+                        rules={{ required: uiTexts.requiredName }}
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
                         )}
-                    </View>
-
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
-                        <Text style={styles.buttonText}>{uiTexts.registerMe}</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.registerText}>{uiTexts.or}</Text>
-                    <Text style={styles.registerTextGoogle}>{uiTexts.registerDisclaimer}</Text>
-                    <TouchableOpacity style={styles.button} onPress={signIn}>
-                        <Text style={styles.buttonText}>{uiTexts.registerGoogle}</Text>
-                    </TouchableOpacity>
-                    <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>
-                        {uiTexts.haveAccountLogin}
-                    </Text>
-                    {
-                        loading &&
-                        <Loader color={colors.azureblue} size={'large'}></Loader>
-                    }
-                    {error && <Text style={styles.actionsText}>{uiTexts.registerErrorTryAgain}</Text>}
+                    />
+                    {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
                 </View>
-            </View>
+
+                <Text style={styles.registerText}>{uiTexts.emailFormLabel}</Text>
+                <View style={{ width: '80%' }}>
+                    <Controller
+                        control={control}
+                        name="email"
+                        rules={{
+                            required: uiTexts.requiredEmail,
+                            pattern: {
+                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: uiTexts.invalidEmail,
+                            },
+                        }}
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} keyboardType="email-address" />
+                        )}
+                    />
+                    {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+                </View>
+
+                <Text style={styles.registerText}>{uiTexts.userTypeFormLabel}</Text>
+                <View style={styles.accountType}>
+                    <TouchableOpacity onPress={() => setUserType('user')}>
+                        <Text style={{
+                            backgroundColor: userType === 'user' ? colors.argentinianblue : colors.white,
+                            fontSize: 18,
+                            fontWeight: userType === 'user' ? 'bold' : 'normal',
+                            padding: 10,
+                            borderRadius: 5
+                        }}>🧑 {uiTexts.user}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setUserType('companion')}>
+                        <Text style={{
+                            backgroundColor: userType === 'companion' ? colors.argentinianblue : colors.white,
+                            fontSize: 18,
+                            fontWeight: userType === 'companion' ? 'bold' : 'normal',
+                            padding: 10,
+                            borderRadius: 5
+                        }}>🤝 {uiTexts.companion}</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <Text style={styles.registerText}>{uiTexts.addressFormLabel}</Text>
+                <View style={{ width: '80%' }}>
+                    <Controller
+                        control={control}
+                        name="address"
+                        rules={{
+                            required: uiTexts.requiredAddress
+                        }}
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} />
+                        )}
+                    />
+                    {errors.address && <Text style={styles.error}>{errors.address.message}</Text>}
+                </View>
+
+                <Text style={styles.registerText}>{uiTexts.passwordFormLabel}</Text>
+                <View style={{ width: '80%' }}>
+                    <Controller
+                        control={control}
+                        name="password"
+                        rules={{
+                            required: uiTexts.requiredPassword,
+                            minLength: { value: 6, message: uiTexts.minimum6Character },
+                        }}
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
+                        )}
+                    />
+                    {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+                </View>
+
+                <Text style={styles.registerText}>{uiTexts.repeatPasswordFormLabel}</Text>
+                <View style={{ width: '80%' }}>
+                    <Controller
+                        control={control}
+                        name="confirmPassword"
+                        rules={{
+                            required: uiTexts.confirmPassword,
+                        }}
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput style={{ borderBottomWidth: 1 }} value={value} onChangeText={onChange} secureTextEntry />
+                        )}
+                    />
+                    {errors.confirmPassword && (
+                        <Text style={styles.error}>{errors.confirmPassword.message}</Text>
+                    )}
+                </View>
+
+                <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
+                    <Text style={styles.buttonText}>{uiTexts.registerMe}</Text>
+                </TouchableOpacity>
+                <Text style={styles.registerText}>{uiTexts.or}</Text>
+                <Text style={styles.registerTextGoogle}>{uiTexts.registerDisclaimer}</Text>
+                <TouchableOpacity style={styles.button} onPress={signIn}>
+                    <Text style={styles.buttonText}>{uiTexts.registerGoogle}</Text>
+                </TouchableOpacity>
+                <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>
+                    {uiTexts.haveAccountLogin}
+                </Text>
+                {
+                    loading &&
+                    <Loader color={colors.azureblue} size={'large'}></Loader>
+                }
+                {error && <Text style={styles.actionsText}>{uiTexts.registerErrorTryAgain}</Text>}
+            </ScrollView>
         </Layout>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
-        flex: 1,
-        justifyContent: 'center'
+        flex: 1
     },
     content: {
         alignItems: 'center',

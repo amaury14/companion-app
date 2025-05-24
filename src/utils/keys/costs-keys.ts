@@ -7,5 +7,5 @@ export const updateMinute = 60_000; // update every minute
 export const update5Minute = updateMinute * 5; // update every 5 minute
 export const update15Minute = updateMinute * 15; // update every 15 minute
 export const timeToleranceMinutes = 20; // tolerance to be able to complete a service
-export const minServiceHours = 0; // minimun amount of hours per service
+export const minServiceHours = 1; // minimun amount of hours per service
 export const maxServiceHours = 14; // maximun amount of hours per service
