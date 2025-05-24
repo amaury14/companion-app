@@ -87,12 +87,14 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
                 <View style={styles.bottomButtonsBar}>
                     <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
                         <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
+                        <Text style={styles.buttonText}>{uiTexts.messaging}</Text>
                     </Pressable>
                     <Pressable style={styles.button} onPress={() => navigation.navigate('ServiceTracking', {
                         serviceId: serviceData.id,
                         destination: serviceData.location ?? { latitude: 0, longitude: 0 }
                     })}>
                         <MaterialIcons name="map" size={22} color={colors.white} />
+                        <Text style={styles.buttonText}>{uiTexts.trackService}</Text>
                     </Pressable>
                 </View>
             </ScrollView>
@@ -114,8 +116,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 8,
         marginBottom: 5,
+        marginRight: 5,
         justifyContent: 'center',
-        padding: 12
+        padding: 5
     },
     buttonDisabled: {
         backgroundColor: colors.gray
