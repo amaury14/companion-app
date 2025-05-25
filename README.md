@@ -9,8 +9,8 @@ A mobile app developed in **React Native + Expo** that connects **elderly caregi
 - **React Native + Expo** (TypeScript)
 - **Firebase** (Auth, Firestore, Storage, Functions, FCM)
 - **React Navigation**
-- **Stripe / MercadoPago** (soon)
 - **Geolocation + Real-time Chat**
+- **Stripe / MercadoPago** (soon)
 
 ---
 

@@ -96,6 +96,7 @@ export const uiTexts = {
     selectRating: 'Selecciona una puntuación antes de enviar.',
     serviceAccepted: 'Servicio Aceptado',
     serviceCompleted: 'Servicio Completado',
+    serviceInformation: 'Información de Servicio',
     serviceLocation: 'Ubicación del servicio',
     serviceOngoing: 'Servicio en Curso',
     serviceStarted: 'Servicio Iniciado',

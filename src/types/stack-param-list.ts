@@ -14,4 +14,5 @@ export type AppStackParamList = {
     UserActiveService: { service: Service; };
     UserHome: undefined;
     UserProfile: { userId: string; };
+    ViewService: { service: Service; };
 };
