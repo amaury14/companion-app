@@ -1,4 +1,5 @@
 import * as Location from 'expo-location';
+import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -287,11 +288,13 @@ export default function RegisterScreen({ navigation }: Props) {
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleSubmit(onRegister)}>
+                    <Ionicons name="log-in-outline" size={28} color="white" />
                     <Text style={styles.buttonText}>{uiTexts.registerMe}</Text>
                 </TouchableOpacity>
                 <Text style={styles.registerText}>{uiTexts.or}</Text>
                 <Text style={styles.registerTextGoogle}>{uiTexts.registerDisclaimer}</Text>
                 <TouchableOpacity style={styles.button} onPress={signIn}>
+                    <Ionicons name="logo-google" size={28} color="white" />
                     <Text style={styles.buttonText}>{uiTexts.registerGoogle}</Text>
                 </TouchableOpacity>
                 <Text onPress={() => navigation.navigate('Login')} style={styles.registerText}>
@@ -314,8 +317,8 @@ const styles = StyleSheet.create({
     content: {
         alignItems: 'center',
         display: 'flex',
-        justifyContent: 'flex-start',
-        height: 600,
+        justifyContent: 'center',
+        height: '100%',
         padding: 5,
         width: '100%'
     },
@@ -323,6 +326,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: colors.header,
         borderRadius: 8,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginTop: 10,
         paddingHorizontal: 24,
         paddingVertical: 12
@@ -330,7 +336,8 @@ const styles = StyleSheet.create({
     buttonText: {
         color: colors.white,
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginLeft: 10
     },
     registerText: {
         color: colors.black,
@@ -342,7 +349,8 @@ const styles = StyleSheet.create({
         color: colors.black,
         fontSize: 16,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
+        width: 300
     },
     accountType: {
         flexDirection: 'row',

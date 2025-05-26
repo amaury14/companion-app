@@ -174,7 +174,13 @@ export default function CreateServiceScreen({ navigation }: Props) {
                     name="duration"
                     rules={{ required: uiTexts.requiredDuration, min: minServiceHours, max: maxServiceHours }}
                     render={({ field: { onChange, value } }) => (
-                        <TextInput style={styles.input} value={value} onChangeText={onChange} keyboardType="numeric" />
+                        <TextInput
+                            keyboardType="numeric"
+                            placeholder={`Enter a number (min: ${minServiceHours})`}
+                            style={styles.input}
+                            value={value}
+                            onChangeText={onChange}
+                        />
                     )}
                 />
                 {errors.duration && <Text style={styles.error}>{errors.duration.message}</Text>}
@@ -184,7 +190,12 @@ export default function CreateServiceScreen({ navigation }: Props) {
                     control={control}
                     name="location"
                     render={({ field: { onChange, value } }) => (
-                        <TextInput placeholder={uiTexts.locationFormPlaceholder} style={styles.input} value={value} onChangeText={onChange} />
+                        <TextInput
+                            placeholder={uiTexts.locationFormPlaceholder}
+                            style={styles.input}
+                            value={value}
+                            onChangeText={onChange}
+                        />
                     )}
                 />
 

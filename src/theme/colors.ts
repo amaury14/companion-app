@@ -2,7 +2,6 @@ export const colors = {
     background: '#dad8c9',
     azureblue: '#2d5e78',
     argentinianblue: '#6cb4ee',
-    dragonblue: '#6cb4ee',
     franceblue: '#6495ed',
     black: '#000',
     lightGray: '#E9ECEF',

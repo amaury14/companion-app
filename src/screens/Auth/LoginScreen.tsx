@@ -1,7 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -91,14 +92,20 @@ export default function LoginScreen({ navigation }: Props) {
         <Layout>
             <View style={styles.container}>
                 <View style={styles.content}>
+                    <Image
+                        source={require('../../../assets/favicon.png')}
+                        style={styles.avatar}
+                    />
                     <Text style={styles.title}>{uiTexts.welcome}</Text>
                     {
                         loginData?.hasLogged &&
                         <TouchableOpacity style={styles.button} onPress={signIn}>
+                            <Ionicons name="logo-google" size={28} color="white" />
                             <Text style={styles.buttonText}>{uiTexts.loginGoogle}</Text>
                         </TouchableOpacity>
                     }
-                    <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.dragonblue }} onPress={() => navigation.navigate('LoginEmail')}>
+                    <TouchableOpacity style={{ ...styles.button, backgroundColor: colors.argentinianblue }} onPress={() => navigation.navigate('LoginEmail')}>
+                        <Ionicons name="mail" size={28} color="white" />
                         <Text style={styles.buttonText}>{uiTexts.loginEmail}</Text>
                     </TouchableOpacity>
                     <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>{uiTexts.noAccountRegister}</Text>
@@ -127,6 +134,11 @@ const styles = StyleSheet.create({
         padding: 5,
         width: '100%'
     },
+    avatar: {
+        width: 64,
+        height: 64,
+        marginBottom: 10
+    },
     title: {
         fontSize: 26,
         fontWeight: 'bold',
@@ -136,6 +148,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: colors.header,
         borderRadius: 8,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginTop: 20,
         paddingHorizontal: 24,
         paddingVertical: 12
@@ -143,7 +158,8 @@ const styles = StyleSheet.create({
     buttonText: {
         color: colors.white,
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginLeft: 10
     },
     registerText: {
         color: colors.black,

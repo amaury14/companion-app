@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
@@ -75,6 +76,7 @@ export default function LoginEmailScreen({ navigation }: Props) {
                         {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
                     </View>
                     <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
+                        <Ionicons name="log-in-outline" size={28} color="white" />
                         <Text style={styles.buttonText}>{uiTexts.login}</Text>
                     </TouchableOpacity>
                     <Text onPress={() => navigation.navigate('Register')} style={styles.registerText}>{uiTexts.noAccountRegister}</Text>
@@ -109,6 +111,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: colors.header,
         borderRadius: 8,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginTop: 20,
         paddingHorizontal: 24,
         paddingVertical: 12
@@ -116,7 +121,8 @@ const styles = StyleSheet.create({
     buttonText: {
         color: colors.white,
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginLeft: 10
     },
     registerText: {
         color: colors.black,

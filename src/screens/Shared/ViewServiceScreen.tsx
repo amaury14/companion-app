@@ -54,12 +54,15 @@ export default function ViewServiceScreen({ navigation }: Props) {
     }, []);
 
     useEffect(() => {
-        const fetchUserDataAsync = async () => {
-            await fetchUserData(user?.type === 'companion' ? serviceData.requesterId : serviceData.companionId);
-        };
+        const id = user?.type === 'companion' ? serviceData?.requesterId : serviceData?.companionId;
+        if (id) {
+            const fetchUserDataAsync = async () => {
+                await fetchUserData(id);
+            };
 
-        fetchUserDataAsync();
-    }, [user, fetchUserData, serviceData.requesterId, serviceData.companionId]);
+            fetchUserDataAsync();
+        }
+    }, [user, fetchUserData, serviceData?.requesterId, serviceData?.companionId]);
 
     return (
         <Layout>
@@ -70,7 +73,7 @@ export default function ViewServiceScreen({ navigation }: Props) {
                     <Loader color={colors.argentinianblue} size={'large'}></Loader>
                 }
                 {
-                    !loading &&
+                    !loading && userData &&
                     <UserCard
                         reputationScore={0}
                         reviews={[]}
