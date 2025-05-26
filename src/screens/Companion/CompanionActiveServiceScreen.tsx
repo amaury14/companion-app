@@ -107,7 +107,7 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
         <Layout>
             <Header title={uiTexts.serviceOngoing}></Header>
             <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-                <ServiceCard serviceData={serviceData}></ServiceCard>
+                <ServiceCard handleTime={true} serviceData={serviceData}></ServiceCard>
                 {
                     !serviceData.checkInTime &&
                     <Pressable style={[styles.button, !isStartEnable && styles.buttonDisabled]} disabled={!isStartEnable} onPress={handleStart}>

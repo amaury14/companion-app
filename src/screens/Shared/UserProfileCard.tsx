@@ -1,12 +1,11 @@
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Dimensions, FlatList, Text, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
 import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import Loader from '../../components/Loader';
-import ReviewItem from '../../components/ReviewItem';
+import UserCard from '../../components/UserCard';
 import { colors } from '../../theme/colors';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
@@ -39,7 +38,7 @@ export const UserProfileCard = () => {
                 const locationText = user.address?.latitude && user.address?.longitude
                     ? await getAddressFromCoords(user.address.latitude, user.address.longitude)
                     : uiTexts.noAddress;
-                setUserData({ ...user, locationText });
+                setUserData({ ...user, locationText, id });
             } else {
                 setUserData(null);
             }
@@ -90,126 +89,28 @@ export const UserProfileCard = () => {
     return (
         <Layout>
             <Header title={uiTexts.userProfile}></Header>
-            {
-                loading &&
-                <Loader color={colors.argentinianblue} size={'large'}></Loader>
-            }
-            {
-                !loading &&
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Text style={styles.name}>{userData?.name}</Text>
-                        {userData?.verified && <MaterialIcons name="verified" size={20} color={colors.success} />}
-                    </View>
-
-                    <Text style={styles.typeText}>
-                        {userData?.type === 'companion' ? uiTexts.companion : uiTexts.user}
-                    </Text>
-
-                    <View style={styles.statsContainer}>
-                        <View style={styles.statItem}>
-                            <FontAwesome name="check-circle" size={16} color={colors.primary} />
-                            <Text style={styles.statText}>{userData?.completedServices} {userData?.type === 'companion' ? uiTexts.completedServices : uiTexts.receivedServices}</Text>
-                        </View>
-                        <View style={styles.statItem}>
-                            <FontAwesome name="star" size={16} color={colors.yellow} />
-                            <Text style={styles.statText}>{reputationScore.toFixed(1)} {uiTexts.reputation}</Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.infoBlock}>
-                        <Text style={styles.label}>📧 {uiTexts.email}:</Text>
-                        <Text style={styles.value}>{userData?.email}</Text>
-                    </View>
-
-                    {
-                        userData?.address &&
-                        <View style={styles.infoBlock}>
-                            <Text style={styles.label}>📍 {uiTexts.location}:</Text>
-                            <Text style={styles.value}>{userData?.locationText}</Text>
-                        </View>
-                    }
-
-                    {
-                        reviews?.length > 0 &&
-                        <View style={styles.reviewContent}>
-                            <Text style={styles.subTitle}>{uiTexts.previousReviews}</Text>
-                            <FlatList
-                                data={reviews}
-                                keyExtractor={item => item.id}
-                                renderItem={({ item }) => (
-                                    <ReviewItem item={item}></ReviewItem>
-                                )}
-                                ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-                            />
-                        </View>
-                    }
-                </View>
-            }
+            <View style={styles.container}>
+                {
+                    loading &&
+                    <Loader color={colors.argentinianblue} size={'large'}></Loader>
+                }
+                {
+                    !loading &&
+                    <UserCard
+                        reputationScore={reputationScore}
+                        reviews={reviews}
+                        showMoreInfo={false}
+                        showLocation={true}
+                        userData={userData}
+                    ></UserCard>
+                }
+            </View>
         </Layout>
     );
 };
 
-const { height } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: colors.lightGray,
-        borderRadius: 12,
-        elevation: 2,
-        height: 'auto',
-        margin: 12,
-        shadowColor: colors.black,
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        padding: 15
-    },
-    header: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        marginBottom: 4
-    },
-    name: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginRight: 8
-    },
-    typeText: {
-        color: colors.darkergray,
-        fontSize: 19,
-        marginBottom: 12
-    },
-    statsContainer: {
-        flexDirection: 'column',
-        justifyContent: 'space-between'
-    },
-    statItem: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        marginBottom: 10
-    },
-    statText: {
-        color: colors.black,
-        fontSize: 19,
-        marginLeft: 6
-    },
-    infoBlock: {
-        marginBottom: 8
-    },
-    label: {
-        color: colors.darkergray,
-        fontSize: 19,
-        fontWeight: '600'
-    },
-    value: {
-        color: colors.black,
-        fontSize: 18
-    },
-    subTitle: {
-        color: colors.black,
-        fontSize: 18,
-        fontWeight: '500',
-        marginBottom: 12
-    },
-    reviewContent: { height: height - 400 }
+        margin: 12
+    }
 });

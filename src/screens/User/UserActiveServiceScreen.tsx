@@ -53,7 +53,7 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
         <Layout>
             <Header title={uiTexts.serviceOngoing}></Header>
             <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-                <ServiceCard serviceData={serviceData}></ServiceCard>
+                <ServiceCard handleTime={true} serviceData={serviceData}></ServiceCard>
                 {
                     serviceData.status === statusTexts.completed && !serviceData.confirmed &&
                     <Pressable
