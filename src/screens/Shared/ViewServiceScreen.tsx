@@ -59,7 +59,7 @@ export default function ViewServiceScreen({ navigation }: Props) {
         };
 
         fetchUserDataAsync();
-    }, [user, fetchUserData]);
+    }, [user, fetchUserData, serviceData.requesterId, serviceData.companionId]);
 
     return (
         <Layout>
