@@ -31,7 +31,7 @@ function ServiceCard({ handleTime, serviceData }: ServiceCardProps) {
 
             return () => clearInterval(interval);
         }
-    }, [serviceData?.checkInTime]);
+    }, [serviceData?.checkInTime, handleTime]);
 
     return (
         <View style={styles.card}>
