@@ -80,7 +80,7 @@ export default function ViewServiceScreen({ navigation }: Props) {
                         viewMoreInfo={() => navigation.navigate('UserProfile', { userId: userData?.id ?? '' })}
                     ></UserCard>
                 }
-                <ServiceCard serviceData={serviceData} handleTime={false}></ServiceCard>
+                <ServiceCard handleTime={false} serviceData={serviceData}></ServiceCard>
             </ScrollView>
         </Layout>
     );
