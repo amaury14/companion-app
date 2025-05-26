@@ -7,8 +7,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { UserProvider } from './src/context/UserContext';
 import AuthStack from './src/navigation/AuthStack/AuthStack';
-import CompanionStack from './src/navigation/CompanionStack/CompanionStack';
-import UserStack from './src/navigation/UserStack/UserStack';
+import CompanionDrawer from './src/navigation/CompanionDrawer/CompanionDrawer';
+import UserDrawer from './src/navigation/UserDrawer/UserDrawer';
 import { auth, db } from './src/services/firebase';
 import { Service } from './src/types/service';
 import { AppStackParamList } from './src/types/stack-param-list';
@@ -78,8 +78,8 @@ export default function App() {
         <UserProvider>
             <SafeAreaProvider>
                 <NavigationContainer ref={navigationRef}>
-                    {userType === 'user' && <UserStack />}
-                    {userType === 'companion' && <CompanionStack />}
+                    {userType === 'user' && <UserDrawer />}
+                    {userType === 'companion' && <CompanionDrawer />}
                     {userType === null && <AuthStack />}
                 </NavigationContainer>
             </SafeAreaProvider>

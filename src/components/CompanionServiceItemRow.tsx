@@ -1,7 +1,7 @@
 import { isSameDay } from 'date-fns';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 import { colors } from '../theme/colors';
 import { Service } from '../types/service';
@@ -14,12 +14,13 @@ export type CompanionServiceItemRowProps = {
     manageService: (item: Service) => void;
     rejectService: (id: string) => void;
     viewService: (item: Service) => void;
+    viewUser: (item: Service) => void;
 };
 
 /**
  * Specialized version of ServiceItemRow for companions, showing accept/reject buttons and proximity details.
  */
-function CompanionServiceItemRow({ acceptService, item, manageService, rejectService, viewService }: CompanionServiceItemRowProps) {
+function CompanionServiceItemRow({ acceptService, item, manageService, rejectService, viewService, viewUser }: CompanionServiceItemRowProps) {
     const isActive = item.status === statusTexts.pending || item.status === statusTexts.in_progress || item.status === statusTexts.accepted;
 
     return (
@@ -35,9 +36,21 @@ function CompanionServiceItemRow({ acceptService, item, manageService, rejectSer
                 isActive &&
                 <Text style={styles.inputText}>📍 {item.locationText || uiTexts.noAddress}</Text>
             }
-            <Pressable style={styles.infoButton} onPress={() => viewService(item)}>
-                <MaterialIcons name="info-outline" size={25} color={colors.black} />
-            </Pressable>
+            <View style={styles.infoButtonRow}>
+                <TouchableOpacity style={styles.infoButton} onPress={() => viewService(item)}>
+                    <MaterialIcons name="info-outline" size={25} color={colors.black} />
+                </TouchableOpacity>
+                {
+                    (
+                        item.status === statusTexts.in_progress ||
+                        item.status === statusTexts.accepted ||
+                        item.status === statusTexts.completed
+                    ) &&
+                    <TouchableOpacity style={{ ...styles.infoButton }} onPress={() => viewUser(item)}>
+                        <Ionicons name="person" size={30} color={colors.success} />
+                    </TouchableOpacity>
+                }
+            </View>
             {
                 isActive &&
                 <View style={styles.buttonRow}>
@@ -83,6 +96,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         marginTop: 8
+    },
+    infoButtonRow: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'flex-start'
     },
     button: {
         alignItems: 'center',

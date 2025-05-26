@@ -1,6 +1,6 @@
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import React from 'react';
-import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { colors } from '../theme/colors';
 import { Review } from '../types/review';
@@ -77,11 +77,11 @@ function UserCard({ reputationScore, reviews, showMoreInfo, showLocation, userDa
 
             {
                 showMoreInfo &&
-                <Pressable style={styles.infoButton} onPress={() => {
+                <TouchableOpacity style={styles.infoButton} onPress={() => {
                     if (userData?.id) viewMoreInfo?.(userData);
                 }}>
                     <MaterialIcons name="info-outline" size={25} color={colors.black} />
-                </Pressable>
+                </TouchableOpacity>
             }
         </View>
     );

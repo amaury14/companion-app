@@ -1,7 +1,11 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { useNavigation } from '@react-navigation/native';
 
 import { colors } from '../theme/colors';
+import { AppStackParamList } from '../types/stack-param-list';
 
 export type HeaderProps = {
     title: string;
@@ -11,10 +15,14 @@ export type HeaderProps = {
  * Top header component used to show screen title.
  */
 function Header({ title }: HeaderProps) {
+    const navigation = useNavigation<DrawerNavigationProp<AppStackParamList>>();
 
     return (
         <View style={styles.header}>
-                <Text style={styles.headerText}>{title}</Text>
+            <Pressable onPress={() => navigation.openDrawer()}>
+                <Ionicons name="menu" size={28} color="white" />
+            </Pressable>
+            <Text style={styles.headerText}>{title}</Text>
         </View>
     );
 }
@@ -25,7 +33,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.header,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         padding: 10
     },
     headerText: {

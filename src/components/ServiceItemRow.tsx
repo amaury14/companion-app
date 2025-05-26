@@ -43,7 +43,7 @@ function ServiceItemRow({ item, manageService, onCancel, onViewCompanion, viewSe
                             (item.status === statusTexts.completed && !item.reviewed)
                         ) &&
                         <TouchableOpacity onPress={() => manageService(item)} style={styles.button}>
-                            <Ionicons name="settings" size={30} color={colors.dragonblue} />
+                            <Ionicons name="settings" size={30} color={colors.argentinianblue} />
                         </TouchableOpacity>
                     }
                     {
@@ -52,21 +52,23 @@ function ServiceItemRow({ item, manageService, onCancel, onViewCompanion, viewSe
                             <Ionicons name="close-circle" size={30} color={colors.danger} />
                         </TouchableOpacity>
                     }
-                    {
-                        (
-                            item.status === statusTexts.in_progress ||
-                            item.status === statusTexts.accepted ||
-                            item.status === statusTexts.completed
-                        ) &&
-                        <TouchableOpacity onPress={() => onViewCompanion(item)} style={styles.button}>
-                            <Ionicons name="person" size={30} color={colors.success} />
-                        </TouchableOpacity>
-                    }
                 </View>
             </View>
-            <Pressable style={styles.infoButton} onPress={() => viewService(item)}>
-                <MaterialIcons name="info-outline" size={25} color={colors.black} />
-            </Pressable>
+            <View style={styles.infoButtonRow}>
+                <TouchableOpacity style={styles.infoButton} onPress={() => viewService(item)}>
+                    <MaterialIcons name="info-outline" size={25} color={colors.black} />
+                </TouchableOpacity>
+                {
+                    (
+                        item.status === statusTexts.in_progress ||
+                        item.status === statusTexts.accepted ||
+                        item.status === statusTexts.completed
+                    ) &&
+                    <TouchableOpacity style={{ ...styles.infoButton }} onPress={() => onViewCompanion(item)}>
+                        <Ionicons name="person" size={30} color={colors.success} />
+                    </TouchableOpacity>
+                }
+            </View>
         </View>
     );
 }
@@ -104,6 +106,11 @@ const styles = StyleSheet.create({
     },
     button: {
         padding: 4
+    },
+    infoButtonRow: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'flex-start'
     },
     infoButton: {
         marginTop: 6
