@@ -20,7 +20,7 @@ export default function CompanionStack() {
             <Stack.Screen name="CompanionHome" component={CompanionHomeScreen} />
             <Stack.Screen name="CompanionActiveService" component={CompanionActiveServiceScreen} />
             <Stack.Screen name="UserProfile" component={UserProfileCard} />
-            <Stack.Screen name="ChatScreen" component={ChatScreen} />
+            <Stack.Screen name="Chat" component={ChatScreen} />
             <Stack.Screen name="ServiceTracking" component={ServiceTrackingScreen} />
             <Stack.Screen name="ViewService" component={ViewServiceScreen} />
         </Stack.Navigator>

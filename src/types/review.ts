@@ -8,4 +8,4 @@ export type Review = {
     reviewedUserId: string;
     reviewerId: string;
     serviceId: string;
-}
+};

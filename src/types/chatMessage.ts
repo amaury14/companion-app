@@ -5,4 +5,4 @@ export type ChatMessage = {
     id: string;
     senderId: string;
     text: string;
-}
+};

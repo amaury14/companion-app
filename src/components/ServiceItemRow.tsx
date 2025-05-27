@@ -39,6 +39,7 @@ function ServiceItemRow({ item, manageService, onCancel, onViewCompanion, viewSe
                         (
                             item.status === statusTexts.in_progress ||
                             item.status === statusTexts.accepted ||
+                            item.status === statusTexts.conflicts ||
                             (item.status === statusTexts.completed && !item.confirmed) ||
                             (item.status === statusTexts.completed && !item.reviewed)
                         ) &&

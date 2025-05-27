@@ -138,7 +138,7 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
                     </View>
                 }
                 <View style={styles.bottomButtonsBar}>
-                    <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
+                    <Pressable style={styles.button} onPress={() => navigation.navigate('Chat', { chatId: serviceData.id })}>
                         <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
                         <Text style={styles.buttonText}>{uiTexts.messaging}</Text>
                     </Pressable>
@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     waitForText: {
         color: colors.black,
         fontWeight: '500',
-        fontSize: 17
+        fontSize: 17,
+        textAlign: 'center'
     }
 });

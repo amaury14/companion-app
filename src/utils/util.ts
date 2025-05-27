@@ -5,6 +5,8 @@ import { LatLng } from 'react-native-maps';
 import { Service } from '../types/service';
 import { uiTexts } from './data/ui-text-data';
 import { statusTexts } from './keys/status-keys';
+import { Claim } from '../types/claim';
+import { claimKeys } from './keys/claim-keys';
 
 export const getCosts = (duration: number, basePrice: number, comission: number): number => {
     const baseCost = duration * basePrice;
@@ -119,5 +121,23 @@ export const areLocationsClose = (
     const distance = R * c;
 
     return distance <= maxDistanceKm;
+};
+
+export const sortClaims = (claim: Claim[]): Claim[] => {
+    if (claim?.length) {
+        return claim.sort((a, b) => {
+            if (a.status === claimKeys.open && b.status !== claimKeys.open) return -1;
+            if (a.status !== claimKeys.open && b.status === claimKeys.open) return 1;
+
+            if (a.status === claimKeys.resolved && b.status !== claimKeys.resolved) return -1;
+            if (a.status !== claimKeys.resolved && b.status === claimKeys.resolved) return 1;
+
+            if (a.status === claimKeys.rejected && b.status !== claimKeys.rejected) return -1;
+            if (a.status !== claimKeys.rejected && b.status === claimKeys.rejected) return 1;
+
+            return b.createdAt?.toDate().getMilliseconds() - a.createdAt?.toDate().getMilliseconds();
+        });
+    }
+    return [];
 };
 

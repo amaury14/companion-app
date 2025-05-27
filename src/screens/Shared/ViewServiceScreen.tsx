@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
@@ -17,7 +17,9 @@ import { AppStackParamList } from '../../types/stack-param-list';
 import { UserData } from '../../types/user';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys } from '../../utils/keys/db-keys';
-import { getAddressFromCoords } from '../../utils/util';
+import { formatDateWithTime, getAddressFromCoords } from '../../utils/util';
+import { categoryData } from '../../utils/data/category-data';
+import { statusData } from '../../utils/data/status.data';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'ViewService'>;
 
@@ -26,15 +28,14 @@ type Props = NativeStackScreenProps<AppStackParamList, 'ViewService'>;
  */
 export default function ViewServiceScreen({ navigation }: Props) {
     const route = useRoute<RouteProp<AppStackParamList, 'ViewService'>>();
-    const { service } = route.params;
+    const { serviceId } = route.params;
     const [loading, setLoading] = useState(false);
-    const [serviceData] = useState<Service>(service);
+    const [serviceData, setServiceData] = useState<Service | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
     const { user } = useUser();
 
     const fetchUserData = useCallback(async (id: string) => {
         try {
-            setLoading(true);
             const docRef = doc(db, dbKeys.users, id);
             const docSnap = await getDoc(docRef);
             if (docSnap?.exists()) {
@@ -48,10 +49,48 @@ export default function ViewServiceScreen({ navigation }: Props) {
             }
         } catch (err) {
             console.error(err);
+        }
+    }, []);
+
+    const fetchServiceData = useCallback(async (id: string) => {
+        try {
+            setLoading(true);
+            const docRef = doc(db, dbKeys.services, id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap?.exists()) {
+                const service = docSnap.data() as Service;
+                const locationText = service.location?.latitude && service.location?.longitude
+                    ? await getAddressFromCoords(service.location.latitude, service.location.longitude)
+                    : uiTexts.noAddress;
+                setServiceData({
+                    ...service,
+                    locationText,
+                    category: categoryData.find(item => item.value === service.category)?.name ?? service.category,
+                    status: statusData.find(item => item.value === service.status)?.name ?? service.status,
+                    dateText: formatDateWithTime(service.date?.toDate()) ?? uiTexts.noDate,
+                    price: service.price ?? 0,
+                    timeStamp: (service.date as Timestamp).toMillis(),
+                    id
+                });
+            } else {
+                setServiceData(null);
+            }
+        } catch (err) {
+            console.error(err);
         } finally {
             setLoading(false);
         }
     }, []);
+
+    useEffect(() => {
+        if (serviceId) {
+            const fetchServiceDataAsync = async () => {
+                await fetchServiceData(serviceId);
+            };
+
+            fetchServiceDataAsync();
+        }
+    }, [serviceId, fetchServiceData]);
 
     useEffect(() => {
         const id = user?.type === 'companion' ? serviceData?.requesterId : serviceData?.companionId;
@@ -83,7 +122,10 @@ export default function ViewServiceScreen({ navigation }: Props) {
                         viewMoreInfo={() => navigation.navigate('UserProfile', { userId: userData?.id ?? '' })}
                     ></UserCard>
                 }
-                <ServiceCard handleTime={false} serviceData={serviceData}></ServiceCard>
+                {
+                    !loading && serviceData &&
+                    <ServiceCard handleTime={false} serviceData={serviceData}></ServiceCard>
+                }
             </ScrollView>
         </Layout>
     );

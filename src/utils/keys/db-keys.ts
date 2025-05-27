@@ -1,5 +1,6 @@
 export const dbKeys = {
     chatRooms: 'chatRooms',
+    claims: 'claims',
     messages: 'messages',
     reviews: 'reviews',
     services: 'services',
@@ -13,7 +14,8 @@ export const fieldKeys = {
     requesterId: 'requesterId',
     requesterLiveLocation: 'requesterLiveLocation',
     reviewedUserId: 'reviewedUserId',
-    status: 'status'
+    status: 'status',
+    userId: 'userId'
 };
 
 export const asyncStorageKeys = {
