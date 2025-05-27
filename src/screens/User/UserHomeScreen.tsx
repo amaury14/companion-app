@@ -147,7 +147,7 @@ export default function UserHomeScreen({ navigation }: Props) {
                                     ]);
                                 }}
                                 onViewCompanion={(item) => handleViewUser(item.companionId)}
-                                viewService={() => navigation.navigate('ViewService', { service: item })}
+                                viewService={() => navigation.navigate('ViewService', { serviceId: item.id })}
                             />
                         )}
                         ListEmptyComponent={<Text style={styles.noRecords}>{uiTexts.noServices}</Text>}

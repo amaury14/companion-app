@@ -184,7 +184,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                                         }
                                     ])
                                 }}
-                                viewService={() => navigation.navigate('ViewService', { service: item })}
+                                viewService={() => navigation.navigate('ViewService', { serviceId: item.id })}
                                 viewUser={(item) => handleViewUser(item.requesterId)}
                             />
                         )

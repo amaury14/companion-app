@@ -5,4 +5,4 @@ export type ChatRoom = {
     id: string;
     participants: string[]; // [userId, companionId]
     serviceId: string;
-}
+};

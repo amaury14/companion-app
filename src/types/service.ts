@@ -1,5 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 
+import { Location } from './location';
+
 export type Service = {
     additionalInfo: string;
     category: string;
@@ -8,27 +10,16 @@ export type Service = {
     confirmed: boolean;
     companionId: string;
     companionPayment: number;
-    companionLiveLocation?: {
-        latitude: number;
-        longitude: number;
-        updatedAt: Timestamp;
-    };
+    companionLiveLocation?: Location;
     date: Timestamp;
     dateText?: string;
     duration: number;
     id: string;
-    location?: {
-        latitude: number;
-        longitude: number;
-    };
+    location?: Location;
     locationText?: string;
     price: number;
     requesterId: string;
-    requesterLiveLocation?: {
-        latitude: number;
-        longitude: number;
-        updatedAt: Timestamp;
-    };
+    requesterLiveLocation?: Location;
     reviewed: boolean;
     status: string;
     timeStamp: number;

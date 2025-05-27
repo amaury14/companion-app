@@ -54,8 +54,21 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
             <Header title={uiTexts.serviceOngoing}></Header>
             <ScrollView style={styles.container} contentContainerStyle={styles.content}>
                 <ServiceCard handleTime={true} serviceData={serviceData}></ServiceCard>
+                <View style={styles.bottomButtonsBar}>
+                    <Pressable style={styles.button} onPress={() => navigation.navigate('Chat', { chatId: serviceData.id })}>
+                        <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
+                        <Text style={styles.buttonText}>{uiTexts.messaging}</Text>
+                    </Pressable>
+                    <Pressable style={styles.button} onPress={() => navigation.navigate('ServiceTracking', {
+                        serviceId: serviceData.id,
+                        destination: serviceData.location ?? { latitude: 0, longitude: 0 }
+                    })}>
+                        <MaterialIcons name="map" size={22} color={colors.white} />
+                        <Text style={styles.buttonText}>{uiTexts.trackService}</Text>
+                    </Pressable>
+                </View>
                 {
-                    serviceData.status === statusTexts.completed && !serviceData.confirmed &&
+                    (serviceData.status === statusTexts.completed && !serviceData.confirmed || serviceData.status === statusTexts.conflicts) &&
                     <Pressable
                         style={styles.button}
                         onPress={() => {
@@ -74,6 +87,13 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
                     </Pressable>
                 }
                 {
+                    serviceData.status === statusTexts.completed && !serviceData.confirmed &&
+                    <View style={styles.hadProblem}>
+                        <MaterialIcons name="warning" size={22} color={colors.black} />
+                        <Text onPress={() => navigation.navigate('OpenClaim', { service: serviceData })} style={styles.hadProblemText}>{uiTexts.hadAProblem}</Text>
+                    </View>
+                }
+                {
                     serviceData.status === statusTexts.completed && serviceData.confirmed &&
                     <View style={{ marginBottom: 5 }}>
                         <ReviewForm
@@ -84,19 +104,6 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
                         ></ReviewForm>
                     </View>
                 }
-                <View style={styles.bottomButtonsBar}>
-                    <Pressable style={styles.button} onPress={() => navigation.navigate('ChatScreen', { chatId: serviceData.id })}>
-                        <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
-                        <Text style={styles.buttonText}>{uiTexts.messaging}</Text>
-                    </Pressable>
-                    <Pressable style={styles.button} onPress={() => navigation.navigate('ServiceTracking', {
-                        serviceId: serviceData.id,
-                        destination: serviceData.location ?? { latitude: 0, longitude: 0 }
-                    })}>
-                        <MaterialIcons name="map" size={22} color={colors.white} />
-                        <Text style={styles.buttonText}>{uiTexts.trackService}</Text>
-                    </Pressable>
-                </View>
             </ScrollView>
         </Layout>
     );
@@ -133,6 +140,19 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center'
+    },
+    hadProblem: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        margin: 5
+    },
+    hadProblemText: {
+        color: colors.black,
+        fontSize: 18,
+        fontWeight: '600',
+        marginLeft: 8
     },
     waitForText: {
         color: colors.black,
