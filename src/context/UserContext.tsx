@@ -4,7 +4,7 @@ import { doc, getDoc } from 'firebase/firestore';
 
 import { auth, db } from '../services/firebase';
 import { UserData } from '../types/user';
-import { dbKeys } from '../utils/keys/db-keys';
+import { dbKeys, userKeys } from '../utils/keys/db-keys';
 
 type UserContextType = {
     user: UserData | null;
@@ -25,7 +25,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    const type = (docSnap?.data() as UserData).type ?? 'user';
+                    const type = (docSnap?.data() as UserData).type ?? userKeys.user;
                     setUser({ id: docSnap.id, type, ...docSnap.data() } as UserData);
                 } else {
                     setUser(null);
