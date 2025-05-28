@@ -12,7 +12,8 @@ import UserDrawer from './src/navigation/UserDrawer/UserDrawer';
 import { auth, db } from './src/services/firebase';
 import { Service } from './src/types/service';
 import { AppStackParamList } from './src/types/stack-param-list';
-import { dbKeys } from './src/utils/keys/db-keys';
+import { UserType } from './src/types/user-type';
+import { dbKeys, userKeys } from './src/utils/keys/db-keys';
 import { requestNotificationPermissions } from './src/utils/notifications';
 
 /**
@@ -36,7 +37,7 @@ import { requestNotificationPermissions } from './src/utils/notifications';
  */
 export default function App() {
     const [initializing, setInitializing] = useState(true);
-    const [userType, setUserType] = useState<null | 'user' | 'companion'>(null);
+    const [userType, setUserType] = useState<UserType>(null);
 
     const navigationRef = useNavigationContainerRef<AppStackParamList>();
 
@@ -44,7 +45,7 @@ export default function App() {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, dbKeys.users, user.uid));
-                const type = userDoc.data()?.type ?? 'user';
+                const type = userDoc.data()?.type ?? userKeys.user;
                 setUserType(type);
             } else {
                 setUserType(null);
@@ -63,7 +64,7 @@ export default function App() {
             const service = response?.notification?.request?.content?.data as Service;
 
             if (service?.id) {
-                navigationRef?.navigate(userType === 'user' ? 'UserHome' : 'CompanionHome');
+                navigationRef?.navigate(userType === userKeys.user ? 'UserHome' : 'CompanionHome');
             }
         });
 
@@ -78,8 +79,8 @@ export default function App() {
         <UserProvider>
             <SafeAreaProvider>
                 <NavigationContainer ref={navigationRef}>
-                    {userType === 'user' && <UserDrawer />}
-                    {userType === 'companion' && <CompanionDrawer />}
+                    {userType === userKeys.user && <UserDrawer />}
+                    {userType === userKeys.companion && <CompanionDrawer />}
                     {userType === null && <AuthStack />}
                 </NavigationContainer>
             </SafeAreaProvider>

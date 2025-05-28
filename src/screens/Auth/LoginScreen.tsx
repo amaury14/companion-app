@@ -13,7 +13,7 @@ import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { asyncStorageKeys, dbKeys } from '../../utils/keys/db-keys';
+import { asyncStorageKeys, dbKeys, userKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Login'>;
 
@@ -59,7 +59,7 @@ export default function LoginScreen({ navigation }: Props) {
                     await setDoc(doc(db, dbKeys.users, credential.user.uid), {
                         name: credential.user.displayName,
                         email: credential.user.email,
-                        type: 'user',
+                        type: userKeys.user,
                         verified: false,
                         reputationScore: 0,
                         completedServices: 0,

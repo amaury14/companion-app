@@ -27,3 +27,8 @@ export const reminderKeys = {
     remindersId: 'app-companion-reminders',
     remindersName: 'Companion Recordatorios'
 };
+
+export const userKeys = {
+    companion: 'companion',
+    user: 'user',
+};

@@ -1,3 +1,5 @@
+import { UserType } from './user-type';
+
 export type UserData = {
     address?: {
         latitude: number;
@@ -10,6 +12,6 @@ export type UserData = {
     name: string;
     locationText?: string;
     reputationScore: number;
-    type: null | 'user' | 'companion' | string;
+    type: UserType | string;
     verified: boolean;
 };
