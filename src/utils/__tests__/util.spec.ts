@@ -4,7 +4,7 @@ import { Timestamp } from 'firebase/firestore';
 import { Service } from '../../types/service';
 import { uiTexts } from '../data/ui-text-data';
 import { statusTexts } from '../keys/status-keys';
-import { formatDateWithTime, getAddressFromCoords, getCosts, getDistanceFromLatLonInKm, getStatusIcon, getTimeDiffText, sortServices } from '../util';
+import { formatDateWithTime, generateMonthsBetweenDates, getAddressFromCoords, getCosts, getDistanceFromLatLonInKm, getStatusIcon, getTimeDiffText, sortServices } from '../util';
 
 jest.mock('expo-location');
 
@@ -217,5 +217,40 @@ describe('getTimeDiffText', () => {
     it('returns default text if dateA is undefined', () => {
         const dateB = new Date();
         expect(getTimeDiffText(undefined as unknown as Date, dateB)).toBe(`0 ${uiTexts.min}`);
+    });
+});
+
+describe('generateMonthsBetweenDates', () => {
+    it('should return a single month when start and end are the same month', () => {
+        const result = generateMonthsBetweenDates(new Date(2025, 5), new Date(2025, 5));
+        expect(result).toEqual([
+            { label: 'Junio - 2025', date: '2025-06-01' }
+        ]);
+    });
+
+    it('should return correct range of months (inclusive)', () => {
+        const result = generateMonthsBetweenDates(new Date(2025, 0), new Date(2025, 2));
+        expect(result).toEqual([
+            { label: 'Marzo - 2025', date: '2025-03-01' },
+            { label: 'Febrero - 2025', date: '2025-02-01' },
+            { label: 'Enero - 2025', date: '2025-01-01' }
+        ]);
+    });
+
+    it('should capitalize first letter of label', () => {
+        const result = generateMonthsBetweenDates(new Date(2025, 10), new Date(2025, 10));
+        expect(result[0].label[0]).toBe(result[0].label[0].toUpperCase());
+    });
+
+    it('should return an empty array if start > end', () => {
+        const result = generateMonthsBetweenDates(new Date(2025, 5), new Date(2025, 4));
+        expect(result).toEqual([]);
+    });
+
+    it('should handle full year correctly and return in reverse order', () => {
+        const result = generateMonthsBetweenDates(new Date(2025, 0), new Date(2025, 11));
+        expect(result.length).toBe(12);
+        expect(result[0]).toEqual({ label: 'Diciembre - 2025', date: '2025-12-01' });
+        expect(result[11]).toEqual({ label: 'Enero - 2025', date: '2025-01-01' });
     });
 });
