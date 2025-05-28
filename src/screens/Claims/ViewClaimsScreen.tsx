@@ -97,7 +97,7 @@ export default function ViewClaimsScreen({ navigation }: Props) {
                 <View style={styles.inlineContent}>
                     <Text style={styles.meta}>{uiTexts.service}:</Text>
                     <TouchableOpacity style={{ marginLeft: 5 }} onPress={() => navigation.navigate('ViewService', { serviceId: item.serviceId })}>
-                        <MaterialIcons name="info-outline" size={25} color={colors.black} />
+                        <MaterialIcons name="info" size={25} color={colors.header} />
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.meta}>

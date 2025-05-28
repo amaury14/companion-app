@@ -12,6 +12,8 @@ export type AppStackParamList = {
     Login: undefined;
     LoginEmail: undefined;
     OpenClaim: { service: Service; };
+    PaymentsHome: undefined;
+    PaymentsStack: undefined;
     Register: undefined;
     ServiceTracking: { serviceId: string; destination: LatLng; };
     UserActiveService: { service: Service; };

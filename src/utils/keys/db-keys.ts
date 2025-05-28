@@ -10,7 +10,9 @@ export const dbKeys = {
 export const fieldKeys = {
     companionId: 'companionId',
     companionLiveLocation: 'companionLiveLocation',
+    confirmed: 'confirmed',
     createdAt: 'createdAt',
+    date: 'date',
     deletedDate: 'deletedDate',
     requesterId: 'requesterId',
     requesterLiveLocation: 'requesterLiveLocation',

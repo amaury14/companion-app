@@ -38,7 +38,7 @@ function CompanionServiceItemRow({ acceptService, item, manageService, rejectSer
             }
             <View style={styles.infoButtonRow}>
                 <TouchableOpacity style={styles.infoButton} onPress={() => viewService(item)}>
-                    <MaterialIcons name="info-outline" size={25} color={colors.black} />
+                    <MaterialIcons name="info" size={25} color={colors.header} />
                 </TouchableOpacity>
                 {
                     (
