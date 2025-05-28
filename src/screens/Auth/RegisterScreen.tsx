@@ -14,8 +14,9 @@ import Loader from '../../components/Loader';
 import { auth, db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { AppStackParamList } from '../../types/stack-param-list';
+import { UserType } from '../../types/user-type';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { asyncStorageKeys, dbKeys } from '../../utils/keys/db-keys';
+import { asyncStorageKeys, dbKeys, userKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Register'>;
 
@@ -32,7 +33,7 @@ type RegisterFormData = {
  */
 export default function RegisterScreen({ navigation }: Props) {
     const { control, handleSubmit, formState: { errors }, getValues } = useForm<RegisterFormData>();
-    const [userType, setUserType] = useState<'user' | 'companion' | null>('user');
+    const [userType, setUserType] = useState<UserType>(userKeys.user as UserType);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
     const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -219,20 +220,20 @@ export default function RegisterScreen({ navigation }: Props) {
 
                 <Text style={styles.registerText}>{uiTexts.userTypeFormLabel}</Text>
                 <View style={styles.accountType}>
-                    <TouchableOpacity onPress={() => setUserType('user')}>
+                    <TouchableOpacity onPress={() => setUserType(userKeys.user as UserType)}>
                         <Text style={{
-                            backgroundColor: userType === 'user' ? colors.argentinianblue : colors.white,
+                            backgroundColor: userType === userKeys.user ? colors.argentinianblue : colors.white,
                             fontSize: 18,
-                            fontWeight: userType === 'user' ? 'bold' : 'normal',
+                            fontWeight: userType === userKeys.user ? 'bold' : 'normal',
                             padding: 10,
                             borderRadius: 5
                         }}>🧑 {uiTexts.user}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setUserType('companion')}>
+                    <TouchableOpacity onPress={() => setUserType(userKeys.companion as UserType)}>
                         <Text style={{
-                            backgroundColor: userType === 'companion' ? colors.argentinianblue : colors.white,
+                            backgroundColor: userType === userKeys.companion ? colors.argentinianblue : colors.white,
                             fontSize: 18,
-                            fontWeight: userType === 'companion' ? 'bold' : 'normal',
+                            fontWeight: userType === userKeys.companion ? 'bold' : 'normal',
                             padding: 10,
                             borderRadius: 5
                         }}>🤝 {uiTexts.companion}</Text>

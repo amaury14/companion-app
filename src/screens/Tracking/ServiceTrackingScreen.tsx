@@ -7,7 +7,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import { useUser } from '../../context/UserContext';
 import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
-import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
+import { dbKeys, fieldKeys, userKeys } from '../../utils/keys/db-keys';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { Accuracy, getForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
 import { update10Seconds } from '../../utils/keys/costs-keys';
@@ -53,14 +53,14 @@ const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
             setCloseActive(true);
             scheduleTextReminder(
                 `⏰ ${uiTexts.reminderService}`,
-                user?.type === 'user' ? uiTexts.companionClose : uiTexts.clientLocationClose
+                user?.type === userKeys.user ? uiTexts.companionClose : uiTexts.clientLocationClose
             );
             clearInterval(interval); // stop checking once condition is met
         }
     }, [destination, location, isCloseActive, user?.type]);
 
     useEffect(() => {
-        const liveLocationField = user?.type === 'user' ? fieldKeys.requesterLiveLocation : fieldKeys.companionLiveLocation;
+        const liveLocationField = user?.type === userKeys.user ? fieldKeys.requesterLiveLocation : fieldKeys.companionLiveLocation;
         startLocationSharing(serviceId, liveLocationField);
         const unsubscribe = onSnapshot(doc(db, dbKeys.services, serviceId), snapshot => {
             const data = snapshot.data();

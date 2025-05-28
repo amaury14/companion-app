@@ -15,7 +15,7 @@ import { AppStackParamList } from '../../types/stack-param-list';
 import { claimData } from '../../utils/data/claim.data';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { claimKeys, claimTexts } from '../../utils/keys/claim-keys';
-import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
+import { dbKeys, fieldKeys, userKeys } from '../../utils/keys/db-keys';
 import { formatDateWithTime, sortClaims } from '../../utils/util';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'ViewClaims'>;
@@ -33,10 +33,10 @@ export default function ViewClaimsScreen({ navigation }: Props) {
             const uid = user?.id;
             if (!uid) return;
             setRefreshing(true);
-
+            const idField = user?.type === userKeys.user ? fieldKeys.userId : fieldKeys.companionId;
             const queryObj = query(
                 collection(db, dbKeys.claims),
-                where(fieldKeys.userId, '==', uid),
+                where(idField, '==', uid),
                 where(fieldKeys.status, '!=', claimKeys.deleted)
             );
             const querySnapshot = await getDocs(queryObj);
@@ -112,7 +112,7 @@ export default function ViewClaimsScreen({ navigation }: Props) {
                 }
             </View>
             {
-                item.status === claimTexts.open &&
+                item.status === claimTexts.open && user?.type === userKeys.user &&
                 <TouchableOpacity onPress={() => {
                     Alert.alert(uiTexts.deleteClaim, uiTexts.areYouSure, [
                         { text: uiTexts.cancel, style: 'cancel' },
@@ -132,7 +132,7 @@ export default function ViewClaimsScreen({ navigation }: Props) {
     return (
         <Layout>
             <View style={styles.container}>
-                <Header title={uiTexts.yourClaims}></Header>
+                <Header title={user?.type === userKeys.user ? uiTexts.yourClaims : uiTexts.claimsReceived}></Header>
                 <View style={styles.body}>
                     <Text style={styles.sectionTitle}>{uiTexts.claims}</Text>
                     <FlatList

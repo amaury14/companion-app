@@ -6,6 +6,7 @@ import { colors } from '../../theme/colors';
 import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import CompanionStack from '../CompanionStack/CompanionStack';
+import ClaimStack from '../UserStack/ClaimStack';
 
 const Drawer = createDrawerNavigator<AppStackParamList>();
 
@@ -39,6 +40,17 @@ export default function CompanionDrawer() {
                     title: uiTexts.home,
                     drawerIcon: () => (
                         <Ionicons name="home" color={colors.white} size={28} />
+                    )
+                }}
+            />
+            <Drawer.Screen
+                name="ClaimStack"
+                component={ClaimStack}
+                options={{
+                    headerShown: false,
+                    title: uiTexts.claimsReceived,
+                    drawerIcon: () => (
+                        <Ionicons name="warning" color={colors.white} size={28} />
                     )
                 }}
             />
