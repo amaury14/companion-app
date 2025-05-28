@@ -30,5 +30,5 @@ export const reminderKeys = {
 
 export const userKeys = {
     companion: 'companion',
-    user: 'user',
+    user: 'user'
 };
