@@ -15,7 +15,7 @@ import { Service } from '../../types/service';
 import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys } from '../../utils/keys/db-keys';
-import { statusTexts } from '../../utils/keys/status-keys';
+import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 import ReviewForm from '../Review/ReviewForm';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'UserActiveService'>;
@@ -31,10 +31,11 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
 
     const handleComplete = async () => {
         try {
-            await updateDoc(doc(db, dbKeys.services, serviceData.id), { confirmed: true });
+            await updateDoc(doc(db, dbKeys.services, serviceData.id), { confirmed: true, status: statusKeys.completed });
             setServiceData({
                 ...serviceData,
-                confirmed: true
+                confirmed: true,
+                status: statusTexts.completed
             });
             if (user?.id) {
                 await updateDoc(doc(db, dbKeys.users, user?.id), { completedServices: increment(1) });
