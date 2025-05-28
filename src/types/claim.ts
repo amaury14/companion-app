@@ -3,6 +3,7 @@ import { Timestamp } from 'firebase/firestore';
 export type Claim = {
     companionId: string;
     createdAt: Timestamp;
+    deletedDate?: Timestamp;
     description: string;
     id: string;
     imageUrl?: string;

@@ -82,7 +82,7 @@ export default function UserHomeScreen({ navigation }: Props) {
 
             await fetchServices();
         } catch (error) {
-            console.error('Error al actualizar el servicio:', error);
+            console.error(uiTexts.errorUpdatingService, error);
         }
     }, [fetchServices]);
 

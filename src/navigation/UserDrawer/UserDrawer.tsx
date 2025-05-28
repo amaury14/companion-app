@@ -34,13 +34,13 @@ export default function UserDrawer() {
             }}
         >
             <Drawer.Screen
-                name="UserHome"
+                name="UserStack"
                 component={UserStack}
                 options={{
                     headerShown: false,
                     title: uiTexts.home,
                     drawerIcon: () => (
-                        <Ionicons name="home-outline" color={colors.white} size={28} />
+                        <Ionicons name="home" color={colors.white} size={28} />
                     )
                 }}
             />
@@ -56,7 +56,7 @@ export default function UserDrawer() {
                 }}
             />
             <Drawer.Screen
-                name="ViewClaims"
+                name="ClaimStack"
                 component={ClaimStack}
                 options={{
                     headerShown: false,

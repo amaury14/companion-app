@@ -4,8 +4,10 @@ import { Service } from './service';
 
 export type AppStackParamList = {
     Chat: { chatId: string };
+    ClaimStack: undefined;
     CompanionActiveService: { service: Service; };
     CompanionHome: undefined;
+    CompanionStack: undefined;
     CreateService: undefined;
     Login: undefined;
     LoginEmail: undefined;
@@ -14,6 +16,7 @@ export type AppStackParamList = {
     ServiceTracking: { serviceId: string; destination: LatLng; };
     UserActiveService: { service: Service; };
     UserHome: undefined;
+    UserStack: undefined;
     UserProfile: { userId: string; };
     ViewClaims: undefined;
     ViewService: { serviceId: string; };
