@@ -80,7 +80,7 @@ function UserCard({ reputationScore, reviews, showMoreInfo, showLocation, userDa
                 <TouchableOpacity style={styles.infoButton} onPress={() => {
                     if (userData?.id) viewMoreInfo?.(userData);
                 }}>
-                    <MaterialIcons name="info-outline" size={25} color={colors.black} />
+                    <MaterialIcons name="info" size={25} color={colors.header} />
                 </TouchableOpacity>
             }
         </View>

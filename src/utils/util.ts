@@ -1,12 +1,14 @@
-import { differenceInMinutes } from 'date-fns';
+import { addMonths, differenceInMinutes, format, isBefore, isEqual } from 'date-fns';
+import { es } from 'date-fns/locale';
 import * as Location from 'expo-location';
 import { LatLng } from 'react-native-maps';
 
 import { Service } from '../types/service';
 import { uiTexts } from './data/ui-text-data';
+import { claimKeys } from './keys/claim-keys';
 import { statusTexts } from './keys/status-keys';
 import { Claim } from '../types/claim';
-import { claimKeys } from './keys/claim-keys';
+import { MonthItem } from '../types/month-item';
 
 export const getCosts = (duration: number, basePrice: number, comission: number): number => {
     const baseCost = duration * basePrice;
@@ -141,3 +143,15 @@ export const sortClaims = (claim: Claim[]): Claim[] => {
     return [];
 };
 
+export const generateMonthsBetweenDates = (start: Date, end: Date): MonthItem[] => {
+    const months: MonthItem[] = [];
+    let current = new Date(start);
+
+    while (isBefore(current, end) || isEqual(current, end)) {
+        const labelText = format(current, "MMMM - yyyy", { locale: es });
+        const isoDate = format(current, "yyyy-MM-01");
+        months.push({ label: `${labelText.charAt(0).toUpperCase()}${labelText.slice(1)}`, date: isoDate });
+        current = addMonths(current, 1);
+    }
+    return months.reverse();
+};
