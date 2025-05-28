@@ -32,13 +32,13 @@ export default function CompanionDrawer() {
             }}
         >
             <Drawer.Screen
-                name="CompanionHome"
+                name="CompanionStack"
                 component={CompanionStack}
                 options={{
                     headerShown: false,
                     title: uiTexts.home,
                     drawerIcon: () => (
-                        <Ionicons name="home-outline" color={colors.white} size={28} />
+                        <Ionicons name="home" color={colors.white} size={28} />
                     )
                 }}
             />

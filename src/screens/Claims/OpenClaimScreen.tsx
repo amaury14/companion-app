@@ -16,9 +16,13 @@ import { claimReasons } from '../../utils/data/claim-reason-data';
 import { uiTexts } from '../../utils/data/ui-text-data';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
+import { claimKeys } from '../../utils/keys/claim-keys';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'OpenClaim'>;
 
+/**
+ * Open claim component to create a new claim bound to a service with issues
+ */
 export default function OpenClaimScreen({ navigation }: Props) {
     const route = useRoute<RouteProp<AppStackParamList, 'OpenClaim'>>();
     const { service } = route.params;
@@ -41,8 +45,9 @@ export default function OpenClaimScreen({ navigation }: Props) {
                 companionId: service.companionId,
                 reason,
                 description,
-                status: 'open',
-                createdAt: serverTimestamp()
+                status: claimKeys.open,
+                createdAt: serverTimestamp(),
+                deletedDate: null
             });
 
             await updateDoc(doc(db, dbKeys.services, service.id), { status: statusKeys.conflicts });

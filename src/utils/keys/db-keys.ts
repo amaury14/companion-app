@@ -11,6 +11,7 @@ export const fieldKeys = {
     companionId: 'companionId',
     companionLiveLocation: 'companionLiveLocation',
     createdAt: 'createdAt',
+    deletedDate: 'deletedDate',
     requesterId: 'requesterId',
     requesterLiveLocation: 'requesterLiveLocation',
     reviewedUserId: 'reviewedUserId',
