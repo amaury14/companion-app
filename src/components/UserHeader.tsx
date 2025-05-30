@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
     headerText: {
         color: colors.white,
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginLeft: 10
     },
     exitButton: {
         alignItems: 'center',

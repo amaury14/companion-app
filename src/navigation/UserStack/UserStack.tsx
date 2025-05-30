@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ChatScreen from '../../screens/Chat/ChatScreen';
 import OpenClaimScreen from '../../screens/Claims/OpenClaimScreen';
 import ViewClaimsScreen from '../../screens/Claims/ViewClaimsScreen';
+import SettingsScreen from '../../screens/Settings/SettingsScreen';
 import { UserProfileCard } from '../../screens/Shared/UserProfileCard';
 import ViewServiceScreen from '../../screens/Shared/ViewServiceScreen';
 import ServiceTrackingScreen from '../../screens/Tracking/ServiceTrackingScreen';
@@ -29,6 +30,7 @@ export default function UserStack() {
             <Stack.Screen name="UserProfile" component={UserProfileCard} />
             <Stack.Screen name="ViewClaims" component={ViewClaimsScreen} />
             <Stack.Screen name="ViewService" component={ViewServiceScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
         </Stack.Navigator>
     );
 }

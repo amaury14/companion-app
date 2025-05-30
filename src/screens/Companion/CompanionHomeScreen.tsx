@@ -15,7 +15,7 @@ import { AppStackParamList } from '../../types/stack-param-list';
 import { categoryData } from '../../utils/data/category-data';
 import { statusData } from '../../utils/data/status.data';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { radioKilometers, update5Minute } from '../../utils/keys/costs-keys';
+import { updateMinute } from '../../utils/keys/costs-keys';
 import { dbKeys, fieldKeys } from '../../utils/keys/db-keys';
 import { statusKeys } from '../../utils/keys/status-keys';
 import { scheduleReminder } from '../../utils/notifications';
@@ -30,7 +30,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
     const [refreshing, setRefreshing] = useState(false);
     const [services, setServices] = useState<Service[]>([]);
     const [servicesRejected, setServicesRejected] = useState<string[]>([]);
-    const { user } = useUser();
+    const { settings, user } = useUser();
 
     const fetchServices = useCallback(async () => {
         try {
@@ -60,7 +60,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                     data.location?.latitude ?? 0,
                     data.location?.longitude ?? 0
                 );
-                if (distance > radioKilometers) return null;
+                if (distance > settings!.radiusKm) return null;
 
                 const locationText = data.location?.latitude && data.location?.longitude
                     ? await getAddressFromCoords(data.location.latitude, data.location.longitude)
@@ -100,7 +100,7 @@ export default function CompanionHomeScreen({ navigation }: Props) {
             console.error(err);
         }
         setRefreshing(false);
-    }, [user, servicesRejected]);
+    }, [user, servicesRejected, settings]);
 
     const handleRefresh = useCallback(async () => {
         await fetchServices();
@@ -119,10 +119,10 @@ export default function CompanionHomeScreen({ navigation }: Props) {
                 participants: [user?.id, service?.requesterId],
                 serviceId: service?.id
             });
-            // Adding notification 5 minutes previous service
+            // Adding notification (x: by settings) minutes previous service
             await scheduleReminder(
                 service,
-                update5Minute,
+                updateMinute * settings!.notifyBeforeMinutes,
                 `⏰ ${uiTexts.reminderService}`,
                 `${uiTexts.serviceStartsAt} ${service?.dateText}`
             );

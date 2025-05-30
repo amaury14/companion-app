@@ -4,18 +4,22 @@ import { doc, getDoc } from 'firebase/firestore';
 
 import { auth, db } from '../services/firebase';
 import { UserData } from '../types/user';
+import { UserSettings } from '../types/user-settings';
 import { dbKeys, userKeys } from '../utils/keys/db-keys';
+import { defaultUserSetting } from '../utils/data/user-settings-data';
 
 type UserContextType = {
+    settings: UserSettings | null;
     user: UserData | null;
 };
 
 /**
  * Provides current user data and loading state globally, initialized from Firebase Auth + Firestore.
  */
-const UserContext = createContext<UserContextType>({ user: null });
+const UserContext = createContext<UserContextType>({ settings: null, user: null });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+    const [settings, setSettings] = useState<UserSettings | null>(null);
     const [user, setUser] = useState<UserData | null>(null);
 
     useEffect(() => {
@@ -30,7 +34,17 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 } else {
                     setUser(null);
                 }
+
+                const settingsRef = doc(db, dbKeys.users, firebaseUser.uid, dbKeys.settings, dbKeys.preferences);
+                const settingsSnap = await getDoc(settingsRef);
+
+                if (settingsSnap.exists()) {
+                    setSettings({ ...settingsSnap.data() } as UserSettings);
+                } else {
+                    setSettings({ ...defaultUserSetting });
+                }
             } else {
+                setSettings(null);
                 setUser(null);
             }
         });
@@ -39,7 +53,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user }}>
+        <UserContext.Provider value={{ settings, user }}>
             {children}
         </UserContext.Provider>
     );

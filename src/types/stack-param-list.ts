@@ -16,6 +16,7 @@ export type AppStackParamList = {
     PaymentsStack: undefined;
     Register: undefined;
     ServiceTracking: { serviceId: string; destination: LatLng; };
+    Settings: undefined;
     UserActiveService: { service: Service; };
     UserHome: undefined;
     UserStack: undefined;

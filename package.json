@@ -46,7 +46,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-select-dropdown": "^4.0.1",
     "react-native-ui-datepicker": "^3.1.2",
-    "react-native-vector-icons": "^10.2.0"
+    "react-native-vector-icons": "^10.2.0",
+    "@react-native-community/slider": "4.5.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

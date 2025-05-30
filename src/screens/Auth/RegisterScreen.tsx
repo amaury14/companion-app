@@ -16,6 +16,7 @@ import { colors } from '../../theme/colors';
 import { AppStackParamList } from '../../types/stack-param-list';
 import { UserType } from '../../types/user-type';
 import { uiTexts } from '../../utils/data/ui-text-data';
+import { defaultUserSetting } from '../../utils/data/user-settings-data';
 import { asyncStorageKeys, dbKeys, userKeys } from '../../utils/keys/db-keys';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Register'>;
@@ -102,6 +103,9 @@ export default function RegisterScreen({ navigation }: Props) {
                 verified: false,
                 reputationScore: 0,
                 completedServices: 0,
+            });
+            await setDoc(doc(db, dbKeys.users, uid, dbKeys.settings, dbKeys.preferences), {
+                ...defaultUserSetting
             });
         } catch (error) {
             console.error(error);

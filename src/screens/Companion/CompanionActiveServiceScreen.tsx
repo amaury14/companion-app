@@ -9,12 +9,13 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Header from '../../components/Header';
 import Layout from '../../components/Layout';
 import ServiceCard from '../../components/ServiceCard';
+import { useUser } from '../../context/UserContext';
 import { db } from '../../services/firebase';
 import { colors } from '../../theme/colors';
 import { Service } from '../../types/service';
 import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
-import { update10Seconds, update5Minute } from '../../utils/keys/costs-keys';
+import { update10Seconds, updateMinute } from '../../utils/keys/costs-keys';
 import { dbKeys } from '../../utils/keys/db-keys';
 import { statusKeys, statusTexts } from '../../utils/keys/status-keys';
 import ReviewForm from '../Review/ReviewForm';
@@ -27,6 +28,7 @@ type Props = NativeStackScreenProps<AppStackParamList, 'CompanionActiveService'>
 export default function CompanionActiveServiceScreen({ navigation }: Props) {
     const route = useRoute<RouteProp<AppStackParamList, 'CompanionActiveService'>>();
     const { service } = route.params;
+    const { settings } = useUser();
 
     const [serviceData, setServiceData] = useState<Service>(service);
     const [isStartEnable, setIsStartEnable] = useState<boolean>(false);
@@ -64,7 +66,7 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
 
         const interval = setInterval(() => {
             checkCompleteTime(interval);
-        }, update5Minute);
+        }, updateMinute * 5);
 
         checkCompleteTime(interval);
 
@@ -142,13 +144,16 @@ export default function CompanionActiveServiceScreen({ navigation }: Props) {
                         <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
                         <Text style={styles.buttonText}>{uiTexts.messaging}</Text>
                     </Pressable>
-                    <Pressable style={styles.button} onPress={() => navigation.navigate('ServiceTracking', {
-                        serviceId: serviceData.id,
-                        destination: serviceData.location ?? { latitude: 0, longitude: 0 }
-                    })}>
-                        <MaterialIcons name="map" size={22} color={colors.white} />
-                        <Text style={styles.buttonText}>{uiTexts.trackService}</Text>
-                    </Pressable>
+                    {
+                        settings!.enableLocationTracking &&
+                        <Pressable style={styles.button} onPress={() => navigation.navigate('ServiceTracking', {
+                            serviceId: serviceData.id,
+                            destination: serviceData.location ?? { latitude: 0, longitude: 0 }
+                        })}>
+                            <MaterialIcons name="map" size={22} color={colors.white} />
+                            <Text style={styles.buttonText}>{uiTexts.trackService}</Text>
+                        </Pressable>
+                    }
                 </View>
             </ScrollView>
         </Layout>
