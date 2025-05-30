@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import CustomDrawerContent from '../../components/CustomDrawerContent';
+import SettingsScreen from '../../screens/Settings/SettingsScreen';
 import { colors } from '../../theme/colors';
 import { AppStackParamList } from '../../types/stack-param-list';
 import { uiTexts } from '../../utils/data/ui-text-data';
@@ -63,6 +64,17 @@ export default function CompanionDrawer() {
                     title: uiTexts.payments,
                     drawerIcon: () => (
                         <Ionicons name="wallet" color={colors.white} size={28} />
+                    )
+                }}
+            />
+            <Drawer.Screen
+                name="Settings"
+                component={SettingsScreen}
+                options={{
+                    headerShown: false,
+                    title: uiTexts.settings,
+                    drawerIcon: () => (
+                        <Ionicons name="cog" color={colors.white} size={28} />
                     )
                 }}
             />

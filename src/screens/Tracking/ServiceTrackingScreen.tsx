@@ -24,7 +24,7 @@ type ServiceTrackingProps = {
 };
 
 const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
-    const { user } = useUser();
+    const { settings, user } = useUser();
     const { serviceId, destination } = route.params;
     const [isCloseActive, setCloseActive] = useState<boolean>(false);
     const [location, setLocation] = useState<LatLng | null>(null);
@@ -60,35 +60,39 @@ const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
     }, [destination, location, isCloseActive, user?.type]);
 
     useEffect(() => {
-        const liveLocationField = user?.type === userKeys.user ? fieldKeys.requesterLiveLocation : fieldKeys.companionLiveLocation;
-        startLocationSharing(serviceId, liveLocationField);
-        const unsubscribe = onSnapshot(doc(db, dbKeys.services, serviceId), snapshot => {
-            const data = snapshot.data();
-            if (data?.[liveLocationField]) {
-                setLocation({
-                    latitude: data[liveLocationField].latitude,
-                    longitude: data[liveLocationField].longitude
-                });
-            }
-        });
+        if (settings!.autoStartTracking) {
+            const liveLocationField = user?.type === userKeys.user ? fieldKeys.requesterLiveLocation : fieldKeys.companionLiveLocation;
+            startLocationSharing(serviceId, liveLocationField);
+            const unsubscribe = onSnapshot(doc(db, dbKeys.services, serviceId), snapshot => {
+                const data = snapshot.data();
+                if (data?.[liveLocationField]) {
+                    setLocation({
+                        latitude: data[liveLocationField].latitude,
+                        longitude: data[liveLocationField].longitude
+                    });
+                }
+            });
 
-        return unsubscribe;
-    }, [serviceId, user]);
+            return unsubscribe;
+        }
+    }, [serviceId, user, settings]);
 
     useEffect(() => {
-        if (!destination || !location) return;
+        if (settings!.autoStartTracking) {
+            if (!destination || !location) return;
 
-        const interval = setInterval(() => {
+            const interval = setInterval(() => {
+                checkLocationClose(interval);
+            }, update10Seconds);
+
             checkLocationClose(interval);
-        }, update10Seconds);
 
-        checkLocationClose(interval);
-
-        return () => clearInterval(interval); // cleanup on unmount
-    }, [destination, location, checkLocationClose]);
+            return () => clearInterval(interval); // cleanup on unmount
+        }
+    }, [destination, location, checkLocationClose, settings]);
 
     useEffect(() => {
-        if (location && mapRef?.current) {
+        if (settings!.autoStartTracking && location && mapRef?.current) {
             mapRef.current.animateToRegion(
                 {
                     latitude: location.latitude,
@@ -99,13 +103,22 @@ const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
                 1000
             );
         }
-    }, [location]);
+    }, [location, settings]);
 
-    if (!location) {
+    if (!location && settings!.autoStartTracking) {
         return (
             <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color={colors.header} />
                 <Text style={styles.loadingText}>{uiTexts.waitingLocation}</Text>
+            </View>
+        );
+    }
+
+    if (settings!.autoStartTracking === false) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={colors.header} />
+                <Text style={styles.loadingText}>{uiTexts.locationDisabledByConfig}</Text>
             </View>
         );
     }
@@ -115,8 +128,8 @@ const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
             style={styles.map}
             followsUserLocation={true}
             initialRegion={{
-                latitude: location.latitude,
-                longitude: location.longitude,
+                latitude: location!.latitude,
+                longitude: location!.longitude,
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
             }}
@@ -125,7 +138,7 @@ const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
             zoomEnabled={true}
         >
             <Marker
-                coordinate={location}
+                coordinate={location!}
                 title={uiTexts.companion}
                 pinColor={colors.azureblue}
             />
@@ -135,7 +148,7 @@ const ServiceTrackingScreen = ({ route }: ServiceTrackingProps) => {
                 pinColor={colors.danger}
             />
             <MapViewDirections
-                origin={location}
+                origin={location!}
                 destination={destination}
                 apikey={process.env.GOOGLE_MAPS_API_KEY}
                 strokeWidth={4}

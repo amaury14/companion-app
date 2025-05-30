@@ -2,8 +2,10 @@ export const dbKeys = {
     chatRooms: 'chatRooms',
     claims: 'claims',
     messages: 'messages',
+    preferences: 'preferences',
     reviews: 'reviews',
     services: 'services',
+    settings: 'settings',
     users: 'users'
 };
 

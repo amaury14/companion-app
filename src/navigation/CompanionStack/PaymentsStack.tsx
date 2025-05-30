@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import PaymentsHomeScreen from '../../screens/Companion/PaymentsHomeScreen';
+import SettingsScreen from '../../screens/Settings/SettingsScreen';
 import { UserProfileCard } from '../../screens/Shared/UserProfileCard';
 import ViewServiceScreen from '../../screens/Shared/ViewServiceScreen';
 import { AppStackParamList } from '../../types/stack-param-list';
@@ -17,6 +18,7 @@ export default function PaymentsStack() {
             <Stack.Screen name="PaymentsHome" component={PaymentsHomeScreen} />
             <Stack.Screen name="UserProfile" component={UserProfileCard} />
             <Stack.Screen name="ViewService" component={ViewServiceScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
         </Stack.Navigator>
     );
 }

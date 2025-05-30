@@ -27,7 +27,7 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
     const route = useRoute<RouteProp<AppStackParamList, 'UserActiveService'>>();
     const { service } = route.params;
     const [serviceData, setServiceData] = useState<Service>(service);
-    const { user } = useUser();
+    const { settings, user } = useUser();
 
     const handleComplete = async () => {
         try {
@@ -60,13 +60,16 @@ export default function UserActiveServiceScreen({ navigation }: Props) {
                         <MaterialIcons name="chat-bubble" size={22} color={colors.white} />
                         <Text style={styles.buttonText}>{uiTexts.messaging}</Text>
                     </Pressable>
-                    <Pressable style={styles.button} onPress={() => navigation.navigate('ServiceTracking', {
-                        serviceId: serviceData.id,
-                        destination: serviceData.location ?? { latitude: 0, longitude: 0 }
-                    })}>
-                        <MaterialIcons name="map" size={22} color={colors.white} />
-                        <Text style={styles.buttonText}>{uiTexts.trackService}</Text>
-                    </Pressable>
+                    {
+                        settings!.enableLocationTracking &&
+                        <Pressable style={styles.button} onPress={() => navigation.navigate('ServiceTracking', {
+                            serviceId: serviceData.id,
+                            destination: serviceData.location ?? { latitude: 0, longitude: 0 }
+                        })}>
+                            <MaterialIcons name="map" size={22} color={colors.white} />
+                            <Text style={styles.buttonText}>{uiTexts.trackService}</Text>
+                        </Pressable>
+                    }
                 </View>
                 {
                     (serviceData.status === statusTexts.completed && !serviceData.confirmed || serviceData.status === statusTexts.conflicts) &&

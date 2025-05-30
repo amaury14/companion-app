@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { UserProfileCard } from '../../screens/Shared/UserProfileCard';
 import ViewClaimsScreen from '../../screens/Claims/ViewClaimsScreen';
+import SettingsScreen from '../../screens/Settings/SettingsScreen';
 import ViewServiceScreen from '../../screens/Shared/ViewServiceScreen';
 import { AppStackParamList } from '../../types/stack-param-list';
 
@@ -17,6 +18,7 @@ export default function ClaimStack() {
             <Stack.Screen name="UserProfile" component={UserProfileCard} />
             <Stack.Screen name="ViewClaims" component={ViewClaimsScreen} />
             <Stack.Screen name="ViewService" component={ViewServiceScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
         </Stack.Navigator>
     );
 }
